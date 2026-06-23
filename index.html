@@ -155,7 +155,8 @@
         <label>Engagement feed reduction (%)</label><input id="engred" type="number" value="0" inputmode="numeric">
         <label>Thread taper</label><select id="thtaper" onchange="updateSubs()"><option>None</option><option>NPT</option><option>BSPT</option><option>Manual</option></select>
         <div id="mTaper" style="display:none"><label>Taper degree</label><input id="taperdeg" type="number" value="0" inputmode="decimal"><label>Dia diff at end of thread (mm)</label><input id="diadiff" type="number" value="0" inputmode="decimal"></div>
-        <label>Bottom repass</label><select id="brepass"><option>No</option><option>Yes</option></select>
+        <label>Bottom repass</label><select id="brepass" onchange="updateSubs()"><option>No</option><option>Yes</option></select>
+        <div id="repWrap" style="display:none"><div class="row2"><div><label>Repass threads (pitches)</label><input id="repp" type="number" value="1" inputmode="numeric"></div><div><label>Repass offset dia (mm)</label><input id="repoff" type="number" value="0" inputmode="decimal"></div></div></div>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">HIGHLY ADVANCED &mdash; MILLING <span>&#9656;</span></div><div class="sb" style="display:none">
@@ -201,7 +202,6 @@
       <button class="btn" onclick="genProg()">&#9881;&#65039;  GENERATE G-CODE</button>
       <div id="cyc"></div>
       <div id="p_res"></div>
-      <button class="btn btn2" id="copybtn" style="display:none" onclick="copyProg()">&#128203;  Copy program</button>
       <button class="btn btn2" id="savebtn" style="display:none" onclick="saveProg()">&#128190;  Save .txt to Downloads</button>
       <button class="btn btn2" id="simbtn" style="display:none" onclick="runSim()">&#9654;  Simulate toolpath</button>
       <canvas id="simcv" width="640" height="520" style="display:none;width:100%;background:#0a1118;border:1px solid #293a4d;border-radius:12px;margin-top:12px"></canvas>
@@ -312,6 +312,7 @@ function updateSubs(){
   var pm=$('path');if(pm){var st=pm.value==='Stepped';if($('mStepWrap'))$('mStepWrap').style.display=st?'block':'none';if($('mEntryWrap'))$('mEntryWrap').style.display=st?'none':'block';}
   var t2=$('t_thtaper');if(t2&&$('tTaper'))$('tTaper').style.display=(t2.value==='Manual')?'block':'none';
   var inf=$('t_infeed');if(inf&&$('tFlank'))$('tFlank').style.display=(inf.value==='Radial')?'none':'block';
+  var bp=$('brepass');if(bp&&$('repWrap'))$('repWrap').style.display=(bp.value==='Yes')?'block':'none';
 }
 function ordn(n){var s=['','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||'th');}
 function renderPassPcts(){var c=$('passpcts');if(!c)return;var n=Math.max(1,Math.round(num('passes',1)));var eq=$('eqvol')&&$('eqvol').value==='Yes';
@@ -394,7 +395,7 @@ function genMill(){
   var toolOD=($('toff').value==='Yes')||($('toolpath')&&$('toolpath').value.indexOf('OD')>=0);
   var pcts=buildPcts();
   var P0={D:D,L:L,P:P,d:d,Z:num('Z',1),Vc:Vc,fz:fz,hand:$('hand').value,direction:$('dir').value,mode:$('path').value,
-    num_passes:pcts.length,pcts:pcts,repass_pitches:(brepass?1:0),repass_offset:0.0,num_teeth:teeth,
+    num_passes:pcts.length,pcts:pcts,repass_pitches:(brepass?Math.max(1,Math.round(num('repp',1))):0),repass_offset:num('repoff',0),num_teeth:teeth,
     bottom_offset:toff,spindle:$('mcode').value,dia_end_offset:toff,minor:minor,entry_style:$('entry').value,
     num_starts:Math.max(1,Math.round(num('starts',1))),entry_feed_reduction:num('engred',0),max_rpm:num('maxrpm',5000),
     stepped_style:($('sstyle').value.indexOf('Carmex')>=0?'Carmex':'Modified'),is_external:!internal,
@@ -496,7 +497,7 @@ function formatForControl(code,ctrl){var name=ctrl||'Fanuc I & J',out;
   var sie=name.indexOf('Siemens')>=0,L=out.split('\n');
   for(var i=0;i<L.length;i++){if(/^\s*O\d/.test(L[i])){L.splice(i+1,0,idLine(name,sie));return L.join('\n');}}
   L.splice(0,0,idLine(name,sie));return L.join('\n');}
-function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;$('p_res').innerHTML='<pre id="gtext"></pre>'+(extra||'');document.getElementById('gtext').textContent=lastProg;$('copybtn').style.display='block';$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('simcv'))$('simcv').style.display='none';}
+function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;$('p_res').innerHTML='<pre id="gtext"></pre>'+(extra||'');document.getElementById('gtext').textContent=lastProg;if($('copybtn'))$('copybtn').style.display='block';$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('simcv'))$('simcv').style.display='none';}
 function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
 function copyProg(){if(navigator.clipboard&&lastProg){navigator.clipboard.writeText(lastProg);$('copybtn').textContent='✓ Copied';setTimeout(function(){$('copybtn').textContent='📋  Copy program';},1500);}}
 
