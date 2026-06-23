@@ -244,8 +244,8 @@ function taperOffset(internal,L){var pre=(method==='Turn')?'t_':'';var tm=$(pre+
 function setMethod(m){method=m;
   var mm=$('mMill'),mt=$('mTurn');if(mm)mm.classList.toggle('on',m==='Mill');if(mt)mt.classList.toggle('on',m==='Turn');
   var os=$('opsel');if(os)os.value=(m==='Mill'?'Milling':'Turning');
-  document.querySelectorAll('.mill-only').forEach(e=>e.style.display=m==='Mill'?'':'none');
-  document.querySelectorAll('.turn-only').forEach(e=>e.style.display=m==='Turn'?'':'none');
+  document.querySelectorAll('.mill-only').forEach(e=>e.style.display=m==='Mill'?'block':'none');
+  document.querySelectorAll('.turn-only').forEach(e=>e.style.display=m==='Turn'?'block':'none');
   if(m==='Mill')recalc(); else recalcT();
   $('p_res').innerHTML='';$('cyc').innerHTML='';$('copybtn').style.display='none';if($('savebtn'))$('savebtn').style.display='none';
 }
