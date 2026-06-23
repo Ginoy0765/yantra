@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f1720">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="YANTRA">
+<title>YANTRA</title>
+<style>
+  :root{--bg:#0f1720;--bg2:#16212e;--card:#1b2837;--line:#293a4d;--txt:#e8eef4;
+    --mut:#90a4b8;--acc:#ffb300;--acc2:#29b6f6;--ok:#43d17a;--pro:#ff7043;--radius:16px}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:16px}
+  .wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+  header{padding:16px 18px 12px;background:linear-gradient(160deg,#13202e,#0f1720);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--acc),#ff7a00);display:flex;align-items:center;justify-content:center;font-weight:800;color:#1a1200;font-size:19px}
+  .brand h1{font-size:19px;margin:0;letter-spacing:3px;font-weight:800}
+  .brand small{display:block;color:var(--mut);font-size:10.5px;letter-spacing:1px;font-weight:600;margin-top:2px}
+  .advbadge{display:none;background:var(--pro);color:#1a1200;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:6px}
+  main{flex:1;padding:14px 14px 92px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:15px 13px;cursor:pointer;transition:.15s;position:relative;min-height:96px;display:flex;flex-direction:column;justify-content:space-between}
+  .tile:active{transform:scale(.97);border-color:var(--acc)}
+  .tile.soon{opacity:.5}
+  .tile .ic{font-size:25px}.tile .t{font-weight:700;font-size:14.5px;margin-top:7px}.tile .s{color:var(--mut);font-size:11px;margin-top:2px;line-height:1.3}
+  .tag{position:absolute;top:9px;right:9px;font-size:9px;font-weight:800;padding:3px 7px;border-radius:20px}
+  .tag.free{background:rgba(67,209,122,.15);color:var(--ok)}.tag.pro{background:rgba(255,112,67,.15);color:var(--pro)}.tag.soon{background:rgba(144,164,184,.15);color:var(--mut)}
+  .view{display:none}.view.on{display:block}
+  .vhead{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .back{background:var(--card);border:1px solid var(--line);color:var(--txt);width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
+  .vhead h2{font-size:18px;margin:0;font-weight:700}
+  .sec{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-top:12px;overflow:hidden}
+  .sec>.st{background:var(--bg2);padding:11px 14px;font-weight:700;font-size:13px;letter-spacing:.5px;color:var(--acc2);cursor:pointer;display:flex;justify-content:space-between}
+  .sec>.sb{padding:4px 14px 14px}
+  label{display:block;color:var(--mut);font-size:11.5px;font-weight:600;margin:12px 0 5px;letter-spacing:.2px}
+  select,input{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:12px;font-size:16px;outline:none}
+  input[readonly]{color:var(--acc);font-weight:700;background:#101a25}
+  select:focus,input:focus{border-color:var(--acc2)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .btn{width:100%;background:linear-gradient(135deg,var(--acc),#ff8f00);color:#1a1200;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;letter-spacing:.5px;margin-top:16px;cursor:pointer}
+  .btn:active{transform:scale(.98)}
+  .btn2{background:var(--bg2);color:var(--txt);border:1px solid var(--line);font-weight:700}
+  .res{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .res .rh{background:var(--bg2);padding:11px 14px;font-weight:700;border-bottom:1px solid var(--line);font-size:14px}
+  .kv{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line)}.kv:last-child{border:none}
+  .kv .k{color:var(--mut);font-size:13px}.kv .v{font-weight:700;font-variant-numeric:tabular-nums}.kv .v b{color:var(--acc)}
+  pre{background:#0a1118;border:1px solid var(--line);border-radius:12px;padding:13px;overflow:auto;font-size:12px;line-height:1.5;color:#bfe3ff;white-space:pre;margin-top:12px}
+  .chip{display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--mut);margin:3px 4px 0 0}
+  .seg{display:flex;gap:8px;margin-top:6px}
+  .seg button{flex:1;background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:11px;padding:11px;font-weight:700;cursor:pointer}
+  .seg button.on{background:var(--acc2);color:#06121c;border-color:var(--acc2)}
+  .cyc{margin-top:12px;background:linear-gradient(135deg,#0d2030,#13283a);border:1px solid var(--line);border-radius:12px;padding:13px;text-align:center;font-weight:800;letter-spacing:1px;color:var(--acc)}
+  .warn{color:var(--pro);font-size:12px;margin-top:8px;line-height:1.4}
+  .note{color:var(--mut);font-size:11.5px;text-align:center;margin-top:16px;line-height:1.5}
+  .prolock{background:linear-gradient(160deg,#22150f,#1b2837);border:1px solid #3a2a20;border-radius:var(--radius);padding:20px;text-align:center;margin-top:12px}
+  .prolock .ic{font-size:32px}.prolock h3{margin:9px 0 4px}.prolock p{color:var(--mut);font-size:13px;margin:0 0 4px}
+  .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;max-width:492px;width:calc(100% - 28px);background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:12px;font-size:13.5px;font-weight:700;cursor:pointer;z-index:20}
+  .mill-only,.turn-only,.adv-only{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="brand"><div class="logo">&#2351;</div>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR</small></div></div></header>
+  <main>
+
+    <!-- HOME: operations roadmap -->
+    <section id="home" class="view on">
+      <div class="grid">
+        <div class="tile" onclick="show('threading')"><span class="tag free">LIVE</span><div class="ic">&#129683;</div><div><div class="t">Threading</div><div class="s">Data + programming</div></div></div>
+        <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic">&#128295;</div><div><div class="t">Drilling</div><div class="s">Coming next</div></div></div>
+        <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic">&#9707;</div><div><div class="t">Grooving</div><div class="s">Coming soon</div></div></div>
+        <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic">&#9881;&#65039;</div><div><div class="t">Milling</div><div class="s">Coming soon</div></div></div>
+        <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic">&#128260;</div><div><div class="t">Turning</div><div class="s">Coming soon</div></div></div>
+      </div>
+      <p class="note">Building one operation at a time. Threading first &mdash; everything works offline.</p>
+    </section>
+
+    <!-- THREADING submenu -->
+    <section id="threading" class="view">
+      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Threading</h2></div>
+      <div class="grid">
+        <div class="tile" onclick="show('data')"><span class="tag free">FREE</span><div class="ic">&#128269;</div><div><div class="t">Thread Data</div><div class="s">Tap-drill, minor, pitch dia</div></div></div>
+        <div class="tile" onclick="show('prog')"><span class="tag free">FREE</span><div class="ic">&#128196;</div><div><div class="t">Programming</div><div class="s">Milling &amp; turning G-code</div></div></div>
+      </div>
+    </section>
+
+    <!-- THREAD DATA -->
+    <section id="data" class="view">
+      <div class="vhead"><button class="back" onclick="show('threading')">&lsaquo;</button><h2>Thread Data</h2></div>
+      <label>Series</label><select id="d_series" onchange="fillSizes()"></select>
+      <label>Size</label><select id="d_size" onchange="calcData()"></select>
+      <div id="d_res"></div>
+    </section>
+
+    <!-- PROGRAMMING -->
+    <section id="prog" class="view">
+      <div class="vhead"><button class="back" onclick="show('threading')">&lsaquo;</button><h2>Programming</h2></div>
+      <label>Method</label>
+      <div class="seg"><button id="mMill" class="on" onclick="setMethod('Mill')">Thread Milling</button><button id="mTurn" onclick="setMethod('Turn')">Thread Turning</button></div>
+
+      <div class="sec"><div class="st" onclick="tog(this)">THREAD TYPE <span>&#9662;</span></div><div class="sb">
+        <div class="row2">
+          <div><label>Internal / External</label><select id="side" onchange="minorEdited=false;recalc()"><option>Internal</option><option>External</option></select></div>
+          <div><label>Hand</label><select id="hand"><option>RH</option><option>LH</option></select></div>
+        </div>
+        <div class="row2">
+          <div><label>Thread profile</label><select id="profile" onchange="profChange()"><option>ISO Metric</option><option>UN (TPI)</option><option>NPT (Taper)</option><option>Custom</option></select></div>
+          <div><label>No. of starts</label><input id="starts" type="number" value="1" inputmode="numeric"></div>
+        </div>
+        <label>Size (auto-fills D, P)</label><select id="size" onchange="sizeChange()"></select>
+      </div></div>
+
+      <div class="sec"><div class="st" onclick="tog(this)">DIMENSIONS <span>&#9662;</span></div><div class="sb">
+        <div class="row2">
+          <div><label>Major dia D (mm)</label><input id="D" type="number" value="16" inputmode="decimal" oninput="minorEdited=false;recalc()"></div>
+          <div><label>TPI</label><input id="tpi" type="number" inputmode="decimal" oninput="tpiChange()" placeholder="metric: blank"></div>
+        </div>
+        <div class="row2">
+          <div><label>Pitch P (mm)</label><input id="P" type="number" value="2" inputmode="decimal" oninput="recalc()"></div>
+          <div><label>Depth / Length L (mm)</label><input id="L" type="number" value="20" inputmode="decimal"></div>
+        </div>
+        <label>Material</label><select id="mat" onchange="recalc()"></select>
+      </div></div>
+
+      <!-- MILLING params -->
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">CUTTING (MILLING) <span>&#9662;</span></div><div class="sb">
+        <div class="row2">
+          <div><label>Stability %</label><input id="stab" type="number" value="100" inputmode="numeric" oninput="recalc()"></div>
+          <div><label>Vc (m/min)</label><input id="vc" type="number" value="60" inputmode="decimal" oninput="recalc()"></div>
+        </div>
+        <div class="row2">
+          <div><label>RPM (auto)</label><input id="rpm" readonly></div>
+          <div><label>fz (mm/tooth)</label><input id="fz" inputmode="decimal" oninput="recalc(true)" placeholder="auto"></div>
+        </div>
+        <label>Direction</label><select id="dir"><option>Top to Bottom</option><option>Bottom to Top</option></select>
+        <div class="row3">
+          <div><label>Passes</label><input id="passes" type="number" value="1" inputmode="numeric"></div>
+          <div><label>1st pass %</label><input id="firstp" type="number" value="100" inputmode="numeric"></div>
+          <div><label>Spring</label><select id="spring"><option>No</option><option>Yes</option></select></div>
+        </div>
+        <label>Equal-volume passes</label><select id="eqvol"><option>No</option><option>Yes</option></select>
+      </div></div>
+
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">TOOL (MILLING) <span>&#9662;</span></div><div class="sb">
+        <div class="row2">
+          <div><label>Cutter dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="recalc()"></div>
+          <div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div>
+        </div>
+        <div class="row2">
+          <div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div>
+          <div><label>Insert length (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth"></div>
+        </div>
+        <label>Path mode</label><select id="path"><option>Helical</option><option>Stepped</option></select>
+      </div></div>
+
+      <!-- TURNING params -->
+      <div class="sec turn-only"><div class="st" onclick="tog(this)">CUTTING (TURNING) <span>&#9662;</span></div><div class="sb">
+        <div class="row2">
+          <div><label>Vc (m/min)</label><input id="t_vc" type="number" value="120" inputmode="decimal" oninput="recalcT()"></div>
+          <div><label>RPM G97 (auto)</label><input id="t_rpm" readonly></div>
+        </div>
+        <label>Infeed</label><select id="t_infeed"><option>Flank</option><option>Radial</option><option>Alternate flank</option></select>
+        <div class="row2">
+          <div><label>Flank angle (deg)</label><input id="t_flank" type="number" value="29" inputmode="decimal"></div>
+          <div><label>Idle / spring passes</label><input id="t_idle" type="number" value="2" inputmode="numeric"></div>
+        </div>
+        <div class="row2">
+          <div><label>First DOC (mm)</label><input id="t_first" type="number" value="0.25" inputmode="decimal"></div>
+          <div><label>Final DOC floor (mm)</label><input id="t_end" type="number" value="0.05" inputmode="decimal"></div>
+        </div>
+        <div class="row2">
+          <div><label>Safe X (mm)</label><input id="t_safex" type="number" value="2" inputmode="decimal"></div>
+          <div><label>Safe Z (mm)</label><input id="t_safez" type="number" value="5" inputmode="decimal"></div>
+        </div>
+      </div></div>
+
+      <div class="sec"><div class="st" onclick="tog(this)">ADVANCED &mdash; OUTPUT CONTROL <span>&#9656;</span></div><div class="sb" style="display:none">
+        <label>Control</label><select id="ctrl"><option>Fanuc I &amp; J</option><option>Fanuc R</option><option>Siemens I &amp; J</option><option>Siemens R</option><option>Heidenhain</option><option>Haas</option></select>
+        <div class="row2">
+          <div><label>Start X Y Z</label><select id="startxyz"><option>No</option><option>Yes</option></select></div>
+          <div><label>Tool offset (G41 D)</label><select id="toff"><option>No</option><option>Yes</option></select></div>
+        </div>
+      </div></div>
+
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; MILLING <span>&#9656;</span></div><div class="sb" style="display:none">
+        <div class="row2">
+          <div><label>M-code</label><select id="mcode"><option>M03</option><option>M04</option></select></div>
+          <div><label>Max RPM</label><input id="maxrpm" type="number" value="5000" inputmode="numeric" oninput="recalc()"></div>
+        </div>
+        <div class="row2">
+          <div><label>Minor dia (auto, editable)</label><input id="minor" type="number" inputmode="decimal" oninput="minorEdited=true"></div>
+          <div><label>Major dia +/- (mm)</label><input id="majadj" type="number" value="0" inputmode="decimal"></div>
+        </div>
+        <div class="row2">
+          <div><label>Stepped style</label><select id="sstyle"><option>Top load Modified</option><option>Carmex bottom-first</option></select></div>
+          <div><label>Entry style (deg)</label><select id="entry"><option>Old</option><option>90</option><option>45</option><option>180</option></select></div>
+        </div>
+        <label>Engagement feed reduction (%)</label><input id="engred" type="number" value="0" inputmode="numeric">
+      </div></div>
+
+      <div class="sec"><div class="st" onclick="tog(this)">ADVANCED &mdash; TAPER &amp; REPASS <span>&#9656;</span></div><div class="sb" style="display:none">
+        <div class="row2">
+          <div><label>Thread taper</label><select id="thtaper"><option>None</option><option>NPT</option><option>BSPT</option><option>Manual</option></select></div>
+          <div><label>Taper degree</label><input id="taperdeg" type="number" value="0" inputmode="decimal"></div>
+        </div>
+        <label>Dia diff at end of thread (mm) &mdash; + grows / &minus; shrinks</label><input id="diadiff" type="number" value="0" inputmode="decimal">
+        <label>Bottom repass</label><select id="brepass"><option>No</option><option>Yes</option></select>
+      </div></div>
+
+      <div class="sec"><div class="st" onclick="tog(this)">OUTPUT <span>&#9662;</span></div><div class="sb">
+        <div class="mill-only"><label>Safe Z (mm)</label><input id="safez" type="number" value="20" inputmode="decimal"></div>
+        <label>Message (optional)</label><input id="msg" placeholder="shown in header">
+      </div></div>
+
+      <button class="btn" onclick="genProg()">&#9881;&#65039;  GENERATE G-CODE</button>
+      <div id="cyc"></div>
+      <div id="p_res"></div>
+      <button class="btn btn2" id="copybtn" style="display:none" onclick="copyProg()">&#128203;  Copy program</button>
+      <button class="btn btn2" id="savebtn" style="display:none" onclick="saveProg()">&#128190;  Save .txt to Downloads</button>
+    </section>
+
+
+    <!-- COMING SOON -->
+    <section id="soon" class="view">
+      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Coming soon</h2></div>
+      <div class="prolock"><div class="ic">&#128736;&#65039;</div><h3>Being built next</h3>
+        <p>Threading is live now. Drilling, grooving, milling and turning</p>
+        <p>are on the way &mdash; one solid operation at a time.</p></div>
+      <p class="note">Got a request for what this should do? Tap "Send message" below.</p>
+    </section>
+
+  </main>
+  <button class="fab" onclick="sendMsg()">&#9993;&#65039;  Send message / request a feature</button>
+</div>
+
+<script>
+const ADVANCED=true;  /* single complete build */
+const COARSE=[["M1.6",0.35,1.6],["M2",0.4,2],["M2.5",0.45,2.5],["M3",0.5,3],["M3.5",0.6,3.5],["M4",0.7,4],["M5",0.8,5],["M6",1,6],["M7",1,7],["M8",1.25,8],["M10",1.5,10],["M12",1.75,12],["M14",2,14],["M16",2,16],["M18",2.5,18],["M20",2.5,20],["M22",2.5,22],["M24",3,24],["M27",3,27],["M30",3.5,30],["M33",3.5,33],["M36",4,36],["M39",4,39],["M42",4.5,42],["M45",4.5,45],["M48",5,48],["M52",5,52],["M56",5.5,56],["M60",5.5,60],["M64",6,64],["M68",6,68],["M72",6,72],["M80",6,80],["M90",6,90],["M100",6,100]];
+const FINE=[["M8x1",1,8],["M10x1.25",1.25,10],["M10x1",1,10],["M12x1.5",1.5,12],["M12x1.25",1.25,12],["M14x1.5",1.5,14],["M16x1.5",1.5,16],["M18x1.5",1.5,18],["M20x2",2,20],["M20x1.5",1.5,20],["M22x1.5",1.5,22],["M24x2",2,24],["M24x1.5",1.5,24],["M27x2",2,27],["M30x2",2,30],["M30x1.5",1.5,30],["M33x2",2,33],["M36x3",3,36],["M36x2",2,36],["M39x3",3,39],["M42x3",3,42],["M45x3",3,45],["M48x3",3,48],["M52x3",3,52],["M56x4",4,56],["M60x4",4,60],["M64x4",4,64]];
+const ALL=COARSE.concat(FINE);
+const MATS=[["Aluminium 6061-T6",300,"N",0.14],["Al 2011 / free-cut brass",350,"N",0.15],["Free-machining steel 12L14",150,"P",0.17],["Copper",150,"N",0.14],["Cast iron (gray)",60,"K",0.16],["Low carbon steel <0.55%C",90,"P",0.16],["Stainless 303 (free-cut)",85,"M",0.10],["High carbon steel >=0.55%C",75,"P",0.14],["AISI 4140 annealed",70,"P",0.10],["Alloy steel (treated)",65,"P",0.10],["Stainless 304 austenitic",75,"M",0.09],["Stainless 316 austenitic",60,"M",0.09],["Titanium Ti-6Al-4V",40,"S",0.07],["Tool steel D2",40,"H",0.06],["Hardened steel 40 HRC",40,"H",0.06],["Inconel 718",20,"S",0.04]];
+const ISO_COL={P:"#2196F3",M:"#FBC02D",K:"#E53935",N:"#43A047",S:"#FB8C00",H:"#424242"};
+const SERIES={Coarse:COARSE,Fine:FINE,All:ALL};
+const MAXRPM=5000;
+let method='Mill';
+let minorEdited=false;
+
+const $=id=>document.getElementById(id);
+function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);}
+function tog(h){const b=h.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';h.querySelector('span').textContent=b.style.display==='none'?'▸':'▾';}
+function r(n,p){return Number(n).toFixed(p);}
+function num(id,def){const v=parseFloat($(id).value);return isNaN(v)?def:v;}
+function fzGreen(fzb,d){d=Math.max(1,Math.min(100,d));return fzb*Math.min(d,40)/10;}
+function getMax(){var e=$('maxrpm');var v=e?parseFloat(e.value):NaN;return isNaN(v)||v<=0?MAXRPM:v;}
+function rpmFor(Vc,d){let n=Math.round(Vc*1000/(Math.PI*d));var mx=getMax();return n>mx?mx:n;}
+function find(des){return ALL.find(x=>x[0]===des);}
+function opt(sel,arr,val){sel.innerHTML=arr.map(a=>'<option>'+a+'</option>').join('');if(val!=null)sel.value=val;}
+function matBy(name){return MATS.find(x=>x[0]===name)||MATS[11];}
+function taperOffset(internal,L){if($('thtaper')){var mode=$('thtaper').value;var dd=parseFloat($('diadiff').value);var deg=parseFloat($('taperdeg').value);if(mode==='Manual'){if(!isNaN(dd)&&dd!==0)return dd;if(!isNaN(deg)&&deg!==0)return 2*L*Math.tan(deg*Math.PI/180);return 0;}if(mode==='NPT'||mode==='BSPT')return internal?-L/16:L/16;}if($('profile').value==='NPT (Taper)')return internal?-L/16:L/16;return 0;}
+
+function setMethod(m){method=m;
+  $('mMill').classList.toggle('on',m==='Mill');$('mTurn').classList.toggle('on',m==='Turn');
+  document.querySelectorAll('.mill-only').forEach(e=>e.style.display=m==='Mill'?'':'none');
+  document.querySelectorAll('.turn-only').forEach(e=>e.style.display=m==='Turn'?'':'none');
+  if(m==='Mill')recalc(); else recalcT();
+  $('p_res').innerHTML='';$('cyc').innerHTML='';$('copybtn').style.display='none';
+}
+function profChange(){const p=$('profile').value;
+  if(p==='ISO Metric'){opt($('size'),ALL.map(x=>x[0]),'M16');$('size').disabled=false;$('tpi').value='';sizeChange();}
+  else if(p==='UN (TPI)'){$('size').innerHTML='<option>enter D + TPI</option>';$('size').disabled=true;$('tpi').value='20';tpiChange();}
+  else {$('size').innerHTML='<option>enter D + P</option>';$('size').disabled=true;}
+}
+function sizeChange(){const row=find($('size').value);if(row){$('D').value=row[2];$('P').value=row[1];$('tpi').value='';}minorEdited=false;recalc();}
+function tpiChange(){const t=parseFloat($('tpi').value);if(t>0)$('P').value=r(25.4/t,4);recalc();}
+function recalc(manualFz){
+  const d=num('d',10),Vc=num('vc',60),stab=num('stab',100);
+  $('rpm').value=rpmFor(Vc,d);
+  if($('minor')&&!minorEdited){var internal=$('side').value==='Internal';var D0=num('D',16),P0=num('P',2);$('minor').value=r(internal?D0-P0:D0-1.226*P0,3);}
+  if(!(manualFz&&parseFloat($('fz').value)>0)){const fz=fzGreen(matBy($('mat').value)[3],d)*(0.6+0.4*Math.max(0,Math.min(100,stab))/100);if(!manualFz)$('fz').value=r(fz,4);}
+}
+function recalcT(){$('t_rpm').value=rpmFor(num('t_vc',120),num('D',16));}
+
+function buildPcts(){
+  let n=Math.max(1,Math.round(num('passes',1)));const first=Math.max(1,Math.min(100,num('firstp',100)));const eq=$('eqvol').value==='Yes';let pcts=[];
+  if(n===1)pcts=[100];
+  else if(eq){for(let i=1;i<=n;i++)pcts.push(+(100*Math.sqrt(i/n)).toFixed(2));pcts[n-1]=100;}
+  else{for(let i=0;i<n;i++)pcts.push(+(first+(100-first)*i/(n-1)).toFixed(2));pcts[n-1]=100;}
+  if($('spring').value==='Yes')pcts.push(100);
+  return pcts;
+}
+function genProg(){ if(method==='Turn') return genTurn(); return genMill(); }
+
+function genMill(){
+  recalc(true);
+  const internal=$('side').value==='Internal';
+  const D0=num('D',16),P=num('P',2),L=num('L',20),d=num('d',10);
+  const majadj=$('majadj')?num('majadj',0):0; const D=D0+majadj;
+  const hand=$('hand').value,dir=$('dir').value,starts=Math.max(1,Math.round(num('starts',1)));
+  const Z=num('Z',1),teeth=Math.max(1,Math.round(num('teeth',1))),insl=parseFloat($('insl').value)||0;
+  const Vc=num('vc',60),rpm=rpmFor(Vc,d),fz=parseFloat($('fz').value)||fzGreen(matBy($('mat').value)[3],d);
+  const path=$('path').value,ctrl=$('ctrl').value,safeZ=num('safez',20);
+  const toffOD=$('toff').value==='Yes',startxyz=$('startxyz').value==='Yes',msg=$('msg').value.trim(),profile=$('profile').value;
+  const mcode=$('mcode')?$('mcode').value:'M03',m04=mcode==='M04';
+  const engred=$('engred')?Math.max(0,Math.min(95,num('engred',0))):0;
+  const entry=($('entry')&&ADVANCED)?$('entry').value:'Old';
+  const brepass=ADVANCED&&$('brepass')&&$('brepass').value==='Yes';
+  const minorField=$('minor');
+  const minor=(minorField&&parseFloat(minorField.value)>0)?parseFloat(minorField.value):(internal?D0-P:D0-1.226*P);
+  if(internal&&d>=D-0.4){$('p_res').innerHTML='<p class="warn">Cutter d='+d+' too big for '+D+' bore.</p>';$('cyc').innerHTML='';return;}
+  const tdepth=(D-minor)/2,dpath=toffOD?0:d,lead=starts*P,F1=fz*Z*rpm;
+  const is_bu=dir==='Bottom to Top'?1:0,is_rh=hand==='RH'?1:0,parity=(1+is_rh+is_bu+(m04?1:0))%2;
+  const arc=parity===1?'G03':'G02',comp=parity===1?'G41':'G42',zs=is_bu?1:-1;
+  const pcts=buildPcts();
+  const Aof=pct=>internal?(D-dpath)/2-(1-pct/100)*tdepth:(D+dpath)/2-(pct/100)*tdepth;
+  const safeR=internal?0:(D/2+d/2+P);
+  const toff=taperOffset(internal,L);
+  const tapered=ADVANCED&&Math.abs(toff)>1e-9&&path==='Helical';
+  const Az=(Af,z)=>Af+(Math.min(L,Math.abs(z))/L)*(toff/2);
+  function leadIn(A,F){var ef=Math.max(1,Math.round(F*(1-engred/100)));
+    if(entry==='Old'||!internal||path!=='Helical'){g.push(comp+' G01 X'+r(A,3)+' Y0. D1 F'+ef);return;}
+    var ccw=arc==='G03',rL=Math.max(0.3,Math.min(A*0.5,2*P)),cx=A-rL;
+    if(entry==='180'){var sx=A-2*rL;g.push('G01 X'+r(sx,3)+' Y0.');g.push(comp+' '+arc+' X'+r(A,3)+' Y0. I'+r(cx-sx,3)+' J0. D1 F'+ef);}
+    else{var ad=(entry==='45')?45:90;var sgn=ccw?-1:1;var sx=cx+rL*Math.cos(-ad*Math.PI/180),sy=sgn*rL*Math.sin(ad*Math.PI/180);
+      g.push('G01 X'+r(sx,3)+' Y'+r(sy,3));g.push(comp+' '+arc+' X'+r(A,3)+' Y0. I'+r(cx-sx,3)+' J'+r(0-sy,3)+' D1 F'+ef);}
+  }
+  let g=['%','O0001 (D='+D0+' P='+P+' L='+L+' d='+d+' '+hand+')','(YANTRA THREAD MILL '+(internal?'INT':'EXT')+' '+hand+' '+path.toUpperCase()+(tapered?' TAPER':'')+')'];
+  if(msg)g.push('('+msg+')');
+  g.push('N1 M06 T1','G54','G90 G40 G17 G94');
+  if(startxyz)g.push('G00 X0. Y0.');
+  g.push('G00 X'+r(safeR,3)+' Y0. S'+rpm+' '+mcode,'G43 H1 Z'+r(safeZ,3)+' M08');
+  let pno=0,ptime=0;
+  function ord(n){var s2=['','st','nd','rd'],v=n%100;return n+(s2[(v-20)%10]||s2[v]||'th');}
+  const cover=insl>0?insl:(teeth*P),nBands=path==='Stepped'?Math.max(1,Math.ceil(L/cover)):1;
+  const step=(path==='Stepped'&&nBands>1)?(L-cover)/(nBands-1):0;
+  pcts.forEach(function(pct){const A=Aof(pct);if(A<=0.2)return;const F=Math.max(1,Math.round(F1*(2*A)/D));
+    pno++;g.push('('+ord(pno).toUpperCase()+' PASS)');
+    if(tapered){
+      const z0=zs<0?0:-L;const Astart=Az(A,z0);
+      g.push('G01 G90 Z'+r(z0,3)+' F1500');leadIn(Astart,F);
+      const ccw=arc==='G03';let ang=0,px=Astart,py=0,z=z0;const nq=Math.max(1,Math.ceil(L/lead))*4;
+      for(let q=0;q<nq;q++){z+=zs*(lead/4);if(zs<0&&z<-L)z=-L;if(zs>0&&z>0)z=0;const Rn=Az(A,z);ang+=ccw?Math.PI/2:-Math.PI/2;
+        const x2=Rn*Math.cos(ang),y2=Rn*Math.sin(ang);
+        g.push(arc+' X'+r(x2,3)+' Y'+r(y2,3)+' Z'+r(z,3)+' I'+r(-px,3)+' J'+r(-py,3)+(q===0?' F'+F:''));
+        ptime+=(2*Math.PI*Rn)/F/4;px=x2;py=y2;}
+      g.push('G01 G40 X0. Y0.');
+    } else {
+      for(let b=0;b<nBands;b++){let z0=path==='Helical'?(zs<0?0:-L):(zs<0?-(b*step):-(L-b*step));
+        g.push('G01 G90 Z'+r(z0,3)+' F1500');leadIn(A,F);
+        const no=path==='Stepped'?1:Math.max(1,Math.ceil(L/lead));
+        for(let i=1;i<=no;i++){let z=path==='Helical'?z0+zs*Math.min(i*lead,L):z0+zs*lead;
+          g.push(arc+' X'+r(A,3)+' Y0. Z'+r(z,3)+' I'+r(-A,3)+' J0. '+(i===1?'F'+F:''));ptime+=(2*Math.PI*A)/F;}
+        g.push('G01 G40 X0. Y0.');}
+    }});
+  if(brepass){const A=Aof(100);const F=Math.max(1,Math.round(F1*(2*A)/D));g.push('(BOTTOM REPASS)');
+    g.push('G01 G90 Z'+r(-L,3)+' F1500');leadIn(A,F);
+    g.push(arc+' X'+r(A,3)+' Y0. I'+r(-A,3)+' J0. F'+F);g.push('G01 G40 X0. Y0.');ptime+=(2*Math.PI*A)/F;}
+  g.push('G90 G00 Z'+r(safeZ,3),'M30','%');
+  const sec=Math.round(ptime*60+5),mm=Math.floor(sec/60),ss=sec%60;
+  $('cyc').innerHTML='<div class="cyc">CYCLE ≈ '+mm+'m '+ss+'s &nbsp;&middot;&nbsp; RPM '+rpm+' &nbsp;&middot;&nbsp; '+pcts.length+' pass'+(pcts.length>1?'es':'')+'</div>';
+  let extra='';
+  if(tapered)extra='<p class="warn" style="color:var(--ok)">✓ Taper active: dia change '+r(toff,3)+' mm over L (centre-on-axis spiral).</p>';
+  else if(profile==='NPT (Taper)')extra='<p class="warn">⚠ NPT taper shown straight here. Turn on Thread taper in Advanced.</p>';
+  if(starts>1)extra+='<p class="warn">Lead = '+starts+'×P used. Full multi-start phasing is Pro.</p>';
+  var baseTxt=g.join('\n'),outTxt=baseTxt;
+  if(ctrl==='Fanuc I & J'||ctrl==='Haas'){outTxt=formatForControl(baseTxt,ctrl);}
+  else if(!ADVANCED){extra+='<p class="warn">Output is Fanuc I&J base. Exact '+ctrl+' post is in the advanced build.</p>';}
+  else{outTxt=formatForControl(baseTxt,ctrl);extra+='<p class="warn" style="color:var(--ok)">✓ '+ctrl+' post applied.</p>';}
+  output(outTxt,extra);
+}
+
+function genTurn(){
+  recalcT();
+  const internal=$('side').value==='Internal';
+  const D=num('D',16),P=num('P',2),L=num('L',20);
+  const starts=Math.max(1,Math.round(num('starts',1))),lead=starts*P;
+  const Vc=num('t_vc',120),rpm=rpmFor(Vc,D);
+  const infeed=$('t_infeed').value,flank=num('t_flank',29),idle=Math.max(0,Math.round(num('t_idle',2)));
+  const firstDOC=Math.max(0.01,num('t_first',0.25)),endDOC=Math.max(0.01,num('t_end',0.05));
+  const safeX=num('t_safex',2),safeZ=num('t_safez',5),msg=$('msg').value.trim(),profile=$('profile').value;
+  const minor=internal?D-P:D-1.226*P,tdepth=(D-minor)/2;
+  const toff=taperOffset(internal,L);const tapered=ADVANCED&&Math.abs(toff)>1e-9;
+  let Rstr='',xEndShift=0;
+  if(tapered){const Zspan=safeZ+L;const taperR=-(toff/2)*(Zspan/L);xEndShift=toff;Rstr=' R'+r(taperR,4);}
+  // degressive constant-volume schedule, floor = endDOC
+  let cum=0,i=1,cums=[];
+  while(tdepth-cum>1e-6&&cums.length<500){let doccv=firstDOC*(Math.sqrt(i)-Math.sqrt(i-1));let doc=Math.max(doccv,endDOC);if(doc>tdepth-cum)doc=tdepth-cum;cum+=doc;cums.push(+cum.toFixed(4));i++;}
+  const nCut=cums.length;
+  for(let k=0;k<idle;k++)cums.push(tdepth);
+  const tan=(infeed==='Radial')?0:Math.tan(flank*Math.PI/180);
+  const retractX=internal?(minor-0.5*P):(D+2*safeX);
+  let g=['%1001','(M'+D+'X'+P+' L='+L+' '+(internal?'INT':'EXT')+')',''];
+  if(msg)g.push('('+msg+')');
+  g.push('N1 G40 G99','G00 T0101 M08','G97 S'+rpm+' (M03/M04)','','G00 X'+r(retractX,3)+' Z10.','G00 X'+r(retractX,3)+' Z'+r(safeZ,3),'');
+  cums.forEach(function(cd,idx){
+    const last=(idx===nCut-1);const cdu=last?tdepth:cd;
+    const x=(internal?(minor+2*cdu):(D-2*cdu))+xEndShift;
+    let zst=safeZ;
+    if(infeed==='Flank')zst=safeZ-tan*cdu;
+    else if(infeed==='Alternate flank')zst=safeZ-((idx%2===0?1:-1)*tan*cdu);
+    g.push('G00 Z'+r(zst,4));
+    g.push('G92 X'+r(x,3)+' Z'+r(-L,3)+' F'+r(lead,3)+Rstr);
+  });
+  g.push('','G00 X'+r(retractX,3)+' M09','G00 Z'+r(safeZ+50,3)+' M05','M30','%');
+  const tpp=(L/(rpm*lead))*60+2,tot=Math.round(5+cums.length*tpp),mm=Math.floor(tot/60),ss=tot%60;
+  $('cyc').innerHTML='<div class="cyc">CYCLE ≈ '+mm+'m '+ss+'s &nbsp;&middot;&nbsp; RPM '+rpm+' (G97) &nbsp;&middot;&nbsp; '+nCut+' cut + '+idle+' spring</div>';
+  let extra='';
+  if(tapered)extra='<p class="warn" style="color:var(--ok)">✓ Taper active: G92 R from dia change '+r(toff,3)+' mm over L.</p>';
+  else if(profile==='NPT (Taper)')extra='<p class="warn">⚠ NPT taper (G92 R) is in the advanced build. This is straight.</p>';
+  if(starts>1)extra+='<p class="warn">Lead = '+starts+'×P used. Multi-start Q phasing is Pro.</p>';
+  output(g,extra);
+}
+
+let lastProg='';
+/* ---- multi-control post-processor (ported from mill_post.py; absolute-coord aware) ---- */
+function ppf(v){v=Math.round(parseFloat(v)*10000)/10000;if(Math.abs(v)<5e-5)return'0.0';var s=''+v;if(s.indexOf('.')<0)s+='.0';return s;}
+function ppff(v){v=parseFloat(v);if(Math.abs(v-Math.round(v))<1e-6)return''+Math.round(v);return ppf(v);}
+function wv(t,w){for(var i=0;i<w.length;i++){var x=w[i];if(x&&x[0]===t&&x.length>1&&(/[0-9]/.test(x[1])||'+-.'.indexOf(x[1])>=0)){var n=parseFloat(x.substring(1));return isNaN(n)?null:n;}}return null;}
+function idLine(name,sie){return (sie?';':'')+'(CONTROL = '+name+')';}
+function convArcs(code,rw){var L=code.split('\n'),o=[],px=0,py=0,pz=0;
+  for(var k=0;k<L.length;k++){var st=L[k].trim(),up=st.toUpperCase(),w=st.split(/\s+/);
+    var arc=up.indexOf('G02')>=0||up.indexOf('G03')>=0;
+    var X=wv('X',w),Y=wv('Y',w),Z=wv('Z',w),I=wv('I',w),J=wv('J',w),F=wv('F',w);
+    if(!arc||I===null||J===null){if(X!==null)px=X;if(Y!==null)py=Y;if(Z!==null)pz=Z;o.push(L[k]);continue;}
+    var g02=up.indexOf('G02')>=0,gc=g02?'G02':'G03',sx=px,sy=py,ex=(X!==null?X:px),ey=(Y!==null?Y:py),cx=sx+I,cy=sy+J,R=Math.hypot(I,J);
+    var em=function(xx,yy,zz,ff,rs){var p=[gc,'X'+ppf(xx),'Y'+ppf(yy)];if(zz!==null&&zz!==undefined)p.push('Z'+ppf(zz));p.push(rw+ppf(rs*R));if(ff!==null&&ff!==undefined)p.push('F'+ppff(ff));return p.join(' ');};
+    var full=Math.abs(ex-sx)<5e-5&&Math.abs(ey-sy)<5e-5;
+    if(full){var opx=2*cx-sx,opy=2*cy-sy,zh=(Z!==null?pz+(Z-pz)/2:null);o.push(em(opx,opy,zh,F,1));o.push(em(sx,sy,(Z!==null?Z:null),null,1));}
+    else{var a0=Math.atan2(sy-cy,sx-cx),a1=Math.atan2(ey-cy,ex-cx);var sw=(((g02?(a0-a1):(a1-a0))%(2*Math.PI))+2*Math.PI)%(2*Math.PI);var rs=sw>Math.PI+1e-6?-1:1;o.push(em(ex,ey,Z,F,rs));}
+    px=ex;py=ey;if(Z!==null)pz=Z;}
+  return o.join('\n');}
+function siemensCommon(code){var o=[],L=code.split('\n');
+  for(var k=0;k<L.length;k++){var ln=L[k];if(ln.trim()==='%')continue;
+    ln=ln.replace(/\bM06\b\s+(T\d+)\b/,'$1 M06').replace('G43','G00');
+    if(/^\s*O\d+/.test(ln)){o.push(ln.replace(/^(\s*O\d+)/,'$1SPF'));continue;}
+    if(ln.indexOf('(')>=0)ln=ln.replace('(',';(');
+    o.push(ln);}
+  return o.join('\n');}
+function toHeidenhain(code){var L=code.split('\n'),prog='1',tool='1',sp=null;
+  for(var a=0;a<L.length;a++){var s=L[a].trim().toUpperCase();var m=s.match(/^O(\d+)/);if(m)prog=m[1];if(s.indexOf('M06')>=0){var mt=s.match(/\bT(\d+)\b/);if(mt)tool=mt[1];}var ms=s.match(/\bS(\d+)\b/);if(ms&&sp===null)sp=ms[1];}
+  var o=['BEGIN PGM '+prog+' MM',';(CONTROL = Heidenhain)'];var abs=true,comp='R0',px=0,py=0,pz=0;
+  for(var b=0;b<L.length;b++){var s=L[b].trim();if(!s||s==='%')continue;var up=s.toUpperCase();
+    if(s[0]==='('){o.push(';'+s);continue;}
+    if(/^O\d+/.test(up))continue;
+    if(up.indexOf('M06')>=0){var tc='TOOL CALL '+tool+' Z';if(sp)tc+=' S'+sp;o.push(tc);continue;}
+    if(up.indexOf('G54')===0)continue;
+    if(up.indexOf('G17')>=0&&up.indexOf('G94')>=0)continue;
+    var w=up.split(/\s+/);
+    if(w.indexOf('M30')>=0||w.indexOf('M02')>=0){o.push('STOP M02');continue;}
+    if(up.indexOf('G90')>=0)abs=true;if(up.indexOf('G91')>=0)abs=false;
+    if(up.indexOf('G42')>=0)comp='RR';else if(up.indexOf('G41')>=0)comp='RL';else if(up.indexOf('G40')>=0)comp='R0';
+    var X=wv('X',w),Y=wv('Y',w),Z=wv('Z',w),I=wv('I',w),J=wv('J',w),F=wv('F',w);
+    var mc=w.filter(function(x){return /^M\d+$/.test(x)&&x!=='M06';});var mstr=mc.map(function(x){return ' '+x;}).join('');
+    var isArc=up.indexOf('G02')>=0||up.indexOf('G03')>=0;var isRapid=(up.indexOf('G00')>=0||up.indexOf('G43')>=0)&&!isArc;
+    if(isArc){var g02=up.indexOf('G02')>=0,sx=px,sy=py,ex=(X!==null?X:px),ey=(Y!==null?Y:py),cx=sx+(I||0),cy=sy+(J||0);
+      o.push('CC IX'+ppf(I||0)+' IY'+ppf(J||0));
+      var full=Math.abs(ex-sx)<5e-5&&Math.abs(ey-sy)<5e-5,swd;
+      if(full)swd=360;else{var a0=Math.atan2(sy-cy,sx-cx),a1=Math.atan2(ey-cy,ex-cx);var sw=(((g02?(a0-a1):(a1-a0))%(2*Math.PI))+2*Math.PI)%(2*Math.PI);swd=sw*180/Math.PI;}
+      var ipa=g02?-swd:swd,cp='CP IPA'+ppf(ipa);if(Z!==null)cp+=' IZ'+ppf(Z-pz);cp+=' '+(g02?'DR-':'DR+')+' '+comp;if(F!==null)cp+=' F'+ppff(F);
+      o.push(cp+mstr);px=ex;py=ey;if(Z!==null)pz=Z;continue;}
+    var parts=['L'];
+    if(abs){if(X!==null)parts.push('X'+ppf(X));if(Y!==null)parts.push('Y'+ppf(Y));if(Z!==null)parts.push('Z'+ppf(Z));}
+    else{if(X!==null||Y!==null){parts.push('IX'+ppf(X||0));parts.push('IY'+ppf(Y||0));parts.push('IZ'+ppf(Z||0));}else if(Z!==null)parts.push('IZ'+ppf(Z));}
+    if((X!==null||Y!==null)||!isRapid)parts.push(comp);
+    if(isRapid)parts.push('FMAX');else if(F!==null)parts.push('F'+ppff(F));
+    o.push(parts.join(' ')+mstr);
+    if(X!==null)px=X;if(Y!==null)py=Y;if(Z!==null)pz=Z;}
+  o.push('END PGM '+prog+' MM');return o.join('\n');}
+function formatForControl(code,ctrl){var name=ctrl||'Fanuc I & J',out;
+  if(name==='Heidenhain')return toHeidenhain(code);
+  if(name==='Fanuc I & J'||name==='Haas')out=code;
+  else if(name==='Fanuc R')out=convArcs(code,'R');
+  else if(name==='Siemens I & J')out=siemensCommon(code);
+  else if(name==='Siemens R')out=siemensCommon(convArcs(code,'CR='));
+  else out=code;
+  var sie=name.indexOf('Siemens')>=0,L=out.split('\n');
+  for(var i=0;i<L.length;i++){if(/^\s*O\d/.test(L[i])){L.splice(i+1,0,idLine(name,sie));return L.join('\n');}}
+  L.splice(0,0,idLine(name,sie));return L.join('\n');}
+function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;$('p_res').innerHTML='<pre id="gtext"></pre>'+(extra||'');document.getElementById('gtext').textContent=lastProg;$('copybtn').style.display='block';$('savebtn').style.display='block';}
+function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
+function copyProg(){if(navigator.clipboard&&lastProg){navigator.clipboard.writeText(lastProg);$('copybtn').textContent='✓ Copied';setTimeout(function(){$('copybtn').textContent='📋  Copy program';},1500);}}
+
+function fillSizes(){opt($('d_size'),SERIES[$('d_series').value].map(x=>x[0]));calcData();}
+function calcData(){const row=find($('d_size').value);if(!row)return;const des=row[0],P=row[1],D=row[2];
+  const drill=Math.round((D-P)/0.05)*0.05,minorInt=D-1.0825*P,minorExt=D-1.226*P,pd=D-0.6495*P,ht=0.6134*P,W=0.57735*P,M3=pd+3*W-1.5155*P;
+  $('d_res').innerHTML='<div class="res"><div class="rh">'+des+' &middot; pitch '+P+' mm</div>'+
+   '<div class="kv"><span class="k">Major dia D</span><span class="v"><b>'+r(D,3)+'</b> mm</span></div>'+
+   '<div class="kv"><span class="k">Pitch dia (E)</span><span class="v">'+r(pd,3)+' mm</span></div>'+
+   '<div class="kv"><span class="k">Minor &mdash; internal</span><span class="v">'+r(minorInt,3)+' mm</span></div>'+
+   '<div class="kv"><span class="k">Minor &mdash; external</span><span class="v">'+r(minorExt,3)+' mm</span></div>'+
+   '<div class="kv"><span class="k">Tap drill &mdash; steel</span><span class="v"><b>'+r(drill,2)+'</b> mm</span></div>'+
+   '<div class="kv"><span class="k">Tap drill &mdash; aluminium</span><span class="v">'+r(drill-0.05,2)+' mm</span></div>'+
+   '<div class="kv"><span class="k">Pre-bore (thread mill int.)</span><span class="v">'+r(minorInt,3)+' mm</span></div>'+
+   '<div class="kv"><span class="k">3-wire over (W='+r(W,3)+')</span><span class="v">'+r(M3,3)+' mm</span></div>'+
+   '<div class="kv"><span class="k">Thread height</span><span class="v">'+r(ht,3)+' mm</span></div></div>'+
+   '<div style="margin-top:12px"><span class="chip">75% engagement</span><span class="chip">ISO 60&deg;</span></div>';}
+
+function sendMsg(){window.location.href='mailto:ginoymanuel@gmail.com?subject=YANTRA%20feedback&body='+encodeURIComponent('YANTRA feedback:\n\n');}
+
+function init(){
+  /* single complete build: all sections active */
+  opt($('mat'),MATS.map(x=>x[0]),'Stainless 316 austenitic');
+  opt($('size'),ALL.map(x=>x[0]),'M16');
+  opt($('d_series'),['Coarse','Fine','All']);fillSizes();$('d_size').value='M16';calcData();
+  setMethod('Mill');
+}
+init();
+</script>
+</body>
+</html>
