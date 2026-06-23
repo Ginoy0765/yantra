@@ -59,6 +59,7 @@
   .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;max-width:492px;width:calc(100% - 28px);background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:12px;font-size:13.5px;font-weight:700;cursor:pointer;z-index:20}
   .mill-only,.turn-only,.adv-only{display:none}
 </style>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -196,6 +197,7 @@
         <p class="note" style="text-align:left">Specials editor: desktop Pro.</p>
       </div></div>
 
+      <div id="engineStatus" class="note" style="text-align:center;margin-top:8px">Loading engine\u2026 (first time needs internet)</div>
       <button class="btn" onclick="genProg()">&#9881;&#65039;  GENERATE G-CODE</button>
       <div id="cyc"></div>
       <div id="p_res"></div>
@@ -231,6 +233,24 @@ const SERIES={Coarse:COARSE,Fine:FINE,All:ALL};
 const MAXRPM=5000;
 let method='Mill';
 let minorEdited=false;
+let pyReady=false, py=null;
+const MILLPY="import thread_mill, mill_post\n_p=dict(JS)\n_prog=thread_mill.generate(**{k:_p[k] for k in _p if k!='control'})\nmill_post.format_for_control(_prog,_p['control'])";
+const MILLTIME="import thread_mill\n_p=dict(JS)\nthread_mill.cycle_time(**{k:_p[k] for k in _p if k!='control'})";
+const TURNPY="import thread_turn\n_p=dict(JS)\n_r=thread_turn.generate(**_p)\n[_r[0],_r[1],_r[2],_r[3]]";
+async function initPy(){
+  try{
+    var st=document.getElementById('engineStatus');
+    py=await loadPyodide();
+    async function rd(n){var r=await fetch(n+'?'+Date.now());return await r.text();}
+    py.FS.writeFile('thread_mill.py', await rd('thread_mill.py'));
+    py.FS.writeFile('thread_turn.py', await rd('thread_turn.py'));
+    py.FS.writeFile('mill_post.py', await rd('mill_post.py'));
+    py.runPython('import thread_mill, thread_turn, mill_post');
+    pyReady=true;
+    if(st){st.textContent='\u2713 Engine ready \u2014 output matches desktop';st.style.color='var(--ok)';}
+  }catch(e){var st=document.getElementById('engineStatus');if(st){st.textContent='Engine load failed (need internet first time): '+e;st.style.color='var(--pro)';}}
+}
+function notReady(){$('p_res').innerHTML='<p class="warn">Engine still loading \u2014 wait a few seconds and tap Generate again.</p>';$('cyc').innerHTML='';}
 
 const $=id=>document.getElementById(id);
 function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);}
@@ -310,17 +330,20 @@ function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&t
 function parseSim(){
   var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
   if(turning){var passes=[];L.forEach(function(l){if(l.indexOf('G92')>=0){var X=_sv('X',l),Z=_sv('Z',l);if(X!=null&&Z!=null)passes.push([X/2,Z]);}});return {turning:true,passes:passes};}
-  var pts=[],x=0,y=0,z=0;
+  var pts=[],x=0,y=0,z=0,rel=false;
   L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;
+    if(/\bG91\b/.test(u))rel=true;if(/\bG90\b/.test(u))rel=false;
     var X=_sv('X',u),Y=_sv('Y',u),Z=_sv('Z',u),I=_sv('I',u),J=_sv('J',u);
     var arc=u.indexOf('G02')>=0||u.indexOf('G03')>=0;
-    if(arc&&I!=null&&J!=null){var sx=x,sy=y,sz=z,ex=(X!=null?X:x),ey=(Y!=null?Y:y),ez=(Z!=null?Z:z);
+    if(arc&&I!=null&&J!=null){var sx=x,sy=y,sz=z;
+      var ex=rel?(X!=null?x+X:x):(X!=null?X:x),ey=rel?(Y!=null?y+Y:y):(Y!=null?Y:y),ez=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);
       var cx=sx+I,cy=sy+J,r=Math.hypot(I,J),a0=Math.atan2(sy-cy,sx-cx),a1=Math.atan2(ey-cy,ex-cx),ccw=u.indexOf('G03')>=0;
-      var sw=(ccw?(a1-a0):(a0-a1));sw=((sw%(2*Math.PI))+2*Math.PI)%(2*Math.PI);if(sw<1e-6)sw=2*Math.PI;
+      var sw=(ccw?(a1-a0):(a0-a1));sw=((sw%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+      if(Math.abs(ex-sx)<1e-6&&Math.abs(ey-sy)<1e-6)sw=2*Math.PI;if(sw<1e-6)sw=2*Math.PI;
       var n=Math.max(8,Math.round(sw/(Math.PI/16)));
       for(var k=1;k<=n;k++){var t=k/n,ang=ccw?a0+sw*t:a0-sw*t;pts.push([cx+r*Math.cos(ang),cy+r*Math.sin(ang),sz+(ez-sz)*t]);}
       x=ex;y=ey;z=ez;}
-    else if(X!=null||Y!=null||Z!=null){if(X!=null)x=X;if(Y!=null)y=Y;if(Z!=null)z=Z;pts.push([x,y,z]);}
+    else if(X!=null||Y!=null||Z!=null){x=rel?(X!=null?x+X:x):(X!=null?X:x);y=rel?(Y!=null?y+Y:y):(Y!=null?Y:y);z=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);pts.push([x,y,z]);}
   });
   return {turning:false,pts:pts};
 }
@@ -355,125 +378,55 @@ function animTurn(ctx,W,H,passes){if(!passes.length){ctx.clearRect(0,0,W,H);retu
 function genProg(){ if(method==='Turn') return genTurn(); return genMill(); }
 
 function genMill(){
+  if(!pyReady){notReady();return;}
   recalc(true);
-  const internal=$('side').value==='Internal';
-  const D0=num('D',16),P=num('P',2),L=num('L',20),d=num('d',10);
-  const majadj=$('majadj')?num('majadj',0):0; const D=D0+majadj;
-  const hand=$('hand').value,dir=$('dir').value,starts=Math.max(1,Math.round(num('starts',1)));
-  const Z=num('Z',1),teeth=Math.max(1,Math.round(num('teeth',1))),insl=parseFloat($('insl').value)||0;
-  const Vc=num('vc',60),rpm=rpmFor(Vc,d),fz=parseFloat($('fz').value)||fzGreen(matBy($('mat').value)[3],d);
-  const path=$('path').value,ctrl=$('ctrl').value,safeZ=num('safez',20);
-  const toffOD=($('toff')&&$('toff').value==='Yes')||($('toolpath')&&$('toolpath').value.indexOf('OD')>=0),startxyz=$('startxyz').value==='Yes',msg=$('msg').value.trim(),uname=$('username')?$('username').value.trim():'',profile=$('profile').value;
-  const mcode=$('mcode')?$('mcode').value:'M03',m04=mcode==='M04';
-  const engred=$('engred')?Math.max(0,Math.min(95,num('engred',0))):0;
-  const entry=($('entry')&&ADVANCED)?$('entry').value:'Old';
-  const brepass=ADVANCED&&$('brepass')&&$('brepass').value==='Yes';
-  const minorField=$('minor');
-  const minor=(minorField&&parseFloat(minorField.value)>0)?parseFloat(minorField.value):(internal?D0-P:D0-1.226*P);
-  if(internal&&d>=D-0.4){$('p_res').innerHTML='<p class="warn">Cutter d='+d+' too big for '+D+' bore.</p>';$('cyc').innerHTML='';return;}
-  const tdepth=(D-minor)/2,dpath=toffOD?0:d,lead=starts*P,F1=fz*Z*rpm;
-  const is_bu=dir==='Bottom to Top'?1:0,is_rh=hand==='RH'?1:0,parity=(1+is_rh+is_bu+(m04?1:0))%2;
-  const arc=parity===1?'G03':'G02',comp=parity===1?'G41':'G42',zs=is_bu?1:-1;
-  const pcts=buildPcts();
-  const Aof=pct=>internal?(D-dpath)/2-(1-pct/100)*tdepth:(D+dpath)/2-(pct/100)*tdepth;
-  const safeR=internal?0:(D/2+d/2+P);
-  const toff=taperOffset(internal,L);
-  const tapered=ADVANCED&&Math.abs(toff)>1e-9&&path==='Helical';
-  const Az=(Af,z)=>Af+(Math.min(L,Math.abs(z))/L)*(toff/2);
-  function leadIn(A,F){var ef=Math.max(1,Math.round(F*(1-engred/100)));
-    if(entry==='Old'||!internal||path!=='Helical'){g.push(comp+' G01 X'+r(A,3)+' Y0. D1 F'+ef);return;}
-    var ccw=arc==='G03',rL=Math.max(0.3,Math.min(A*0.5,2*P)),cx=A-rL;
-    if(entry==='180'){var sx=A-2*rL;g.push('G01 X'+r(sx,3)+' Y0.');g.push(comp+' '+arc+' X'+r(A,3)+' Y0. I'+r(cx-sx,3)+' J0. D1 F'+ef);}
-    else{var ad=(entry==='45')?45:90;var sgn=ccw?-1:1;var sx=cx+rL*Math.cos(-ad*Math.PI/180),sy=sgn*rL*Math.sin(ad*Math.PI/180);
-      g.push('G01 X'+r(sx,3)+' Y'+r(sy,3));g.push(comp+' '+arc+' X'+r(A,3)+' Y0. I'+r(cx-sx,3)+' J'+r(0-sy,3)+' D1 F'+ef);}
-  }
-  let g=['%','O0001 (D='+D0+' P='+P+' L='+L+' d='+d+' '+hand+')','(YANTRA THREAD MILL '+(internal?'INT':'EXT')+' '+hand+' '+path.toUpperCase()+(tapered?' TAPER':'')+')'];
-  if(msg)g.push('('+msg+')');
-  if(uname)g.push('(BY '+uname+')');
-  g.push('N1 M06 T1','G54','G90 G40 G17 G94');
-  if(startxyz)g.push('G00 X0. Y0.');
-  g.push('G00 X'+r(safeR,3)+' Y0. S'+rpm+' '+mcode,'G43 H1 Z'+r(safeZ,3)+' M08');
-  let pno=0,ptime=0;
-  function ord(n){var s2=['','st','nd','rd'],v=n%100;return n+(s2[(v-20)%10]||s2[v]||'th');}
-  const cover=insl>0?insl:(teeth*P),nBands=path==='Stepped'?Math.max(1,Math.ceil(L/cover)):1;
-  const step=(path==='Stepped'&&nBands>1)?(L-cover)/(nBands-1):0;
-  pcts.forEach(function(pct){const A=Aof(pct);if(A<=0.2)return;const F=Math.max(1,Math.round(F1*(2*A)/D));
-    pno++;g.push('('+ord(pno).toUpperCase()+' PASS)');
-    if(tapered){
-      const z0=zs<0?0:-L;const Astart=Az(A,z0);
-      g.push('G01 G90 Z'+r(z0,3)+' F1500');leadIn(Astart,F);
-      const ccw=arc==='G03';let ang=0,px=Astart,py=0,z=z0;const nq=Math.max(1,Math.ceil(L/lead))*4;
-      for(let q=0;q<nq;q++){z+=zs*(lead/4);if(zs<0&&z<-L)z=-L;if(zs>0&&z>0)z=0;const Rn=Az(A,z);ang+=ccw?Math.PI/2:-Math.PI/2;
-        const x2=Rn*Math.cos(ang),y2=Rn*Math.sin(ang);
-        g.push(arc+' X'+r(x2,3)+' Y'+r(y2,3)+' Z'+r(z,3)+' I'+r(-px,3)+' J'+r(-py,3)+(q===0?' F'+F:''));
-        ptime+=(2*Math.PI*Rn)/F/4;px=x2;py=y2;}
-      g.push('G01 G40 X0. Y0.');
-    } else {
-      for(let b=0;b<nBands;b++){let z0=path==='Helical'?(zs<0?0:-L):(zs<0?-(b*step):-(L-b*step));
-        g.push('G01 G90 Z'+r(z0,3)+' F1500');leadIn(A,F);
-        const no=path==='Stepped'?1:Math.max(1,Math.ceil(L/lead));
-        for(let i=1;i<=no;i++){let z=path==='Helical'?z0+zs*Math.min(i*lead,L):z0+zs*lead;
-          g.push(arc+' X'+r(A,3)+' Y0. Z'+r(z,3)+' I'+r(-A,3)+' J0. '+(i===1?'F'+F:''));ptime+=(2*Math.PI*A)/F;}
-        g.push('G01 G40 X0. Y0.');}
-    }});
-  if(brepass){const A=Aof(100);const F=Math.max(1,Math.round(F1*(2*A)/D));g.push('(BOTTOM REPASS)');
-    g.push('G01 G90 Z'+r(-L,3)+' F1500');leadIn(A,F);
-    g.push(arc+' X'+r(A,3)+' Y0. I'+r(-A,3)+' J0. F'+F);g.push('G01 G40 X0. Y0.');ptime+=(2*Math.PI*A)/F;}
-  g.push('G90 G00 Z'+r(safeZ,3),'M30','%');
-  const sec=Math.round(ptime*60+5),mm=Math.floor(sec/60),ss=sec%60;
-  $('cyc').innerHTML='<div class="cyc">CYCLE ≈ '+mm+'m '+ss+'s &nbsp;&middot;&nbsp; RPM '+rpm+' &nbsp;&middot;&nbsp; '+pcts.length+' pass'+(pcts.length>1?'es':'')+'</div>';
-  let extra='';
-  if(tapered)extra='<p class="warn" style="color:var(--ok)">✓ Taper active: dia change '+r(toff,3)+' mm over L (centre-on-axis spiral).</p>';
-  else if(profile==='NPT (Taper)')extra='<p class="warn">⚠ NPT taper shown straight here. Turn on Thread taper in Advanced.</p>';
-  if(starts>1)extra+='<p class="warn">Lead = '+starts+'×P used. Full multi-start phasing is Pro.</p>';
-  var baseTxt=g.join('\n'),outTxt=baseTxt;
-  if(ctrl==='Fanuc I & J'||ctrl==='Haas'){outTxt=formatForControl(baseTxt,ctrl);}
-  else if(!ADVANCED){extra+='<p class="warn">Output is Fanuc I&J base. Exact '+ctrl+' post is in the advanced build.</p>';}
-  else{outTxt=formatForControl(baseTxt,ctrl);extra+='<p class="warn" style="color:var(--ok)">✓ '+ctrl+' post applied.</p>';}
-  outTxt=applyFR(outTxt);
-  output(outTxt,extra);
+  var internal=$('side').value==='Internal';
+  var D0=num('D',16),P=num('P',2),L=num('L',20),d=num('d',10);
+  var D=D0+num('majadj',0);
+  var mfld=$('minor');var minor=(mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):null;
+  var teeth=Math.max(1,Math.round(num('teeth',1)));
+  var Vc=num('vc',60),fz=parseFloat($('fz').value)||fzGreen(matBy($('mat').value)[3],d);
+  var toff=taperOffset(internal,L);
+  var brepass=$('brepass').value==='Yes';
+  var toolOD=($('toff').value==='Yes')||($('toolpath')&&$('toolpath').value.indexOf('OD')>=0);
+  var pcts=buildPcts();
+  var P0={D:D,L:L,P:P,d:d,Z:num('Z',1),Vc:Vc,fz:fz,hand:$('hand').value,direction:$('dir').value,mode:$('path').value,
+    num_passes:pcts.length,pcts:pcts,repass_pitches:(brepass?1:0),repass_offset:0.0,num_teeth:teeth,
+    bottom_offset:toff,spindle:$('mcode').value,dia_end_offset:toff,minor:minor,entry_style:$('entry').value,
+    num_starts:Math.max(1,Math.round(num('starts',1))),entry_feed_reduction:num('engred',0),max_rpm:num('maxrpm',5000),
+    stepped_style:($('sstyle').value.indexOf('Carmex')>=0?'Carmex':'Modified'),is_external:!internal,
+    strategy:$('req').value,entry_angle:num('entryang',0),tool_offset_mode:(toolOD?'od':'centre'),
+    rctf_strength:num('rctf',0)/100,control:$('ctrl').value};
+  try{
+    py.globals.set('JS',py.toPy(P0));
+    var prog=py.runPython(MILLPY); var t=py.runPython(MILLTIME);
+    prog=applyFR(prog);
+    var sec=Math.round(t),mm=Math.floor(sec/60),ss=sec%60;
+    $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &middot; matches desktop engine</div>';
+    output(prog,'');
+  }catch(e){$('p_res').innerHTML='<p class="warn">Engine error: '+e+'</p>';}
 }
-
 function genTurn(){
-  recalcT();
-  const internal=$('side').value==='Internal';
-  const D=num('D',16),P=num('P',2),L=num('L',20);
-  const starts=Math.max(1,Math.round(num('starts',1))),lead=starts*P;
-  const Vc=num('t_vc',120),mx=num('t_maxrpm',5000);let rpm=Math.round(Vc*1000/(Math.PI*D));if(mx>0&&rpm>mx)rpm=mx;
-  const infeed=$('t_infeed').value,flank=num('t_flank',30),modf=num('t_modflank',1),effF=Math.max(0,flank-modf),idle=Math.max(0,Math.round(num('t_idle',2)));
-  const safeX=num('t_safex',1),safeZ=num('t_safez',5),msg=$('t_msg')?$('t_msg').value.trim():'',uname=$('t_username')?$('t_username').value.trim():'',profile=$('profile').value;
-  const mcode=$('t_mcode')?$('t_mcode').value:'M03';
-  const mf=$('t_minor');const minor=(mf&&parseFloat(mf.value)>0)?parseFloat(mf.value):(internal?D-P:D-1.226*P);
-  const tdepth=(D-minor)/2;
-  const toff=taperOffset(internal,L);const tapered=Math.abs(toff)>1e-9;
-  let Rstr='',xEndShift=0;
-  if(tapered){const Zspan=safeZ+L;const taperR=-(toff/2)*(Zspan/L);xEndShift=toff;Rstr=' R'+r(taperR,4);}
-  let cums=buildTurnPasses();const nCut=cums.length;
-  for(let k=0;k<idle;k++)cums.push(tdepth);
-  const tan=(infeed==='Radial')?0:Math.tan(effF*Math.PI/180);
-  const retractX=internal?(minor-0.5*P):(D+2*safeX);
-  let g=['%1001','(M'+D+'X'+P+' L='+L+' '+(internal?'INT':'EXT')+')'];
-  if(uname)g.push('(BY '+uname+')');
-  g.push('');
-  if(msg)g.push('('+msg+')');
-  g.push('N1 G40 G99','G00 T0101 M08 ('+mcode+')','G97 S'+rpm+' (M03/M04)','','G00 X'+r(retractX,3)+' Z10.','G00 X'+r(retractX,3)+' Z'+r(safeZ,3),'');
-  cums.forEach(function(cd,idx){
-    const last=(idx===nCut-1);const cdu=last?tdepth:cd;
-    const x=(internal?(minor+2*cdu):(D-2*cdu))+xEndShift;
-    let zst=safeZ;
-    if(infeed==='Flank')zst=safeZ-tan*cdu;
-    else if(infeed==='Alternate flank')zst=safeZ-((idx%2===0?1:-1)*tan*cdu);
-    g.push('G00 Z'+r(zst,4));
-    g.push('G92 X'+r(x,3)+' Z'+r(-L,3)+' F'+r(lead,3)+Rstr);
-  });
-  g.push('','G00 X'+r(retractX,3)+' M09','G00 Z'+r(safeZ+50,3)+' M05','M30','%');
-  const tpp=(L/(rpm*lead))*60+2,tot=Math.round(5+cums.length*tpp),mm=Math.floor(tot/60),ss=tot%60;
-  $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &nbsp;&middot;&nbsp; RPM '+rpm+' (G97) &nbsp;&middot;&nbsp; '+nCut+' cut + '+idle+' spring</div>';
-  let extra='';
-  if(tapered)extra='<p class="warn" style="color:var(--ok)">\u2713 Taper active: G92 R from dia change '+r(toff,3)+' mm over L.</p>';
-  else if(profile==='NPT (Taper)')extra='<p class="warn">Set Thread taper in Advanced for NPT. This is straight.</p>';
-  if(starts>1)extra+='<p class="warn">Lead = '+starts+'\u00d7P used. Multi-start Q phasing is Pro.</p>';
-  output(applyFR(g.join('\n')),extra);
+  if(!pyReady){notReady();return;}
+  var internal=$('side').value==='Internal';
+  var D=num('D',16),P=num('P',2),L=num('L',20);
+  var toff=taperOffset(internal,L);
+  var mfld=$('t_minor');var minor=(mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):null;
+  var P0={D:D,L:L,P:P,minor_dia:minor,side:internal?'Internal':'External',angle_deg:60,hand:$('hand').value,
+    safe_x:num('t_safex',1),safe_z:num('t_safez',5),Vc:num('t_vc',120),first_doc:num('t_first',0.25),
+    end_doc_50:num('t_e50',0.12),end_doc_80:num('t_e80',0.08),end_doc_100:num('t_e100',0.05),
+    idle_passes:Math.max(0,Math.round(num('t_idle',2))),taper:$('t_thtaper').value,dia_end_offset:toff,
+    infeed:$('t_infeed').value,flank_angle:Math.max(0,num('t_flank',30)-num('t_modflank',1)),
+    zone_transition:$('t_trans').value.toLowerCase(),num_starts:Math.max(1,Math.round(num('starts',1))),
+    max_rpm:num('t_maxrpm',5000),start_angle:num('t_startang',0)};
+  try{
+    py.globals.set('JS',py.toPy(P0));
+    var res=py.runPython(TURNPY).toJs();
+    var prog=applyFR(res[0]);
+    var sec=Math.round(res[1]),mm=Math.floor(sec/60),ss=sec%60;
+    $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &middot; RPM '+res[2]+' (G97) &middot; '+res[3]+' cut passes</div>';
+    output(prog,'');
+  }catch(e){$('p_res').innerHTML='<p class="warn">Engine error: '+e+'</p>';}
 }
 let lastProg='';
 /* ---- multi-control post-processor (ported from mill_post.py; absolute-coord aware) ---- */
@@ -569,6 +522,7 @@ function init(){
   setMethod('Mill');
 }
 init();
+initPy();
 </script>
 </body>
 </html>
