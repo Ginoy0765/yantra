@@ -70,7 +70,7 @@
     <!-- HOME: operations roadmap -->
     <section id="home" class="view on">
       <div class="grid">
-        <div class="tile" onclick="show('threading')"><span class="tag free">LIVE</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><rect x="6" y="18" width="7" height="20" fill="#2f3d49"/><rect x="13" y="22" width="66" height="14" rx="7" fill="#cdbb9a"/><g stroke="#7a6f55" stroke-width="1.3"><path d="M24 22 l4 14"/><path d="M32 22 l4 14"/><path d="M40 22 l4 14"/><path d="M48 22 l4 14"/><path d="M56 22 l4 14"/><path d="M64 22 l4 14"/></g><polygon points="58,52 70,52 64,38" fill="#e24b4a"/><path d="M32 45 h-12" stroke="#cfd8e0" stroke-width="1.3"/><polygon points="20,42 15,45 20,48" fill="#cfd8e0"/></svg></div><div><div class="t">Threading</div><div class="s">Data + programming</div></div></div>
+        <div class="tile" onclick="show('prog')"><span class="tag free">LIVE</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><rect x="6" y="18" width="7" height="20" fill="#2f3d49"/><rect x="13" y="22" width="66" height="14" rx="7" fill="#cdbb9a"/><g stroke="#7a6f55" stroke-width="1.3"><path d="M24 22 l4 14"/><path d="M32 22 l4 14"/><path d="M40 22 l4 14"/><path d="M48 22 l4 14"/><path d="M56 22 l4 14"/><path d="M64 22 l4 14"/></g><polygon points="58,52 70,52 64,38" fill="#e24b4a"/><path d="M32 45 h-12" stroke="#cfd8e0" stroke-width="1.3"/><polygon points="20,42 15,45 20,48" fill="#cfd8e0"/></svg></div><div><div class="t">Threading</div><div class="s">Data + programming</div></div></div>
         <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><rect x="10" y="16" width="38" height="26" rx="2" fill="#cdbb9a"/><rect x="60" y="26" width="28" height="6" rx="1" fill="#9aa9b8"/><polygon points="48,29 60,24 60,34" fill="#378add"/><path d="M60 26 l9 -1 M60 30 l9 -1" stroke="#185fa5" stroke-width="1"/><path d="M56 48 h-9" stroke="#cfd8e0" stroke-width="1.3"/><polygon points="47,45 42,48 47,51" fill="#cfd8e0"/></svg></div><div><div class="t">Drilling</div><div class="s">Coming next</div></div></div>
         <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><rect x="6" y="18" width="7" height="20" fill="#2f3d49"/><rect x="13" y="22" width="66" height="14" rx="7" fill="#cdbb9a"/><rect x="40" y="22" width="9" height="14" fill="#16222e"/><polygon points="40,52 49,52 49,40 40,40" fill="#1d9e75"/><polygon points="41,56 44.5,51 48,56" fill="#cfd8e0"/></svg></div><div><div class="t">Grooving</div><div class="s">Coming soon</div></div></div>
         <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><rect x="22" y="32" width="64" height="16" rx="2" fill="#cdbb9a"/><rect x="47" y="6" width="12" height="24" rx="2" fill="#ffb300"/><path d="M47 12 l12 0 M47 18 l12 0 M47 24 l12 0" stroke="#9a6b00" stroke-width="1"/><polygon points="47,30 53,36 59,30" fill="#ffb300"/><path d="M44 6 a9 3 0 0 1 18 0" fill="none" stroke="#90a4b8" stroke-width="1.2"/><polygon points="42,4 45,8 48,3" fill="#90a4b8"/></svg></div><div><div class="t">Milling</div><div class="s">Coming soon</div></div></div>
@@ -104,7 +104,7 @@
 
     <!-- THREAD DATA -->
     <section id="data" class="view">
-      <div class="vhead"><button class="back" onclick="show('threading')">&lsaquo;</button><h2>Thread Data</h2></div>
+      <div class="vhead"><button class="back" onclick="show('prog')">&lsaquo;</button><h2>Thread Data</h2></div>
       <label>Series</label><select id="d_series" onchange="fillSizes()"></select>
       <label>Size</label><select id="d_size" onchange="calcData()"></select>
       <div id="d_res"></div>
@@ -112,7 +112,7 @@
 
     <!-- PROGRAMMING -->
     <section id="prog" class="view">
-      <div class="vhead"><button class="back" onclick="show('threading')">&lsaquo;</button><h2>Programming</h2></div>
+      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Programming</h2><button class="back" style="margin-left:auto;width:auto;padding:0 12px;font-size:12.5px" onclick="show('data')">Thread data</button></div>
 
       <div class="sec"><div class="st" onclick="tog(this)">THREAD TYPE <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>Milling / Turning</label><select id="opsel" onchange="setMethodSel()"><option>Milling</option><option>Turning</option></select></div><div><label>Internal / External</label><select id="side" onchange="minorEdited=false;recalc();recalcT()"><option>Internal</option><option>External</option></select></div></div>
@@ -141,14 +141,14 @@
         <label>Equal-volume passes</label><select id="eqvol" onchange="renderPassPcts()"><option>No</option><option>Yes</option></select>
       </div></div>
 
-      <div class="sec mill-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9662;</span></div><div class="sb">
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9656;</span></div><div class="sb" style="display:none">
         <div class="row2"><div><label>Control</label><select id="ctrl"><option>Fanuc I &amp; J</option><option>Fanuc R</option><option>Siemens I &amp; J</option><option>Siemens R</option><option>Heidenhain</option><option>Haas</option></select></div><div><label>Start XYZ</label><select id="startxyz"><option>No</option><option>Yes</option></select></div></div>
         <div class="row2"><div><label>Tool offset</label><select id="toff"><option>No</option><option>Yes</option></select></div><div><label>Safe Z (mm)</label><input id="safez" type="number" value="20" inputmode="decimal"></div></div>
         <label>Message</label><input id="msg" placeholder="optional - shown in header">
         <label>User name</label><input id="username" placeholder="optional">
       </div></div>
 
-      <div class="sec mill-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; MILLING <span>&#9662;</span></div><div class="sb">
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; MILLING <span>&#9656;</span></div><div class="sb" style="display:none">
         <div class="row2"><div><label>M-code</label><select id="mcode"><option>M03</option><option>M04</option></select></div><div><label>Max RPM</label><input id="maxrpm" type="number" value="5000" inputmode="numeric" oninput="recalc()"></div></div>
         <div class="row2"><div><label>Minor dia (auto, editable)</label><input id="minor" type="number" inputmode="decimal" oninput="minorEdited=true"></div><div><label>Major dia +/- (mm)</label><input id="majadj" type="number" value="0" inputmode="decimal"></div></div>
         <div class="row2"><div id="mStepWrap"><label>Stepped style</label><select id="sstyle"><option>Top load Modified</option><option>Carmex bottom-first</option></select></div><div id="mEntryWrap"><label>Entry style (deg)</label><select id="entry"><option>Old</option><option>90</option><option>45</option><option>180</option></select></div></div>
@@ -158,7 +158,7 @@
         <label>Bottom repass</label><select id="brepass"><option>No</option><option>Yes</option></select>
       </div></div>
 
-      <div class="sec mill-only"><div class="st" onclick="tog(this)">HIGHLY ADVANCED &mdash; MILLING <span>&#9662;</span></div><div class="sb">
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">HIGHLY ADVANCED &mdash; MILLING <span>&#9656;</span></div><div class="sb" style="display:none">
         <div class="row2"><div><label>RCTF comp (%)</label><input id="rctf" type="number" value="0" inputmode="numeric"></div><div><label>Requirement</label><select id="req"><option>Standard</option><option>Finishing</option><option>Productivity</option><option>Weak setup</option><option>Tool life</option></select></div></div>
         <div class="row2"><div><label>Entry angle (deg)</label><input id="entryang" type="number" value="0" inputmode="decimal"></div><div><label>Tool axis</label><select id="toolaxis"><option>Z- (default)</option><option>Z+</option><option>X-</option><option>X+</option><option>Y-</option><option>Y+</option></select></div></div>
         <div class="row2"><div><label>Toolpath</label><select id="toolpath"><option>Tool centre (default)</option><option>Tool OD</option></select></div><div><label>PCD (mm)</label><input id="pcd" type="number" value="0" inputmode="decimal"></div></div>
@@ -174,14 +174,14 @@
         <div class="row2"><div><label>Idle (spring) passes</label><input id="t_idle" type="number" value="2" inputmode="numeric"></div><div><label>Total passes (auto)</label><input id="t_total" readonly></div></div>
       </div></div>
 
-      <div class="sec turn-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9662;</span></div><div class="sb">
+      <div class="sec turn-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9656;</span></div><div class="sb" style="display:none">
         <div class="row2"><div><label>Control</label><select id="t_ctrl"><option>Fanuc I &amp; J</option><option>Fanuc R</option><option>Siemens</option></select></div><div><label>Tool offset</label><select id="t_toff"><option>No</option><option>Yes</option></select></div></div>
         <div class="row2"><div><label>Safe dist X (mm)</label><input id="t_safex" type="number" value="1" inputmode="decimal"></div><div><label>Safe dist Z (mm)</label><input id="t_safez" type="number" value="5" inputmode="decimal"></div></div>
         <label>Message</label><input id="t_msg" placeholder="optional - shown in header">
         <label>User name</label><input id="t_username" placeholder="optional">
       </div></div>
 
-      <div class="sec turn-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; TURNING <span>&#9662;</span></div><div class="sb">
+      <div class="sec turn-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; TURNING <span>&#9656;</span></div><div class="sb" style="display:none">
         <div class="row2"><div><label>M-code</label><select id="t_mcode"><option>M03</option><option>M04</option></select></div><div><label>Minor dia</label><input id="t_minor" type="number" inputmode="decimal" placeholder="auto"></div></div>
         <div class="row2"><div><label>Major dia +/- (mm)</label><input id="t_majadj" type="number" value="0" inputmode="decimal"></div><div><label>Infeed type</label><select id="t_infeed" onchange="updateSubs()"><option>Flank</option><option>Radial</option><option>Alternate flank</option></select></div></div>
         <div class="row2" id="tFlank"><div><label>Flank angle (deg)</label><input id="t_flank" type="number" value="30" inputmode="decimal"></div><div><label>Modified flank (deg)</label><input id="t_modflank" type="number" value="1" inputmode="decimal"></div></div>
@@ -191,7 +191,7 @@
         <label>Pre-size (bore/turn first)</label><select id="t_presize"><option>No</option><option>Yes</option></select>
       </div></div>
 
-      <div class="sec turn-only"><div class="st" onclick="tog(this)">HIGHLY ADVANCED &mdash; TURNING <span>&#9662;</span></div><div class="sb">
+      <div class="sec turn-only"><div class="st" onclick="tog(this)">HIGHLY ADVANCED &mdash; TURNING <span>&#9656;</span></div><div class="sb" style="display:none">
         <div class="row2"><div><label>Requirement</label><select id="t_req"><option>Standard</option><option>Finishing</option><option>Productivity</option><option>Weak setup</option><option>Tool life</option></select></div><div><label>Thread start angle (deg)</label><input id="t_startang" type="number" value="0" inputmode="decimal"></div></div>
         <label>Find / Replace</label><div class="row2"><input id="t_findr" placeholder="find..."><input id="t_repl" placeholder="replace with..."></div>
         <p class="note" style="text-align:left">Specials editor: desktop Pro.</p>
