@@ -125,6 +125,12 @@
         <label>Material</label><select id="mat" onchange="recalc()"></select>
       </div></div>
 
+      <div class="sec mill-only"><div class="st" onclick="tog(this)">TOOL DATA <span>&#9662;</span></div><div class="sb">
+        <div class="row2"><div><label>Tool dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="recalc()"></div><div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div></div>
+        <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth"></div></div>
+        <label>Path mode</label><select id="path" onchange="updateSubs()"><option>Helical</option><option>Stepped</option></select>
+      </div></div>
+
       <div class="sec mill-only"><div class="st" onclick="tog(this)">CUTTING PARAMETERS <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>Stability %</label><input id="stab" type="number" value="100" inputmode="numeric" oninput="recalc()"></div><div><label>Vc (m/min)</label><input id="vc" type="number" value="60" inputmode="decimal" oninput="recalc()"></div></div>
         <div class="row2"><div><label>RPM (auto)</label><input id="rpm" readonly></div><div><label>fz (mm/tooth)</label><input id="fz" inputmode="decimal" oninput="recalc(true)" placeholder="auto"></div></div>
@@ -132,12 +138,6 @@
         <div class="row2"><div><label>Passes</label><input id="passes" type="number" value="1" inputmode="numeric" oninput="renderPassPcts()"></div><div><label>Spring pass</label><select id="spring"><option>No</option><option>Yes</option></select></div></div>
         <div id="passpcts"></div>
         <label>Equal-volume passes</label><select id="eqvol" onchange="renderPassPcts()"><option>No</option><option>Yes</option></select>
-      </div></div>
-
-      <div class="sec mill-only"><div class="st" onclick="tog(this)">TOOL DATA <span>&#9662;</span></div><div class="sb">
-        <div class="row2"><div><label>Tool dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="recalc()"></div><div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div></div>
-        <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth"></div></div>
-        <label>Path mode</label><select id="path" onchange="updateSubs()"><option>Helical</option><option>Stepped</option></select>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9662;</span></div><div class="sb">
