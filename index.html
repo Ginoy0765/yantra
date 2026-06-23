@@ -122,13 +122,13 @@
 
       <div class="sec"><div class="st" onclick="tog(this)">DIMENSIONS <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>Major Dia D (mm)</label><input id="D" type="number" value="16" inputmode="decimal" oninput="minorEdited=false;recalc();recalcT()"></div><div><label>TPI</label><input id="tpi" type="number" inputmode="decimal" oninput="tpiChange()" placeholder="metric: blank"></div></div>
-        <div class="row2"><div><label>Pitch P (mm)</label><input id="P" type="number" value="2" inputmode="decimal" oninput="recalc();recalcT()"></div><div><label>Depth L (mm)</label><input id="L" type="number" value="20" inputmode="decimal"></div></div>
+        <div class="row2"><div><label>Pitch P (mm)</label><input id="P" type="number" value="2" inputmode="decimal" oninput="recalc();recalcT();updateTeeth()"></div><div><label>Depth L (mm)</label><input id="L" type="number" value="20" inputmode="decimal"></div></div>
         <label>Material</label><select id="mat" onchange="recalc()"></select>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">TOOL DATA <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>Tool dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="recalc()"></div><div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div></div>
-        <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth"></div></div>
+        <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth" oninput="updateTeeth()"></div></div>
         <label>Path mode</label><select id="path" onchange="updateSubs()"><option>Helical</option><option>Stepped</option></select>
       </div></div>
 
@@ -270,7 +270,7 @@ function setMethod(m){method=m;
   var os=$('opsel');if(os)os.value=(m==='Mill'?'Milling':'Turning');
   document.querySelectorAll('.mill-only').forEach(e=>e.style.display=m==='Mill'?'block':'none');
   document.querySelectorAll('.turn-only').forEach(e=>e.style.display=m==='Turn'?'block':'none');
-  if(m==='Mill'){recalc();renderPassPcts();} else recalcT();
+  if(m==='Mill'){recalc();renderPassPcts();updateTeeth();} else recalcT();
   updateSubs();
   $('p_res').innerHTML='';$('cyc').innerHTML='';$('copybtn').style.display='none';if($('savebtn'))$('savebtn').style.display='none';
 }
@@ -279,7 +279,7 @@ function profChange(){var p=$('profile').value;var list=PROFILES[p];
   if(list&&list.length){opt($('size'),list.map(function(x){return x[0];}));$('size').disabled=false;$('tpi').value='';sizeChange();}
   else{$('size').innerHTML='<option>enter D + P manually</option>';$('size').disabled=true;}
 }
-function sizeChange(){var list=PROFILES[$('profile').value];if(list){var row=list.find(function(x){return x[0]===$('size').value;});if(row){$('D').value=row[2];$('P').value=row[1];$('tpi').value='';}}minorEdited=false;recalc();recalcT();}
+function sizeChange(){var list=PROFILES[$('profile').value];if(list){var row=list.find(function(x){return x[0]===$('size').value;});if(row){$('D').value=row[2];$('P').value=row[1];$('tpi').value='';}}minorEdited=false;recalc();recalcT();updateTeeth();}
 function tpiChange(){const t=parseFloat($('tpi').value);if(t>0)$('P').value=r(25.4/t,4);recalc();}
 function recalc(manualFz){
   const d=num('d',10),Vc=num('vc',60),stab=num('stab',100);
@@ -304,6 +304,9 @@ function buildTurnPasses(){
 }
 function recalcT(){var Vc=num('t_vc',120),D=num('D',16),mx=num('t_maxrpm',5000);var rpm=Math.round(Vc*1000/(Math.PI*D));if(mx>0&&rpm>mx)rpm=mx;$('t_rpm').value=rpm;if($('t_total'))$('t_total').value=buildTurnPasses().length;}
 
+function updateTeeth(){var il=$('insl'),tt=$('teeth');if(!il||!tt)return;var t=parseFloat(il.value),P=num('P',0);
+  if(il.value.trim()&&t>0&&P>0){tt.value=Math.max(1,Math.floor(t/P));tt.readOnly=true;tt.style.color='var(--acc)';tt.style.background='#101a25';}
+  else{tt.readOnly=false;tt.style.color='';tt.style.background='';}}
 function updateSubs(){
   var tt=$('thtaper');if(tt&&$('mTaper'))$('mTaper').style.display=(tt.value==='Manual')?'block':'none';
   var pm=$('path');if(pm){var st=pm.value==='Stepped';if($('mStepWrap'))$('mStepWrap').style.display=st?'block':'none';if($('mEntryWrap'))$('mEntryWrap').style.display=st?'none':'block';}
