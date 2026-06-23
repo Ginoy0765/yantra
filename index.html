@@ -201,6 +201,8 @@
       <div id="p_res"></div>
       <button class="btn btn2" id="copybtn" style="display:none" onclick="copyProg()">&#128203;  Copy program</button>
       <button class="btn btn2" id="savebtn" style="display:none" onclick="saveProg()">&#128190;  Save .txt to Downloads</button>
+      <button class="btn btn2" id="simbtn" style="display:none" onclick="runSim()">&#9654;  Simulate toolpath</button>
+      <canvas id="simcv" width="640" height="520" style="display:none;width:100%;background:#0a1118;border:1px solid #293a4d;border-radius:12px;margin-top:12px"></canvas>
     </section>
 
 
@@ -304,6 +306,52 @@ function buildPcts(){
   return pcts;
 }
 function applyFR(t){var f=$('findr')?$('findr').value:'';if(f)t=t.split(f).join($('repl')?$('repl').value:'');var f2=$('t_findr')?$('t_findr').value:'';if(f2)t=t.split(f2).join($('t_repl')?$('t_repl').value:'');return t;}
+function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&ts[i][0]===a){var n=parseFloat(ts[i].slice(1));if(!isNaN(n))return n;}}return null;}
+function parseSim(){
+  var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
+  if(turning){var passes=[];L.forEach(function(l){if(l.indexOf('G92')>=0){var X=_sv('X',l),Z=_sv('Z',l);if(X!=null&&Z!=null)passes.push([X/2,Z]);}});return {turning:true,passes:passes};}
+  var pts=[],x=0,y=0,z=0;
+  L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;
+    var X=_sv('X',u),Y=_sv('Y',u),Z=_sv('Z',u),I=_sv('I',u),J=_sv('J',u);
+    var arc=u.indexOf('G02')>=0||u.indexOf('G03')>=0;
+    if(arc&&I!=null&&J!=null){var sx=x,sy=y,sz=z,ex=(X!=null?X:x),ey=(Y!=null?Y:y),ez=(Z!=null?Z:z);
+      var cx=sx+I,cy=sy+J,r=Math.hypot(I,J),a0=Math.atan2(sy-cy,sx-cx),a1=Math.atan2(ey-cy,ex-cx),ccw=u.indexOf('G03')>=0;
+      var sw=(ccw?(a1-a0):(a0-a1));sw=((sw%(2*Math.PI))+2*Math.PI)%(2*Math.PI);if(sw<1e-6)sw=2*Math.PI;
+      var n=Math.max(8,Math.round(sw/(Math.PI/16)));
+      for(var k=1;k<=n;k++){var t=k/n,ang=ccw?a0+sw*t:a0-sw*t;pts.push([cx+r*Math.cos(ang),cy+r*Math.sin(ang),sz+(ez-sz)*t]);}
+      x=ex;y=ey;z=ez;}
+    else if(X!=null||Y!=null||Z!=null){if(X!=null)x=X;if(Y!=null)y=Y;if(Z!=null)z=Z;pts.push([x,y,z]);}
+  });
+  return {turning:false,pts:pts};
+}
+var simRAF=null;
+function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.display='block';var ctx=cv.getContext('2d');var W=cv.width,H=cv.height;if(simRAF){cancelAnimationFrame(simRAF);clearTimeout(simRAF);}var d=parseSim();if(d.turning)animTurn(ctx,W,H,d.passes);else animMill(ctx,W,H,d.pts);}
+function animMill(ctx,W,H,pts){if(pts.length<2){ctx.clearRect(0,0,W,H);return;}
+  var c=0.866,sn=0.5;var P=pts.map(function(p){return [(p[0]-p[1])*c,(p[0]+p[1])*sn-p[2]*1.4];});
+  var xs=P.map(function(p){return p[0];}),ys=P.map(function(p){return p[1];});
+  var mnx=Math.min.apply(0,xs),mxx=Math.max.apply(0,xs),mny=Math.min.apply(0,ys),mxy=Math.max.apply(0,ys);
+  var m=30,sc=Math.min((W-2*m)/((mxx-mnx)||1),(H-2*m)/((mxy-mny)||1));
+  function TX(p){return m+(p[0]-mnx)*sc;}function TY(p){return H-m-(p[1]-mny)*sc;}
+  var i=1,inc=Math.max(1,Math.round(P.length/200));
+  function step(){ctx.clearRect(0,0,W,H);ctx.lineWidth=2;ctx.strokeStyle='#29b6f6';ctx.beginPath();ctx.moveTo(TX(P[0]),TY(P[0]));
+    for(var k=1;k<=i&&k<P.length;k++)ctx.lineTo(TX(P[k]),TY(P[k]));ctx.stroke();
+    var dd=P[Math.min(i,P.length-1)];ctx.fillStyle='#ffb300';ctx.beginPath();ctx.arc(TX(dd),TY(dd),5,0,2*Math.PI);ctx.fill();
+    i+=inc;if(i<P.length)simRAF=requestAnimationFrame(step);}
+  step();}
+function animTurn(ctx,W,H,passes){if(!passes.length){ctx.clearRect(0,0,W,H);return;}
+  var rs=passes.map(function(p){return p[0];});var rmax=Math.max.apply(0,rs);
+  var Lz=Math.max.apply(0,passes.map(function(p){return Math.abs(p[1]);}))||20;
+  var m=28,sx=(W-2*m)/Lz,sy=(H/2-m)/(rmax||1);
+  function ZX(z){return W-m-Math.abs(z)*sx;}function RY(r){return H/2-r*sy;}function RYb(r){return H/2+r*sy;}
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#3a4a58';ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(m,H/2);ctx.lineTo(W-m,H/2);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='#465666';ctx.lineWidth=1;ctx.strokeRect(ZX(-Lz),RY(rmax),Lz*sx,2*rmax*sy);
+  var i=0;
+  function step(){var p=passes[i];ctx.strokeStyle='#29b6f6';ctx.lineWidth=1.3;
+    ctx.beginPath();ctx.moveTo(ZX(0),RY(p[0]));ctx.lineTo(ZX(-Lz),RY(p[0]));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ZX(0),RYb(p[0]));ctx.lineTo(ZX(-Lz),RYb(p[0]));ctx.stroke();
+    i++;if(i<passes.length)simRAF=setTimeout(function(){requestAnimationFrame(step);},70);}
+  step();}
 function genProg(){ if(method==='Turn') return genTurn(); return genMill(); }
 
 function genMill(){
@@ -492,7 +540,7 @@ function formatForControl(code,ctrl){var name=ctrl||'Fanuc I & J',out;
   var sie=name.indexOf('Siemens')>=0,L=out.split('\n');
   for(var i=0;i<L.length;i++){if(/^\s*O\d/.test(L[i])){L.splice(i+1,0,idLine(name,sie));return L.join('\n');}}
   L.splice(0,0,idLine(name,sie));return L.join('\n');}
-function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;$('p_res').innerHTML='<pre id="gtext"></pre>'+(extra||'');document.getElementById('gtext').textContent=lastProg;$('copybtn').style.display='block';$('savebtn').style.display='block';}
+function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;$('p_res').innerHTML='<pre id="gtext"></pre>'+(extra||'');document.getElementById('gtext').textContent=lastProg;$('copybtn').style.display='block';$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('simcv'))$('simcv').style.display='none';}
 function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
 function copyProg(){if(navigator.clipboard&&lastProg){navigator.clipboard.writeText(lastProg);$('copybtn').textContent='✓ Copied';setTimeout(function(){$('copybtn').textContent='📋  Copy program';},1500);}}
 
