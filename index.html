@@ -129,14 +129,15 @@
         <div class="row2"><div><label>Stability %</label><input id="stab" type="number" value="100" inputmode="numeric" oninput="recalc()"></div><div><label>Vc (m/min)</label><input id="vc" type="number" value="60" inputmode="decimal" oninput="recalc()"></div></div>
         <div class="row2"><div><label>RPM (auto)</label><input id="rpm" readonly></div><div><label>fz (mm/tooth)</label><input id="fz" inputmode="decimal" oninput="recalc(true)" placeholder="auto"></div></div>
         <label>Direction</label><select id="dir"><option>Top to Bottom</option><option>Bottom to Top</option></select>
-        <div class="row3"><div><label>Passes</label><input id="passes" type="number" value="1" inputmode="numeric"></div><div><label>1st pass %</label><input id="firstp" type="number" value="100" inputmode="numeric"></div><div><label>Spring pass</label><select id="spring"><option>No</option><option>Yes</option></select></div></div>
-        <label>Equal-volume passes</label><select id="eqvol"><option>No</option><option>Yes</option></select>
+        <div class="row2"><div><label>Passes</label><input id="passes" type="number" value="1" inputmode="numeric" oninput="renderPassPcts()"></div><div><label>Spring pass</label><select id="spring"><option>No</option><option>Yes</option></select></div></div>
+        <div id="passpcts"></div>
+        <label>Equal-volume passes</label><select id="eqvol" onchange="renderPassPcts()"><option>No</option><option>Yes</option></select>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">TOOL DATA <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>Tool dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="recalc()"></div><div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div></div>
         <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth"></div></div>
-        <label>Path mode</label><select id="path"><option>Helical</option><option>Stepped</option></select>
+        <label>Path mode</label><select id="path" onchange="updateSubs()"><option>Helical</option><option>Stepped</option></select>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9662;</span></div><div class="sb">
@@ -149,10 +150,10 @@
       <div class="sec mill-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; MILLING <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>M-code</label><select id="mcode"><option>M03</option><option>M04</option></select></div><div><label>Max RPM</label><input id="maxrpm" type="number" value="5000" inputmode="numeric" oninput="recalc()"></div></div>
         <div class="row2"><div><label>Minor dia (auto, editable)</label><input id="minor" type="number" inputmode="decimal" oninput="minorEdited=true"></div><div><label>Major dia +/- (mm)</label><input id="majadj" type="number" value="0" inputmode="decimal"></div></div>
-        <div class="row2"><div><label>Stepped style</label><select id="sstyle"><option>Top load Modified</option><option>Carmex bottom-first</option></select></div><div><label>Entry style (deg)</label><select id="entry"><option>Old</option><option>90</option><option>45</option><option>180</option></select></div></div>
+        <div class="row2"><div id="mStepWrap"><label>Stepped style</label><select id="sstyle"><option>Top load Modified</option><option>Carmex bottom-first</option></select></div><div id="mEntryWrap"><label>Entry style (deg)</label><select id="entry"><option>Old</option><option>90</option><option>45</option><option>180</option></select></div></div>
         <label>Engagement feed reduction (%)</label><input id="engred" type="number" value="0" inputmode="numeric">
-        <div class="row2"><div><label>Thread taper</label><select id="thtaper"><option>None</option><option>NPT</option><option>BSPT</option><option>Manual</option></select></div><div><label>Taper degree</label><input id="taperdeg" type="number" value="0" inputmode="decimal"></div></div>
-        <label>Dia diff at end of thread (mm)</label><input id="diadiff" type="number" value="0" inputmode="decimal">
+        <label>Thread taper</label><select id="thtaper" onchange="updateSubs()"><option>None</option><option>NPT</option><option>BSPT</option><option>Manual</option></select>
+        <div id="mTaper" style="display:none"><label>Taper degree</label><input id="taperdeg" type="number" value="0" inputmode="decimal"><label>Dia diff at end of thread (mm)</label><input id="diadiff" type="number" value="0" inputmode="decimal"></div>
         <label>Bottom repass</label><select id="brepass"><option>No</option><option>Yes</option></select>
       </div></div>
 
@@ -181,11 +182,11 @@
 
       <div class="sec turn-only"><div class="st" onclick="tog(this)">ADVANCED &mdash; TURNING <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>M-code</label><select id="t_mcode"><option>M03</option><option>M04</option></select></div><div><label>Minor dia</label><input id="t_minor" type="number" inputmode="decimal" placeholder="auto"></div></div>
-        <div class="row2"><div><label>Major dia +/- (mm)</label><input id="t_majadj" type="number" value="0" inputmode="decimal"></div><div><label>Infeed type</label><select id="t_infeed"><option>Flank</option><option>Radial</option><option>Alternate flank</option></select></div></div>
-        <div class="row2"><div><label>Flank angle (deg)</label><input id="t_flank" type="number" value="30" inputmode="decimal"></div><div><label>Modified flank (deg)</label><input id="t_modflank" type="number" value="1" inputmode="decimal"></div></div>
+        <div class="row2"><div><label>Major dia +/- (mm)</label><input id="t_majadj" type="number" value="0" inputmode="decimal"></div><div><label>Infeed type</label><select id="t_infeed" onchange="updateSubs()"><option>Flank</option><option>Radial</option><option>Alternate flank</option></select></div></div>
+        <div class="row2" id="tFlank"><div><label>Flank angle (deg)</label><input id="t_flank" type="number" value="30" inputmode="decimal"></div><div><label>Modified flank (deg)</label><input id="t_modflank" type="number" value="1" inputmode="decimal"></div></div>
         <div class="row2"><div><label>Zone pattern (%)</label><input id="t_zone" value="50,80"></div><div><label>Transition</label><select id="t_trans" onchange="recalcT()"><option>Linear</option><option>Stepped</option><option>Degressive</option></select></div></div>
-        <div class="row2"><div><label>Thread taper</label><select id="t_thtaper"><option>None</option><option>NPT</option><option>BSPT</option><option>Manual</option></select></div><div><label>Taper degree</label><input id="t_taperdeg" type="number" value="0" inputmode="decimal"></div></div>
-        <label>Dia diff at end of thread (mm)</label><input id="t_diadiff" type="number" value="0" inputmode="decimal">
+        <label>Thread taper</label><select id="t_thtaper" onchange="updateSubs()"><option>None</option><option>NPT</option><option>BSPT</option><option>Manual</option></select>
+        <div id="tTaper" style="display:none"><label>Taper degree</label><input id="t_taperdeg" type="number" value="0" inputmode="decimal"><label>Dia diff at end of thread (mm)</label><input id="t_diadiff" type="number" value="0" inputmode="decimal"></div>
         <label>Pre-size (bore/turn first)</label><select id="t_presize"><option>No</option><option>Yes</option></select>
       </div></div>
 
@@ -246,7 +247,8 @@ function setMethod(m){method=m;
   var os=$('opsel');if(os)os.value=(m==='Mill'?'Milling':'Turning');
   document.querySelectorAll('.mill-only').forEach(e=>e.style.display=m==='Mill'?'block':'none');
   document.querySelectorAll('.turn-only').forEach(e=>e.style.display=m==='Turn'?'block':'none');
-  if(m==='Mill')recalc(); else recalcT();
+  if(m==='Mill'){recalc();renderPassPcts();} else recalcT();
+  updateSubs();
   $('p_res').innerHTML='';$('cyc').innerHTML='';$('copybtn').style.display='none';if($('savebtn'))$('savebtn').style.display='none';
 }
 function setMethodSel(){setMethod($('opsel').value==='Turning'?'Turn':'Mill');}
@@ -280,11 +282,24 @@ function buildTurnPasses(){
 }
 function recalcT(){var Vc=num('t_vc',120),D=num('D',16),mx=num('t_maxrpm',5000);var rpm=Math.round(Vc*1000/(Math.PI*D));if(mx>0&&rpm>mx)rpm=mx;$('t_rpm').value=rpm;if($('t_total'))$('t_total').value=buildTurnPasses().length;}
 
+function updateSubs(){
+  var tt=$('thtaper');if(tt&&$('mTaper'))$('mTaper').style.display=(tt.value==='Manual')?'block':'none';
+  var pm=$('path');if(pm){var st=pm.value==='Stepped';if($('mStepWrap'))$('mStepWrap').style.display=st?'block':'none';if($('mEntryWrap'))$('mEntryWrap').style.display=st?'none':'block';}
+  var t2=$('t_thtaper');if(t2&&$('tTaper'))$('tTaper').style.display=(t2.value==='Manual')?'block':'none';
+  var inf=$('t_infeed');if(inf&&$('tFlank'))$('tFlank').style.display=(inf.value==='Radial')?'none':'block';
+}
+function ordn(n){var s=['','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||'th');}
+function renderPassPcts(){var c=$('passpcts');if(!c)return;var n=Math.max(1,Math.round(num('passes',1)));var eq=$('eqvol')&&$('eqvol').value==='Yes';
+  if(n<=1){c.innerHTML='';return;}
+  if(eq||n>5){c.innerHTML='<p class="note" style="text-align:left;margin-top:6px">'+(eq?'Equal-volume: pass % auto-distributed.':'More than 5 passes: % auto-distributed.')+'</p>';return;}
+  var h='';for(var i=1;i<=n;i++){var def=Math.round(100*i/n);h+='<div style="margin-top:6px"><label>'+ordn(i)+' pass %</label><input id="pp'+i+'" type="number" value="'+def+'" inputmode="numeric"></div>';}
+  c.innerHTML=h;}
 function buildPcts(){
-  let n=Math.max(1,Math.round(num('passes',1)));const first=Math.max(1,Math.min(100,num('firstp',100)));const eq=$('eqvol').value==='Yes';let pcts=[];
+  var n=Math.max(1,Math.round(num('passes',1)));var eq=$('eqvol').value==='Yes';var pcts=[];
   if(n===1)pcts=[100];
-  else if(eq){for(let i=1;i<=n;i++)pcts.push(+(100*Math.sqrt(i/n)).toFixed(2));pcts[n-1]=100;}
-  else{for(let i=0;i<n;i++)pcts.push(+(first+(100-first)*i/(n-1)).toFixed(2));pcts[n-1]=100;}
+  else if(eq){for(var i=1;i<=n;i++)pcts.push(+(100*Math.sqrt(i/n)).toFixed(2));pcts[n-1]=100;}
+  else if(n>5){for(var i=0;i<n;i++)pcts.push(+(100*(i+1)/n).toFixed(2));pcts[n-1]=100;}
+  else{for(var i=1;i<=n;i++){var e=$('pp'+i);var v=e?parseFloat(e.value):NaN;if(isNaN(v))v=100*i/n;pcts.push(+v.toFixed(2));}pcts[n-1]=100;}
   if($('spring').value==='Yes')pcts.push(100);
   return pcts;
 }
