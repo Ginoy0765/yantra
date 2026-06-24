@@ -278,7 +278,7 @@ function setMethod(m){method=m;
   document.querySelectorAll('.turn-only').forEach(e=>e.style.display=m==='Turn'?'block':'none');
   if(m==='Mill'){recalc();renderPassPcts();updateTeeth();} else recalcT();
   updateSubs();
-  $('p_res').innerHTML='';$('cyc').innerHTML='';$('copybtn').style.display='none';if($('savebtn'))$('savebtn').style.display='none';
+  $('p_res').innerHTML='';$('cyc').innerHTML='';if($('copybtn'))$('copybtn').style.display='none';if($('savebtn'))$('savebtn').style.display='none';if($('simbtn'))$('simbtn').style.display='none';
 }
 function setMethodSel(){setMethod($('opsel').value==='Turning'?'Turn':'Mill');}
 function profChange(){var p=$('profile').value;var list=PROFILES[p];
