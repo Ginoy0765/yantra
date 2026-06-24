@@ -198,7 +198,7 @@
         <p class="note" style="text-align:left">Specials editor: desktop Pro.</p>
       </div></div>
 
-      <div id="engineStatus" class="note" style="text-align:center;margin-top:8px">Loading engine\u2026 (first time needs internet)</div>
+      <div id="engineStatus" class="note" style="text-align:center;margin-top:8px">Loading engine... (first time needs internet)</div>
       <button class="btn" onclick="genProg()">&#9881;&#65039;  GENERATE G-CODE</button>
       <div id="cyc"></div>
       <div id="p_res"></div>
@@ -238,18 +238,22 @@ const MILLPY="import thread_mill, mill_post\n_p=dict(JS)\n_prog=thread_mill.gene
 const MILLTIME="import thread_mill\n_p=dict(JS)\nthread_mill.cycle_time(**{k:_p[k] for k in _p if k!='control'})";
 const TURNPY="import thread_turn\n_p=dict(JS)\n_r=thread_turn.generate(**_p)\n[_r[0],_r[1],_r[2],_r[3]]";
 async function initPy(){
+  var st=document.getElementById('engineStatus');
+  function S(t,c){if(st){st.textContent=t;st.style.color=c||'var(--mut)';}}
+  var wd=setTimeout(function(){if(!pyReady)S('Still downloading the engine \u2014 large first-time load; keep the tab open on a stable connection.','var(--pro)');},20000);
   try{
-    var st=document.getElementById('engineStatus');
+    S('Loading engine \u2014 runtime\u2026');
     py=await loadPyodide();
-    async function rd(n){var r=await fetch(n+'?'+Date.now());return await r.text();}
+    S('Loading engine \u2014 thread modules\u2026');
+    async function rd(n){var r=await fetch(n+'?'+Date.now());if(!r.ok)throw new Error(n+' HTTP '+r.status);return await r.text();}
     py.FS.writeFile('thread_mill.py', await rd('thread_mill.py'));
     py.FS.writeFile('thread_turn.py', await rd('thread_turn.py'));
     py.FS.writeFile('mill_post.py', await rd('mill_post.py'));
     py.runPython('import thread_mill, thread_turn, mill_post');
-    pyReady=true;
-    if(st){st.textContent='\u2713 Engine ready \u2014 output matches desktop';st.style.color='var(--ok)';}
+    pyReady=true; clearTimeout(wd);
+    S('\u2713 Engine ready \u2014 output matches desktop','var(--ok)');
     if(pendingGen){pendingGen=false;genProg();}
-  }catch(e){var st=document.getElementById('engineStatus');if(st){st.textContent='Engine load failed (need internet first time): '+e;st.style.color='var(--pro)';}}
+  }catch(e){clearTimeout(wd);S('Engine load failed: '+(e&&e.message?e.message:e),'var(--pro)');}
 }
 function notReady(){$('p_res').innerHTML='<p class="warn">Engine still loading \u2014 wait a few seconds and tap Generate again.</p>';$('cyc').innerHTML='';}
 
