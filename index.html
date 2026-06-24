@@ -233,7 +233,7 @@ const SERIES={Coarse:COARSE,Fine:FINE,All:ALL};
 const MAXRPM=5000;
 let method='Mill';
 let minorEdited=false;
-let pyReady=false, py=null;
+let pyReady=false, py=null, pendingGen=false;
 const MILLPY="import thread_mill, mill_post\n_p=dict(JS)\n_prog=thread_mill.generate(**{k:_p[k] for k in _p if k!='control'})\nmill_post.format_for_control(_prog,_p['control'])";
 const MILLTIME="import thread_mill\n_p=dict(JS)\nthread_mill.cycle_time(**{k:_p[k] for k in _p if k!='control'})";
 const TURNPY="import thread_turn\n_p=dict(JS)\n_r=thread_turn.generate(**_p)\n[_r[0],_r[1],_r[2],_r[3]]";
@@ -248,6 +248,7 @@ async function initPy(){
     py.runPython('import thread_mill, thread_turn, mill_post');
     pyReady=true;
     if(st){st.textContent='\u2713 Engine ready \u2014 output matches desktop';st.style.color='var(--ok)';}
+    if(pendingGen){pendingGen=false;genProg();}
   }catch(e){var st=document.getElementById('engineStatus');if(st){st.textContent='Engine load failed (need internet first time): '+e;st.style.color='var(--pro)';}}
 }
 function notReady(){$('p_res').innerHTML='<p class="warn">Engine still loading \u2014 wait a few seconds and tap Generate again.</p>';$('cyc').innerHTML='';}
@@ -379,7 +380,7 @@ function animTurn(ctx,W,H,passes){if(!passes.length){ctx.clearRect(0,0,W,H);retu
     ctx.beginPath();ctx.moveTo(ZX(0),RYb(p[0]));ctx.lineTo(ZX(-Lz),RYb(p[0]));ctx.stroke();
     i++;if(i<passes.length)simRAF=setTimeout(function(){requestAnimationFrame(step);},70);}
   step();}
-function genProg(){ if(method==='Turn') return genTurn(); return genMill(); }
+function genProg(){ if(!pyReady){pendingGen=true;$('p_res').innerHTML='<p class="warn">Engine loading (first time only, ~10\u201330s on phone)\u2026 it will generate automatically once ready.</p>';return;} pendingGen=false; if(method==='Turn') return genTurn(); return genMill(); }
 
 function genMill(){
   if(!pyReady){notReady();return;}
