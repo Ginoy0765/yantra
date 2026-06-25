@@ -3,7 +3,7 @@ Engine files (thread_mill/thread_turn/mill_post/axis_transform) are unchanged.""
 import re
 import thread_mill, mill_post, axis_transform
 
-_EX = ('control', 'safez', 'sx', 'sy', 'sz', 'toolaxis', 'finishing')
+_EX = ('control', 'safez', 'sx', 'sy', 'sz', 'toolaxis', 'finishing', 'tnum', 'hnum', 'dnum')
 _ORD = re.compile(r'^\((\d+)(?:ST|ND|RD|TH) PASS\)$')
 
 
@@ -40,6 +40,8 @@ def _finishing(prog):
 def post_mill(p):
     thread_mill.SAFE_Z = p['safez']
     prog = thread_mill.generate(**_gen_kwargs(p))
+    t = str(int(round(p.get('tnum', 1)))); h = str(int(round(p.get('hnum', 1)))); dd = str(int(round(p.get('dnum', 1))))
+    prog = prog.replace('M06 T1', 'M06 T' + t).replace('G43 H1 ', 'G43 H' + h + ' ').replace(' D1 ', ' D' + dd + ' ')
     prog = mill_post.format_for_control(prog, p['control'])
     if p.get('finishing'):
         prog = _finishing(prog)
