@@ -58,6 +58,7 @@
   .prolock .ic{font-size:32px}.prolock h3{margin:9px 0 4px}.prolock p{color:var(--mut);font-size:13px;margin:0 0 4px}
   .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;max-width:492px;width:calc(100% - 28px);background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:12px;font-size:13.5px;font-weight:700;cursor:pointer;z-index:20}
   .mill-only,.turn-only,.adv-only{display:none}
+  .locked-sb{opacity:.5;pointer-events:none}
 #d:placeholder-shown{background:#ffdede;border-color:#e57373}
 </style>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
@@ -65,7 +66,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.0</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.1</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -350,7 +351,7 @@ function renderPassPcts(){var c=$('passpcts');if(!c)return;var n=Math.max(1,Math
   c.innerHTML=h;}
 function applyLockUI(){
   var bdg=$('advbadge');if(bdg)bdg.textContent=LOCK_ADV?'FREE':'ADVANCED';
-  if(LOCK_ADV){document.querySelectorAll('.sec .st').forEach(function(t){var x=t.textContent.toUpperCase();if(x.indexOf('ADVANCED')>=0){var b=document.createElement('span');b.className='advbadge';b.style.marginLeft='6px';b.style.background='#37506a';b.textContent='PREVIEW';t.appendChild(b);}});}
+  if(LOCK_ADV){document.querySelectorAll('.sec').forEach(function(sec){var t=sec.querySelector('.st');if(!t)return;if(t.textContent.toUpperCase().indexOf('ADVANCED')<0)return;var b=document.createElement('span');b.className='advbadge';b.style.marginLeft='6px';b.style.background='#37506a';b.textContent='PREVIEW';t.appendChild(b);var body=t.nextElementSibling;if(body){body.classList.add('locked-sb');body.querySelectorAll('input,select,textarea,button').forEach(function(el){el.disabled=true;});}});}
 }
 function setDefaultPasses(){var P=num('P',0);if(P<=0)return;var n=P<=1.6?1:(P<=2?2:3);if($('passes'))$('passes').value=n;renderPassPcts();}
 function resetAll(){
