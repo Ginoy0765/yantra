@@ -66,6 +66,11 @@
   .mrinfo{margin-top:6px;font-size:12px;color:var(--mut);display:flex;align-items:center;gap:8px}
   .isochip{display:inline-block;color:#06121c;font-weight:800;font-size:10px;padding:2px 8px;border-radius:20px}
   .gedit{width:100%;min-height:240px;background:#0a1118;border:1px solid var(--acc2);border-radius:12px;padding:13px;font-size:12px;line-height:1.5;color:#bfe3ff;font-family:monospace;white-space:pre;margin-top:12px;resize:vertical;outline:none}
+  .histrow{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 40px 12px 14px;margin-top:10px;cursor:pointer}
+  .histrow:active{border-color:var(--acc)}
+  .histrow .hn{font-weight:700;font-size:14px;word-break:break-all}
+  .histrow .hm{color:var(--mut);font-size:11.5px;margin-top:3px}
+  .histrow .hx{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);color:var(--mut);font-size:16px;cursor:pointer}
 #d:placeholder-shown{background:#ffdede;border-color:#e57373}
 </style>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
@@ -73,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.3</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.4</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -215,6 +220,7 @@
       <div id="engineStatus" class="note" style="text-align:center;margin-top:8px">Loading engine... (first time needs internet)</div>
       <button class="btn" onclick="genProg()">&#9881;&#65039;  GENERATE G-CODE</button>
       <button class="btn btn2" onclick="resetAll()">&#8634;  Reset to defaults</button>
+      <button class="btn btn2" onclick="show('phist');renderHist()">&#128338;  Saved programs</button>
       <div id="cyc"></div>
       <div id="p_res"></div>
       <button class="btn btn2" id="savebtn" style="display:none" onclick="saveProg()">&#128190;  Save .txt to Downloads</button>
@@ -240,6 +246,12 @@
 
 
     <!-- COMING SOON -->
+    <section id="phist" class="view">
+      <div class="vhead"><button class="back" onclick="show('prog')">&lsaquo;</button><h2>Saved programs</h2><button class="back" style="margin-left:auto;width:auto;padding:0 12px;font-size:12.5px" onclick="clearHist()">Clear all</button></div>
+      <div id="histlist"></div>
+      <p class="note">Saved on this device only. Tap a program to reopen &amp; simulate.</p>
+    </section>
+
     <section id="soon" class="view">
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Coming soon</h2></div>
       <div class="prolock"><div class="ic">&#128736;&#65039;</div><h3>Being built next</h3>
@@ -618,7 +630,15 @@ function formatForControl(code,ctrl){var name=ctrl||'Fanuc I & J',out;
 function renderProg(){var pp=$('p_res');if(!pp)return;if(editOn){pp.innerHTML='<textarea id="gedit" class="gedit" spellcheck="false"></textarea>'+lastExtra;var ta=$('gedit');ta.value=lastProg;ta.oninput=function(){lastProg=ta.value;};}else{pp.innerHTML='<pre id="gtext"></pre>'+lastExtra;$('gtext').textContent=lastProg;}}
 function toggleEdit(){editOn=!editOn;var e=$('editbtn');if(e)e.textContent=editOn?'\u270E Edit: ON (sim uses edits)':'\u270E Edit: OFF';renderProg();}
 function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;lastExtra=extra||'';renderProg();if($('copybtn'))$('copybtn').style.display='block';$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('editbtn'))$('editbtn').style.display='block';if($('simcv'))$('simcv').style.display='none';}
-function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
+var HKEY='yantra_hist';
+function getHist(){try{return JSON.parse(localStorage.getItem(HKEY)||'[]');}catch(e){return [];}}
+function setHist(a){try{localStorage.setItem(HKEY,JSON.stringify(a));}catch(e){}}
+function addHist(name,prog){if(!prog)return;var a=getHist();a.unshift({n:name,t:Date.now(),p:prog});if(a.length>50)a=a.slice(0,50);setHist(a);}
+function delHist(i){var a=getHist();a.splice(i,1);setHist(a);renderHist();}
+function clearHist(){if(getHist().length&&confirm('Clear all saved programs on this device?')){setHist([]);renderHist();}}
+function openHist(i){var a=getHist(),e=a[i];if(!e)return;lastProg=e.p;lastExtra='';show('prog');renderProg();$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('editbtn'))$('editbtn').style.display='block';if($('cyc'))$('cyc').innerHTML='';var pr=$('p_res');if(pr)pr.scrollIntoView({behavior:'smooth'});}
+function renderHist(){var c=$('histlist');if(!c)return;var a=getHist();if(!a.length){c.innerHTML='<p class="note">No saved programs yet. Generate a program and tap Save.</p>';return;}c.innerHTML=a.map(function(e,i){var d=new Date(e.t);var ds=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});var kb=Math.max(1,Math.round((e.p||'').length/1024));return '<div class="histrow" onclick="openHist('+i+')"><div class="hn">'+String(e.n).replace(/</g,'&lt;')+'</div>'+'<div class="hm">'+ds+' &middot; '+kb+' KB</div>'+'<button class="hx" onclick="event.stopPropagation();delHist('+i+')">&times;</button></div>';}).join('');}
+function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');addHist(name,lastProg);var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
 function copyProg(){if(navigator.clipboard&&lastProg){navigator.clipboard.writeText(lastProg);$('copybtn').textContent='✓ Copied';setTimeout(function(){$('copybtn').textContent='📋  Copy program';},1500);}}
 
 function fillSizes(){opt($('d_size'),SERIES[$('d_series').value].map(x=>x[0]));calcData();}
