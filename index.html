@@ -214,16 +214,16 @@
       <canvas id="simcv" width="640" height="520" style="display:none;width:100%;background:#0a1118;border:1px solid #293a4d;border-radius:12px;margin-top:12px"></canvas>
       <div id="simctrls" style="display:none;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
         <button class="btn btn2" id="simplay" style="width:auto;padding:8px 12px" onclick="simPlay()">&#9654; Play</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(-1)">&#9664;</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(1)">&#9654;</button>
+        <button class="btn btn2" id="simpause" style="width:auto;padding:8px 12px" onclick="simPause()">&#9208; Pause</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(-1)">&#9664; Block</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(1)">Block &#9654;</button>
         <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simAll()">All</button>
+        <button class="btn btn2" id="simspeed" style="width:auto;padding:8px 12px" onclick="simSpeed()">Speed 1&#215;</button>
         <button class="btn btn2" id="vtop" style="width:auto;padding:8px 12px" onclick="simView('top')">Top</button>
         <button class="btn btn2" id="vfront" style="width:auto;padding:8px 12px" onclick="simView('front')">Front</button>
         <button class="btn btn2" id="vleft" style="width:auto;padding:8px 12px" onclick="simView('left')">Left</button>
         <button class="btn btn2" id="viso" style="width:auto;padding:8px 12px" onclick="simView('iso')">3D</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simZoom(1.2)">&#43;</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simZoom(0.83)">&#8722;</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simReset()">Reset</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simReset()">Reset (clear)</button>
         <div id="simblklbl" class="note" style="width:100%;text-align:center;margin-top:2px"></div>
         <div id="simpos" style="width:100%;text-align:center;font-family:monospace;font-size:13px;color:#ffb300;margin-top:2px"></div>
       </div>
@@ -406,8 +406,8 @@ function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.d
   var bb=_bounds(all);SIM.c=bb.c;var ext=Math.max(bb.mx[0]-bb.mn[0],bb.mx[1]-bb.mn[1],bb.mx[2]-bb.mn[2])||1;
   SIM.base=Math.min(SIM.W,SIM.H)/(ext*1.7);SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.pd=0;
   SIM.azim=d.turning?0:0.6;SIM.tilt=d.turning?0:0.95;
-  SIM.curBlk=d.turning?d.passes.length:d.blocks;SIM.playing=false;
-  bindSim(cv);updatePlayBtn();renderSim();
+  SIM.curBlk=d.turning?d.passes.length:d.blocks;SIM.playing=false;SIM.speed=1;
+  bindSim(cv);updatePlayBtn();var _sb=$('simspeed');if(_sb)_sb.innerHTML='Speed 1×';renderSim();
 }
 function _proj(p){var x=p[0]-SIM.c[0],y=p[1]-SIM.c[1],z=p[2]-SIM.c[2];var s=SIM.base*SIM.zoom;
   if(SIM.turning){return [SIM.W/2+SIM.panX+x*s, SIM.H/2+SIM.panY-y*s];}
@@ -439,13 +439,15 @@ function renderSim(){var ctx=SIM.ctx,W=SIM.W,H=SIM.H;if(!ctx)return;ctx.clearRec
   }
 }
 function simStop(){if(SIM.anim)cancelAnimationFrame(SIM.anim);SIM.playing=false;updatePlayBtn();}
-function updatePlayBtn(){var b=$('simplay');if(b)b.innerHTML=SIM.playing?'\u23F8 Pause':'\u25B6 Play';}
+function updatePlayBtn(){var b=$('simplay');if(b)b.style.opacity=SIM.playing?'0.5':'1';}
+function simPause(){simStop();}
+function simSpeed(){var st=[1,2,4,8];SIM.speed=st[(st.indexOf(SIM.speed||1)+1)%st.length];var b=$('simspeed');if(b)b.innerHTML='Speed '+SIM.speed+'×';}
 function simPlay(){var mx=SIM.turning?SIM.passes.length:SIM.blocks;
-  if(SIM.playing){simStop();return;}
+  if(SIM.playing)return;
   if(SIM.curBlk>=mx)SIM.curBlk=1;
   SIM.playing=true;updatePlayBtn();
-  var inc=Math.max(1,Math.round(mx/240));
   function frame(){if(!SIM.playing)return;var m=SIM.turning?SIM.passes.length:SIM.blocks;
+    var inc=Math.max(1,Math.round(m/240))*(SIM.speed||1);
     SIM.curBlk=Math.min(m,SIM.curBlk+inc);renderSim();
     if(SIM.curBlk>=m){SIM.playing=false;updatePlayBtn();return;}
     SIM.anim=requestAnimationFrame(frame);}
@@ -453,8 +455,7 @@ function simPlay(){var mx=SIM.turning?SIM.passes.length:SIM.blocks;
 function simView(v){if(!SIM.turning){if(v==='top'){SIM.azim=0;SIM.tilt=1.5708;}else if(v==='front'){SIM.azim=0;SIM.tilt=0.0;}else if(v==='left'){SIM.azim=1.5708;SIM.tilt=0.0;}else{SIM.azim=0.6;SIM.tilt=0.95;}}renderSim();}
 function simBlock(d){simStop();var mx=SIM.turning?SIM.passes.length:SIM.blocks;SIM.curBlk=Math.max(1,Math.min(mx,SIM.curBlk+d));renderSim();}
 function simAll(){simStop();SIM.curBlk=SIM.turning?SIM.passes.length:SIM.blocks;renderSim();}
-function simZoom(f){SIM.zoom*=f;renderSim();}
-function simReset(){simStop();SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.azim=SIM.turning?0:0.6;SIM.tilt=SIM.turning?0:0.95;renderSim();}
+function simReset(){simStop();var cv=$('simcv');if(cv){if(SIM.ctx)SIM.ctx.clearRect(0,0,SIM.W,SIM.H);cv.style.display='none';}if($('simctrls'))$('simctrls').style.display='none';var p=$('simpos');if(p)p.textContent='';var lbl=$('simblklbl');if(lbl)lbl.textContent='';}
 function bindSim(cv){if(SIM.bound)return;SIM.bound=true;var T={};cv.style.touchAction='none';
   cv.addEventListener('pointerdown',function(e){try{cv.setPointerCapture(e.pointerId);}catch(_){}T[e.pointerId]={x:e.clientX,y:e.clientY};});
   cv.addEventListener('pointermove',function(e){var pv=T[e.pointerId];if(!pv)return;T[e.pointerId]={x:e.clientX,y:e.clientY};var ids=Object.keys(T);
