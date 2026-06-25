@@ -377,7 +377,7 @@ function applyFR(t){var f=$('findr')?$('findr').value:'';if(f)t=t.split(f).join(
 function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&ts[i][0]===a){var n=parseFloat(ts[i].slice(1));if(!isNaN(n))return n;}}return null;}
 function parseSim(){
   var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
-  if(turning){var passes=[];L.forEach(function(l){if(l.indexOf('G92')>=0){var X=_sv('X',l),Z=_sv('Z',l);if(X!=null&&Z!=null)passes.push([X/2,Z]);}});return {turning:true,passes:passes};}
+  if(turning){var passes=[],cZ=null;L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;var X=_sv('X',u),Z=_sv('Z',u);if(u.indexOf('G92')>=0){if(X!=null)passes.push([X/2,(Z!=null?Z:(cZ!=null?cZ:0)),(cZ!=null?cZ:(Z!=null?Z:0))]);if(Z!=null)cZ=Z;}else{if(Z!=null)cZ=Z;}});return {turning:true,passes:passes};}
   var pts=[],blk=[],x=0,y=0,z=0,rel=false,b=0;
   L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;
     if(/\bG91\b/.test(u))rel=true;if(/\bG90\b/.test(u))rel=false;
@@ -401,7 +401,7 @@ function _bounds(arr){var mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];arr.forEach(funct
 function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.display='block';if($('simctrls'))$('simctrls').style.display='flex';
   SIM.cv=cv;SIM.ctx=cv.getContext('2d');SIM.W=cv.width;SIM.H=cv.height;
   var d=parseSim();SIM.turning=d.turning;var all;
-  if(d.turning){SIM.passes=d.passes;all=[];d.passes.forEach(function(p){all.push([p[1],p[0],0],[0,p[0],0],[0,-p[0],0]);});if(!all.length)all=[[0,0,0]];}
+  if(d.turning){SIM.passes=d.passes;all=[];d.passes.forEach(function(p){all.push([p[1],p[0],0],[p[2],p[0],0],[p[2],-p[0],0],[p[1],-p[0],0]);});if(!all.length)all=[[0,0,0]];}
   else{SIM.pts=d.pts;SIM.blk=d.blk;SIM.blocks=d.blocks;all=d.pts.length?d.pts:[[0,0,0]];}
   var bb=_bounds(all);SIM.c=bb.c;var ext=Math.max(bb.mx[0]-bb.mn[0],bb.mx[1]-bb.mn[1],bb.mx[2]-bb.mn[2])||1;
   SIM.base=Math.min(SIM.W,SIM.H)/(ext*1.7);SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.pd=0;
@@ -417,11 +417,12 @@ function _proj(p){var x=p[0]-SIM.c[0],y=p[1]-SIM.c[1],z=p[2]-SIM.c[2];var s=SIM.
 function renderSim(){var ctx=SIM.ctx,W=SIM.W,H=SIM.H;if(!ctx)return;ctx.clearRect(0,0,W,H);
   var lbl=$('simblklbl');
   if(SIM.turning){var cb=Math.max(0,Math.round(SIM.curBlk));
-    var zmin=Math.min.apply(0,SIM.passes.map(function(p){return p[1];}));
-    ctx.strokeStyle='#3a4a58';ctx.setLineDash([5,5]);ctx.lineWidth=1;var a=_proj([0,0,0]),c2=_proj([zmin,0,0]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(c2[0],c2[1]);ctx.stroke();ctx.setLineDash([]);
+    var zmin=Math.min.apply(0,SIM.passes.map(function(p){return p[1];}));var zmax=Math.max.apply(0,SIM.passes.map(function(p){return p[2];}));
+    ctx.strokeStyle='#3a4a58';ctx.setLineDash([5,5]);ctx.lineWidth=1;var a=_proj([zmax,0,0]),c2=_proj([zmin,0,0]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(c2[0],c2[1]);ctx.stroke();ctx.setLineDash([]);
     for(var i=0;i<SIM.passes.length&&i<cb;i++){var p=SIM.passes[i],cur=(i===cb-1);ctx.strokeStyle=cur?'#ffb300':'#29b6f6';ctx.lineWidth=cur?2.4:1.3;
-      var A=_proj([0,p[0],0]),B=_proj([p[1],p[0],0]);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
-      var A2=_proj([0,-p[0],0]),B2=_proj([p[1],-p[0],0]);ctx.beginPath();ctx.moveTo(A2[0],A2[1]);ctx.lineTo(B2[0],B2[1]);ctx.stroke();}
+      var A=_proj([p[2],p[0],0]),B=_proj([p[1],p[0],0]);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+      var A2=_proj([p[2],-p[0],0]),B2=_proj([p[1],-p[0],0]);ctx.beginPath();ctx.moveTo(A2[0],A2[1]);ctx.lineTo(B2[0],B2[1]);ctx.stroke();
+      ctx.fillStyle=cur?'#ffb300':'#7fd4ff';ctx.beginPath();ctx.arc(A[0],A[1],2.3,0,2*Math.PI);ctx.fill();ctx.beginPath();ctx.arc(A2[0],A2[1],2.3,0,2*Math.PI);ctx.fill();}
     var pcc=SIM.passes[cb-1];if(pcc){var tpc=_proj([pcc[1],pcc[0],0]);ctx.fillStyle='#ff5252';ctx.beginPath();ctx.arc(tpc[0],tpc[1],5,0,2*Math.PI);ctx.fill();}
     var posT=$('simpos');if(posT)posT.textContent=pcc?('X '+(pcc[0]*2).toFixed(3)+' (dia)    Z '+pcc[1].toFixed(3)):'';
     if(lbl)lbl.textContent='Pass '+cb+' / '+SIM.passes.length;
