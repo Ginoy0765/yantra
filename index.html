@@ -123,17 +123,17 @@
       <div class="sec"><div class="st" onclick="tog(this)">DIMENSIONS <span>&#9662;</span></div><div class="sb">
         <div class="row2"><div><label>Major Dia D (mm)</label><input id="D" type="number" value="16" inputmode="decimal" oninput="minorEdited=false;recalc();recalcT()"></div><div><label>TPI</label><input id="tpi" type="number" inputmode="decimal" oninput="tpiChange()" placeholder="metric: blank"></div></div>
         <div class="row2"><div><label>Pitch P (mm)</label><input id="P" type="number" value="2" inputmode="decimal" oninput="recalc();recalcT();updateTeeth()"></div><div><label>Depth L (mm)</label><input id="L" type="number" value="20" inputmode="decimal"></div></div>
-        <label>Material</label><select id="mat" onchange="recalc()"></select>
+        <label>Material</label><select id="mat" onchange="matChange()"></select>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">TOOL DATA <span>&#9662;</span></div><div class="sb">
-        <div class="row2"><div><label>Tool dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="recalc()"></div><div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div></div>
-        <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth" oninput="updateTeeth()"></div></div>
+        <div class="row2"><div><label>Tool dia d (mm)</label><input id="d" type="number" value="10" inputmode="decimal" oninput="matChange()"></div><div><label>Flutes Z</label><input id="Z" type="number" value="3" inputmode="numeric"></div></div>
+        <div class="row2"><div><label>No. of teeth</label><input id="teeth" type="number" value="1" inputmode="numeric" oninput="matChange()"></div><div><label>Length of insert (mm)</label><input id="insl" type="number" inputmode="decimal" placeholder="blank = teeth" oninput="updateTeeth()"></div></div>
         <label>Path mode</label><select id="path" onchange="updateSubs()"><option>Helical</option><option>Stepped</option></select>
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">CUTTING PARAMETERS <span>&#9662;</span></div><div class="sb">
-        <div class="row2"><div><label>Stability %</label><input id="stab" type="number" value="100" inputmode="numeric" oninput="recalc()"></div><div><label>Vc (m/min)</label><input id="vc" type="number" value="60" inputmode="decimal" oninput="recalc()"></div></div>
+        <div class="row2"><div><label>Stability %</label><input id="stab" type="number" value="50" inputmode="numeric" oninput="matChange()"></div><div><label>Vc (m/min)</label><input id="vc" type="number" value="60" inputmode="decimal" oninput="recalc()"></div></div>
         <div class="row2"><div><label>RPM (auto)</label><input id="rpm" readonly></div><div><label>fz (mm/tooth)</label><input id="fz" inputmode="decimal" oninput="recalc(true)" placeholder="auto"></div></div>
         <label>Direction</label><select id="dir"><option>Top to Bottom</option><option>Bottom to Top</option></select>
         <div class="row2"><div><label>Passes</label><input id="passes" type="number" value="1" inputmode="numeric" oninput="renderPassPcts()"></div><div><label>Spring pass</label><select id="spring"><option>No</option><option>Yes</option></select></div></div>
@@ -142,7 +142,8 @@
       </div></div>
 
       <div class="sec mill-only"><div class="st" onclick="tog(this)">CUSTOMISATION <span>&#9656;</span></div><div class="sb" style="display:none">
-        <div class="row2"><div><label>Control</label><select id="ctrl"><option>Fanuc I &amp; J</option><option>Fanuc R</option><option>Siemens I &amp; J</option><option>Siemens R</option><option>Heidenhain</option><option>Haas</option></select></div><div><label>Start XYZ</label><select id="startxyz"><option>No</option><option>Yes</option></select></div></div>
+        <div class="row2"><div><label>Control</label><select id="ctrl"><option>Fanuc I &amp; J</option><option>Fanuc R</option><option>Siemens I &amp; J</option><option>Siemens R</option><option>Heidenhain</option><option>Haas</option></select></div><div><label>Start XYZ</label><select id="startxyz" onchange="updateSubs()"><option>No</option><option>Yes</option></select></div></div>
+        <div id="startWrap" style="display:none"><div class="row3"><div><label>Start X (mm)</label><input id="start_x" type="number" value="0" inputmode="decimal"></div><div><label>Start Y (mm)</label><input id="start_y" type="number" value="0" inputmode="decimal"></div><div><label>Start Z (mm)</label><input id="start_z" type="number" value="0" inputmode="decimal"></div></div></div>
         <div class="row2"><div><label>Tool offset</label><select id="toff"><option>No</option><option>Yes</option></select></div><div><label>Safe Z (mm)</label><input id="safez" type="number" value="20" inputmode="decimal"></div></div>
         <label>Message</label><input id="msg" placeholder="optional - shown in header">
         <label>User name</label><input id="username" placeholder="optional">
@@ -168,7 +169,7 @@
       </div></div>
 
       <div class="sec turn-only"><div class="st" onclick="tog(this)">THREAD TURNING <span>&#9662;</span></div><div class="sb">
-        <div class="row2"><div><label>Stability %</label><input id="t_stab" type="number" value="100" inputmode="numeric"></div><div><label>Vc (m/min)</label><input id="t_vc" type="number" value="120" inputmode="decimal" oninput="recalcT()"></div></div>
+        <div class="row2"><div><label>Stability %</label><input id="t_stab" type="number" value="50" inputmode="numeric" oninput="matChange()"></div><div><label>Vc (m/min)</label><input id="t_vc" type="number" value="120" inputmode="decimal" oninput="recalcT()"></div></div>
         <div class="row2"><div><label>RPM (auto)</label><input id="t_rpm" readonly></div><div><label>Max RPM</label><input id="t_maxrpm" type="number" value="5000" inputmode="numeric" oninput="recalcT()"></div></div>
         <div class="row2"><div><label>First DOC (mm)</label><input id="t_first" type="number" value="0.25" inputmode="decimal" oninput="recalcT()"></div><div><label>End DOC at 50% (mm)</label><input id="t_e50" type="number" value="0.12" inputmode="decimal" oninput="recalcT()"></div></div>
         <div class="row2"><div><label>End DOC at 80% (mm)</label><input id="t_e80" type="number" value="0.08" inputmode="decimal" oninput="recalcT()"></div><div><label>End DOC at 100% (mm)</label><input id="t_e100" type="number" value="0.05" inputmode="decimal" oninput="recalcT()"></div></div>
@@ -205,6 +206,15 @@
       <button class="btn btn2" id="savebtn" style="display:none" onclick="saveProg()">&#128190;  Save .txt to Downloads</button>
       <button class="btn btn2" id="simbtn" style="display:none" onclick="runSim()">&#9654;  Simulate toolpath</button>
       <canvas id="simcv" width="640" height="520" style="display:none;width:100%;background:#0a1118;border:1px solid #293a4d;border-radius:12px;margin-top:12px"></canvas>
+      <div id="simctrls" style="display:none;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(-1)">&#9664; Block</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(1)">Block &#9654;</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simAll()">All</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simZoom(1.2)">&#43;</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simZoom(0.83)">&#8722;</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simReset()">Reset view</button>
+        <div id="simblklbl" class="note" style="width:100%;text-align:center;margin-top:2px"></div>
+      </div>
     </section>
 
 
@@ -235,8 +245,8 @@ const MAXRPM=5000;
 let method='Mill';
 let minorEdited=false;
 let pyReady=false, py=null, pendingGen=false;
-const MILLPY="import thread_mill, mill_post\n_p=dict(JS)\n_prog=thread_mill.generate(**{k:_p[k] for k in _p if k!='control'})\nmill_post.format_for_control(_prog,_p['control'])";
-const MILLTIME="import thread_mill\n_p=dict(JS)\nthread_mill.cycle_time(**{k:_p[k] for k in _p if k!='control'})";
+const MILLPY="import webpost\nwebpost.post_mill(dict(JS))";
+const MILLTIME="import webpost\nwebpost.mill_time(dict(JS))";
 const TURNPY="import thread_turn\n_p=dict(JS)\n_r=thread_turn.generate(**_p)\n[_r[0],_r[1],_r[2],_r[3]]";
 async function initPy(){
   var st=document.getElementById('engineStatus');
@@ -247,10 +257,9 @@ async function initPy(){
     py=await loadPyodide();
     S('Loading engine \u2014 thread modules\u2026');
     async function rd(n){var r=await fetch(n+'?'+Date.now());if(!r.ok)throw new Error(n+' HTTP '+r.status);return await r.text();}
-    py.FS.writeFile('thread_mill.py', await rd('thread_mill.py'));
-    py.FS.writeFile('thread_turn.py', await rd('thread_turn.py'));
-    py.FS.writeFile('mill_post.py', await rd('mill_post.py'));
-    py.runPython('import thread_mill, thread_turn, mill_post');
+    var FILES=['thread_mill.py','thread_turn.py','mill_post.py','axis_transform.py','webpost.py'];
+    for(var fi=0;fi<FILES.length;fi++){py.FS.writeFile(FILES[fi], await rd(FILES[fi]));}
+    py.runPython('import thread_mill, thread_turn, mill_post, axis_transform, webpost');
     pyReady=true; clearTimeout(wd);
     S('\u2713 Engine ready \u2014 output matches desktop','var(--ok)');
     if(pendingGen){pendingGen=false;genProg();}
@@ -287,12 +296,8 @@ function profChange(){var p=$('profile').value;var list=PROFILES[p];
 }
 function sizeChange(){var list=PROFILES[$('profile').value];if(list){var row=list.find(function(x){return x[0]===$('size').value;});if(row){$('D').value=row[2];$('P').value=row[1];$('tpi').value='';}}minorEdited=false;recalc();recalcT();updateTeeth();}
 function tpiChange(){const t=parseFloat($('tpi').value);if(t>0)$('P').value=r(25.4/t,4);recalc();}
-function recalc(manualFz){
-  const d=num('d',10),Vc=num('vc',60),stab=num('stab',100);
-  $('rpm').value=rpmFor(Vc,d);
-  if($('minor')&&!minorEdited){var internal=$('side').value==='Internal';var D0=num('D',16),P0=num('P',2);$('minor').value=r(internal?D0-P0:D0-1.226*P0,3);}
-  if(!(manualFz&&parseFloat($('fz').value)>0)){const fz=fzGreen(matBy($('mat').value)[3],d)*(0.6+0.4*Math.max(0,Math.min(100,stab))/100);if(!manualFz)$('fz').value=r(fz,4);}
-}
+function matChange(){var m=matBy($('mat').value);if(!m||m[1]==null)return;var vc=m[1],fzb=m[3];var sm=Math.max(10,Math.min(100,num('stab',50)));var vfm=Math.max(0.33,sm/50);var fsm=sm>=50?(0.5+sm/100):Math.max(0.5,sm/50);if($('vc'))$('vc').value=Math.round(vc*vfm);var stt=Math.max(10,Math.min(100,num('t_stab',50)));var vft=Math.max(0.33,stt/50);if($('t_vc'))$('t_vc').value=Math.round(Math.round(vc*1.4)*vft);var d=num('d',0),nt=Math.max(1,Math.round(num('teeth',1)));var nf=Math.max(0.1,1-0.08*Math.min(9,nt-1)-0.02*Math.max(0,nt-10));if($('fz')){if(d>0){var vg=fzb*Math.min(d,40)/10;$('fz').value=(vg*nf*fsm).toFixed(3);}else $('fz').value='';}recalc();recalcT();}
+function recalc(){var d=num('d',10),Vc=num('vc',60);$('rpm').value=rpmFor(Vc,d);if($('minor')&&!minorEdited){var internal=$('side').value==='Internal';var D0=num('D',16),P0=num('P',2);$('minor').value=r(internal?D0-P0:D0-1.226*P0,3);}}
 function buildTurnPasses(){
   var internal=$('side').value==='Internal';var D=num('D',16),P=num('P',2);
   var mf=$('t_minor');var minor=(mf&&parseFloat(mf.value)>0)?parseFloat(mf.value):(internal?D-P:D-1.226*P);var td=(D-minor)/2;if(td<=0)return [];
@@ -312,13 +317,14 @@ function recalcT(){var Vc=num('t_vc',120),D=num('D',16),mx=num('t_maxrpm',5000);
 
 function updateTeeth(){var il=$('insl'),tt=$('teeth');if(!il||!tt)return;var t=parseFloat(il.value),P=num('P',0);
   if(il.value.trim()&&t>0&&P>0){tt.value=Math.max(1,Math.floor(t/P));tt.readOnly=true;tt.style.color='var(--acc)';tt.style.background='#101a25';}
-  else{tt.readOnly=false;tt.style.color='';tt.style.background='';}}
+  else{tt.readOnly=false;tt.style.color='';tt.style.background='';}matChange();}
 function updateSubs(){
   var tt=$('thtaper');if(tt&&$('mTaper'))$('mTaper').style.display=(tt.value==='Manual')?'block':'none';
   var pm=$('path');if(pm){var st=pm.value==='Stepped';if($('mStepWrap'))$('mStepWrap').style.display=st?'block':'none';if($('mEntryWrap'))$('mEntryWrap').style.display=st?'none':'block';}
   var t2=$('t_thtaper');if(t2&&$('tTaper'))$('tTaper').style.display=(t2.value==='Manual')?'block':'none';
   var inf=$('t_infeed');if(inf&&$('tFlank'))$('tFlank').style.display=(inf.value==='Radial')?'none':'block';
   var bp=$('brepass');if(bp&&$('repWrap'))$('repWrap').style.display=(bp.value==='Yes')?'block':'none';
+  var szx=$('startxyz');if(szx&&$('startWrap'))$('startWrap').style.display=(szx.value==='Yes')?'block':'none';
 }
 function ordn(n){var s=['','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||'th');}
 function renderPassPcts(){var c=$('passpcts');if(!c)return;var n=Math.max(1,Math.round(num('passes',1)));var eq=$('eqvol')&&$('eqvol').value==='Yes';
@@ -340,62 +346,93 @@ function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&t
 function parseSim(){
   var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
   if(turning){var passes=[];L.forEach(function(l){if(l.indexOf('G92')>=0){var X=_sv('X',l),Z=_sv('Z',l);if(X!=null&&Z!=null)passes.push([X/2,Z]);}});return {turning:true,passes:passes};}
-  var pts=[],x=0,y=0,z=0,rel=false;
+  var pts=[],blk=[],x=0,y=0,z=0,rel=false,b=0;
   L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;
     if(/\bG91\b/.test(u))rel=true;if(/\bG90\b/.test(u))rel=false;
     var X=_sv('X',u),Y=_sv('Y',u),Z=_sv('Z',u),I=_sv('I',u),J=_sv('J',u);
     var arc=u.indexOf('G02')>=0||u.indexOf('G03')>=0;
-    if(arc&&I!=null&&J!=null){var sx=x,sy=y,sz=z;
+    if(arc&&I!=null&&J!=null){b++;var sx=x,sy=y,sz=z;
       var ex=rel?(X!=null?x+X:x):(X!=null?X:x),ey=rel?(Y!=null?y+Y:y):(Y!=null?Y:y),ez=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);
       var cx=sx+I,cy=sy+J,r=Math.hypot(I,J),a0=Math.atan2(sy-cy,sx-cx),a1=Math.atan2(ey-cy,ex-cx),ccw=u.indexOf('G03')>=0;
       var sw=(ccw?(a1-a0):(a0-a1));sw=((sw%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
       if(Math.abs(ex-sx)<1e-6&&Math.abs(ey-sy)<1e-6)sw=2*Math.PI;if(sw<1e-6)sw=2*Math.PI;
       var n=Math.max(8,Math.round(sw/(Math.PI/16)));
-      for(var k=1;k<=n;k++){var t=k/n,ang=ccw?a0+sw*t:a0-sw*t;pts.push([cx+r*Math.cos(ang),cy+r*Math.sin(ang),sz+(ez-sz)*t]);}
+      pts.push([sx,sy,sz]);blk.push(b);
+      for(var k=1;k<=n;k++){var t=k/n,ang=ccw?a0+sw*t:a0-sw*t;pts.push([cx+r*Math.cos(ang),cy+r*Math.sin(ang),sz+(ez-sz)*t]);blk.push(b);}
       x=ex;y=ey;z=ez;}
-    else if(X!=null||Y!=null||Z!=null){x=rel?(X!=null?x+X:x):(X!=null?X:x);y=rel?(Y!=null?y+Y:y):(Y!=null?Y:y);z=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);pts.push([x,y,z]);}
+    else if(X!=null||Y!=null||Z!=null){b++;x=rel?(X!=null?x+X:x):(X!=null?X:x);y=rel?(Y!=null?y+Y:y):(Y!=null?Y:y);z=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);pts.push([x,y,z]);blk.push(b);}
   });
-  return {turning:false,pts:pts};
+  return {turning:false,pts:pts,blk:blk,blocks:b};
 }
-var simRAF=null;
-function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.display='block';var ctx=cv.getContext('2d');var W=cv.width,H=cv.height;if(simRAF){cancelAnimationFrame(simRAF);clearTimeout(simRAF);}var d=parseSim();if(d.turning)animTurn(ctx,W,H,d.passes);else animMill(ctx,W,H,d.pts);}
-function animMill(ctx,W,H,pts){if(pts.length<2){ctx.clearRect(0,0,W,H);return;}
-  var c=0.866,sn=0.5;var P=pts.map(function(p){return [(p[0]-p[1])*c,(p[0]+p[1])*sn-p[2]*1.4];});
-  var xs=P.map(function(p){return p[0];}),ys=P.map(function(p){return p[1];});
-  var mnx=Math.min.apply(0,xs),mxx=Math.max.apply(0,xs),mny=Math.min.apply(0,ys),mxy=Math.max.apply(0,ys);
-  var m=30,sc=Math.min((W-2*m)/((mxx-mnx)||1),(H-2*m)/((mxy-mny)||1));
-  function TX(p){return m+(p[0]-mnx)*sc;}function TY(p){return H-m-(p[1]-mny)*sc;}
-  var i=1,inc=Math.max(1,Math.round(P.length/200));
-  function step(){ctx.clearRect(0,0,W,H);ctx.lineWidth=2;ctx.strokeStyle='#29b6f6';ctx.beginPath();ctx.moveTo(TX(P[0]),TY(P[0]));
-    for(var k=1;k<=i&&k<P.length;k++)ctx.lineTo(TX(P[k]),TY(P[k]));ctx.stroke();
-    var dd=P[Math.min(i,P.length-1)];ctx.fillStyle='#ffb300';ctx.beginPath();ctx.arc(TX(dd),TY(dd),5,0,2*Math.PI);ctx.fill();
-    i+=inc;if(i<P.length)simRAF=requestAnimationFrame(step);}
-  step();}
-function animTurn(ctx,W,H,passes){if(!passes.length){ctx.clearRect(0,0,W,H);return;}
-  var rs=passes.map(function(p){return p[0];});var rmax=Math.max.apply(0,rs);
-  var Lz=Math.max.apply(0,passes.map(function(p){return Math.abs(p[1]);}))||20;
-  var m=28,sx=(W-2*m)/Lz,sy=(H/2-m)/(rmax||1);
-  function ZX(z){return W-m-Math.abs(z)*sx;}function RY(r){return H/2-r*sy;}function RYb(r){return H/2+r*sy;}
-  ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='#3a4a58';ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(m,H/2);ctx.lineTo(W-m,H/2);ctx.stroke();ctx.setLineDash([]);
-  ctx.strokeStyle='#465666';ctx.lineWidth=1;ctx.strokeRect(ZX(-Lz),RY(rmax),Lz*sx,2*rmax*sy);
-  var i=0;
-  function step(){var p=passes[i];ctx.strokeStyle='#29b6f6';ctx.lineWidth=1.3;
-    ctx.beginPath();ctx.moveTo(ZX(0),RY(p[0]));ctx.lineTo(ZX(-Lz),RY(p[0]));ctx.stroke();
-    ctx.beginPath();ctx.moveTo(ZX(0),RYb(p[0]));ctx.lineTo(ZX(-Lz),RYb(p[0]));ctx.stroke();
-    i++;if(i<passes.length)simRAF=setTimeout(function(){requestAnimationFrame(step);},70);}
-  step();}
+var SIM={bound:false};
+function _bounds(arr){var mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];arr.forEach(function(p){for(var i=0;i<3;i++){if(p[i]<mn[i])mn[i]=p[i];if(p[i]>mx[i])mx[i]=p[i];}});return {mn:mn,mx:mx,c:[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2]};}
+function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.display='block';if($('simctrls'))$('simctrls').style.display='flex';
+  SIM.cv=cv;SIM.ctx=cv.getContext('2d');SIM.W=cv.width;SIM.H=cv.height;
+  var d=parseSim();SIM.turning=d.turning;var all;
+  if(d.turning){SIM.passes=d.passes;all=[];d.passes.forEach(function(p){all.push([p[1],p[0],0],[0,p[0],0],[0,-p[0],0]);});if(!all.length)all=[[0,0,0]];}
+  else{SIM.pts=d.pts;SIM.blk=d.blk;SIM.blocks=d.blocks;all=d.pts.length?d.pts:[[0,0,0]];}
+  var bb=_bounds(all);SIM.c=bb.c;var ext=Math.max(bb.mx[0]-bb.mn[0],bb.mx[1]-bb.mn[1],bb.mx[2]-bb.mn[2])||1;
+  SIM.base=Math.min(SIM.W,SIM.H)/(ext*1.7);SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.pd=0;
+  SIM.azim=d.turning?0:0.6;SIM.tilt=d.turning?0:0.95;
+  SIM.curBlk=d.turning?d.passes.length:d.blocks;
+  bindSim(cv);renderSim();
+}
+function _proj(p){var x=p[0]-SIM.c[0],y=p[1]-SIM.c[1],z=p[2]-SIM.c[2];var s=SIM.base*SIM.zoom;
+  if(SIM.turning){return [SIM.W/2+SIM.panX+x*s, SIM.H/2+SIM.panY-y*s];}
+  var ca=Math.cos(SIM.azim),sa=Math.sin(SIM.azim);var xa=x*ca+y*sa,ya=-x*sa+y*ca;
+  var st=Math.sin(SIM.tilt),ct=Math.cos(SIM.tilt);
+  return [SIM.W/2+SIM.panX+xa*s, SIM.H/2+SIM.panY+(ya*st - z*ct)*s];}
+function renderSim(){var ctx=SIM.ctx,W=SIM.W,H=SIM.H;if(!ctx)return;ctx.clearRect(0,0,W,H);
+  var lbl=$('simblklbl');
+  if(SIM.turning){
+    var zmin=Math.min.apply(0,SIM.passes.map(function(p){return p[1];}));
+    ctx.strokeStyle='#3a4a58';ctx.setLineDash([5,5]);ctx.lineWidth=1;var a=_proj([0,0,0]),c2=_proj([zmin,0,0]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(c2[0],c2[1]);ctx.stroke();ctx.setLineDash([]);
+    for(var i=0;i<SIM.passes.length&&i<SIM.curBlk;i++){var p=SIM.passes[i],cur=(i===SIM.curBlk-1);ctx.strokeStyle=cur?'#ffb300':'#29b6f6';ctx.lineWidth=cur?2.4:1.3;
+      var A=_proj([0,p[0],0]),B=_proj([p[1],p[0],0]);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+      var A2=_proj([0,-p[0],0]),B2=_proj([p[1],-p[0],0]);ctx.beginPath();ctx.moveTo(A2[0],A2[1]);ctx.lineTo(B2[0],B2[1]);ctx.stroke();}
+    if(lbl)lbl.textContent='Pass '+SIM.curBlk+' / '+SIM.passes.length;
+  } else {
+    ctx.lineWidth=2;ctx.strokeStyle='#29b6f6';ctx.beginPath();var started=false;
+    for(var j=0;j<SIM.pts.length;j++){if(SIM.blk[j]>SIM.curBlk)break;var pp=_proj(SIM.pts[j]);if(!started){ctx.moveTo(pp[0],pp[1]);started=true;}else ctx.lineTo(pp[0],pp[1]);}
+    ctx.stroke();
+    ctx.lineWidth=3.5;ctx.strokeStyle='#ffb300';ctx.beginPath();var s2=false;
+    for(var k=0;k<SIM.pts.length;k++){if(SIM.blk[k]<SIM.curBlk)continue;if(SIM.blk[k]>SIM.curBlk)break;var p2=_proj(SIM.pts[k]);if(!s2){ctx.moveTo(p2[0],p2[1]);s2=true;}else ctx.lineTo(p2[0],p2[1]);}
+    ctx.stroke();
+    if(lbl)lbl.textContent='Block '+SIM.curBlk+' / '+SIM.blocks+'  ·  drag = rotate, pinch = zoom';
+  }
+}
+function simBlock(d){var mx=SIM.turning?SIM.passes.length:SIM.blocks;SIM.curBlk=Math.max(1,Math.min(mx,SIM.curBlk+d));renderSim();}
+function simAll(){SIM.curBlk=SIM.turning?SIM.passes.length:SIM.blocks;renderSim();}
+function simZoom(f){SIM.zoom*=f;renderSim();}
+function simReset(){SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.azim=SIM.turning?0:0.6;SIM.tilt=SIM.turning?0:0.95;renderSim();}
+function bindSim(cv){if(SIM.bound)return;SIM.bound=true;var T={};cv.style.touchAction='none';
+  cv.addEventListener('pointerdown',function(e){try{cv.setPointerCapture(e.pointerId);}catch(_){}T[e.pointerId]={x:e.clientX,y:e.clientY};});
+  cv.addEventListener('pointermove',function(e){var pv=T[e.pointerId];if(!pv)return;T[e.pointerId]={x:e.clientX,y:e.clientY};var ids=Object.keys(T);
+    if(ids.length>=2){var a=T[ids[0]],b=T[ids[1]];var nd=Math.hypot(a.x-b.x,a.y-b.y);if(SIM.pd)SIM.zoom*=nd/SIM.pd;SIM.pd=nd;SIM.panX+=(e.clientX-pv.x)*0.5;SIM.panY+=(e.clientY-pv.y)*0.5;renderSim();}
+    else{var dx=e.clientX-pv.x,dy=e.clientY-pv.y;if(SIM.turning){SIM.panX+=dx;SIM.panY+=dy;}else{SIM.azim+=dx*0.01;SIM.tilt=Math.max(0.05,Math.min(1.55,SIM.tilt+dy*0.01));}renderSim();}});
+  function end(e){delete T[e.pointerId];if(Object.keys(T).length<2)SIM.pd=0;}
+  cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);cv.addEventListener('pointerleave',end);
+  cv.addEventListener('wheel',function(e){e.preventDefault();SIM.zoom*=(e.deltaY<0?1.1:0.9);renderSim();},{passive:false});
+}
 function genProg(){ if(!pyReady){pendingGen=true;$('p_res').innerHTML='<p class="warn">Engine loading (first time only, ~10\u201330s on phone)\u2026 it will generate automatically once ready.</p>';return;} pendingGen=false; if(method==='Turn') return genTurn(); return genMill(); }
 
+function computeVcFz(stab){var m=matBy($('mat').value);var vc=m[1],fzb=m[3];var s=Math.max(0,Math.min(100,stab));var vcF=Math.max(0.33,s/50);var fzF=s>=50?(0.5+s/100):Math.max(0.5,s/50);var d=num('d',0),nt=Math.max(1,Math.round(num('teeth',1)));var nf=Math.max(0.1,1-0.08*Math.min(9,nt-1)-0.02*Math.max(0,nt-10));return {vc:Math.round(vc*vcF),fz:d>0?(fzb*Math.min(d,40)/10*nf*fzF):0};}
+function applyHeader(prog,msg,uname){var L=prog.split('\n');var ins=[];if(msg)ins.push('('+msg+')');if(uname)ins.push('(BY '+uname+')');if(!ins.length)return prog;for(var i=0;i<L.length;i++){if(/^\s*O\d/.test(L[i])||/^\s*%1001/.test(L[i])){L.splice.apply(L,[i+1,0].concat(ins));return L.join('\n');}}L.splice.apply(L,[1,0].concat(ins));return L.join('\n');}
 function genMill(){
   if(!pyReady){notReady();return;}
-  recalc(true);
+  matChange();
   var internal=$('side').value==='Internal';
   var D0=num('D',16),P=num('P',2),L=num('L',20),d=num('d',10);
   var D=D0+num('majadj',0);
   var mfld=$('minor');var minor=(mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):null;
   var teeth=Math.max(1,Math.round(num('teeth',1)));
-  var Vc=num('vc',60),fz=parseFloat($('fz').value)||fzGreen(matBy($('mat').value)[3],d);
+  var req=($('req')?$('req').value:'Standard');
+  var stabEff=(req==='Productivity')?100:((req==='Weak setup')?0:num('stab',50));
+  var _vf=computeVcFz(stabEff);var Vc=_vf.vc,fz=_vf.fz;
+  if(req==='Tool life')Vc=Math.round(Vc*0.8);
+  if($('vc'))$('vc').value=Vc;if($('fz')&&fz>0)$('fz').value=fz.toFixed(3);
+  var sxyz=$('startxyz').value==='Yes';var sX=sxyz?num('start_x',0):0,sY=sxyz?num('start_y',0):0,sZ=sxyz?num('start_z',0):0;
+  var tax=$('toolaxis')?$('toolaxis').value:'Z-';tax=tax.indexOf('Z-')===0?'Z-':tax;
   var toff=taperOffset(internal,L);
   var brepass=$('brepass').value==='Yes';
   var toolOD=($('toff').value==='Yes')||($('toolpath')&&$('toolpath').value.indexOf('OD')>=0);
@@ -405,12 +442,12 @@ function genMill(){
     bottom_offset:toff,spindle:$('mcode').value,dia_end_offset:toff,minor:minor,entry_style:$('entry').value,
     num_starts:Math.max(1,Math.round(num('starts',1))),entry_feed_reduction:num('engred',0),max_rpm:num('maxrpm',5000),
     stepped_style:($('sstyle').value.indexOf('Carmex')>=0?'Carmex':'Modified'),is_external:!internal,
-    strategy:$('req').value,entry_angle:num('entryang',0),tool_offset_mode:(toolOD?'od':'centre'),
-    rctf_strength:num('rctf',0)/100,control:$('ctrl').value};
+    strategy:'Standard',finishing:(req==='Finishing'),entry_angle:num('entryang',0),tool_offset_mode:(toolOD?'od':'centre'),
+    rctf_strength:num('rctf',0)/100,control:$('ctrl').value,safez:num('safez',20),sx:sX,sy:sY,sz:sZ,toolaxis:tax};
   try{
     py.globals.set('JS',py.toPy(P0));
     var prog=py.runPython(MILLPY); var t=py.runPython(MILLTIME);
-    prog=applyFR(prog);
+    prog=applyHeader(prog,($('msg')?$('msg').value.trim():''),($('username')?$('username').value.trim():''));prog=applyFR(prog);
     var sec=Math.round(t),mm=Math.floor(sec/60),ss=sec%60;
     $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &middot; matches desktop engine</div>';
     output(prog,'');
@@ -432,7 +469,7 @@ function genTurn(){
   try{
     py.globals.set('JS',py.toPy(P0));
     var res=py.runPython(TURNPY).toJs();
-    var prog=applyFR(res[0]);
+    var prog=applyHeader(res[0],($('t_msg')?$('t_msg').value.trim():''),($('t_username')?$('t_username').value.trim():''));prog=applyFR(prog);
     var sec=Math.round(res[1]),mm=Math.floor(sec/60),ss=sec%60;
     $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &middot; RPM '+res[2]+' (G97) &middot; '+res[3]+' cut passes</div>';
     output(prog,'');
@@ -529,7 +566,7 @@ function init(){
   opt($('mat'),MATS.map(x=>x[0]),'Stainless 316 austenitic');
   opt($('profile'),Object.keys(PROFILES).concat(['Custom']),'ISO Metric');profChange();$('size').value='M16';sizeChange();
   opt($('d_series'),['Coarse','Fine','All']);fillSizes();$('d_size').value='M16';calcData();
-  setMethod('Mill');
+  setMethod('Mill');matChange();
 }
 init();
 initPy();
