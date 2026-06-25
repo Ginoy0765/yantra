@@ -212,13 +212,19 @@
       <button class="btn btn2" id="simbtn" style="display:none" onclick="runSim()">&#9654;  Simulate toolpath</button>
       <canvas id="simcv" width="640" height="520" style="display:none;width:100%;background:#0a1118;border:1px solid #293a4d;border-radius:12px;margin-top:12px"></canvas>
       <div id="simctrls" style="display:none;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(-1)">&#9664; Block</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(1)">Block &#9654;</button>
+        <button class="btn btn2" id="simplay" style="width:auto;padding:8px 12px" onclick="simPlay()">&#9654; Play</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(-1)">&#9664;</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simBlock(1)">&#9654;</button>
         <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simAll()">All</button>
+        <button class="btn btn2" id="vtop" style="width:auto;padding:8px 12px" onclick="simView('top')">Top</button>
+        <button class="btn btn2" id="vfront" style="width:auto;padding:8px 12px" onclick="simView('front')">Front</button>
+        <button class="btn btn2" id="vleft" style="width:auto;padding:8px 12px" onclick="simView('left')">Left</button>
+        <button class="btn btn2" id="viso" style="width:auto;padding:8px 12px" onclick="simView('iso')">3D</button>
         <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simZoom(1.2)">&#43;</button>
         <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simZoom(0.83)">&#8722;</button>
-        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simReset()">Reset view</button>
+        <button class="btn btn2" style="width:auto;padding:8px 12px" onclick="simReset()">Reset</button>
         <div id="simblklbl" class="note" style="width:100%;text-align:center;margin-top:2px"></div>
+        <div id="simpos" style="width:100%;text-align:center;font-family:monospace;font-size:13px;color:#ffb300;margin-top:2px"></div>
       </div>
     </section>
 
@@ -399,8 +405,8 @@ function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.d
   var bb=_bounds(all);SIM.c=bb.c;var ext=Math.max(bb.mx[0]-bb.mn[0],bb.mx[1]-bb.mn[1],bb.mx[2]-bb.mn[2])||1;
   SIM.base=Math.min(SIM.W,SIM.H)/(ext*1.7);SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.pd=0;
   SIM.azim=d.turning?0:0.6;SIM.tilt=d.turning?0:0.95;
-  SIM.curBlk=d.turning?d.passes.length:d.blocks;
-  bindSim(cv);renderSim();
+  SIM.curBlk=d.turning?d.passes.length:d.blocks;SIM.playing=false;
+  bindSim(cv);updatePlayBtn();renderSim();
 }
 function _proj(p){var x=p[0]-SIM.c[0],y=p[1]-SIM.c[1],z=p[2]-SIM.c[2];var s=SIM.base*SIM.zoom;
   if(SIM.turning){return [SIM.W/2+SIM.panX+x*s, SIM.H/2+SIM.panY-y*s];}
@@ -415,6 +421,8 @@ function renderSim(){var ctx=SIM.ctx,W=SIM.W,H=SIM.H;if(!ctx)return;ctx.clearRec
     for(var i=0;i<SIM.passes.length&&i<SIM.curBlk;i++){var p=SIM.passes[i],cur=(i===SIM.curBlk-1);ctx.strokeStyle=cur?'#ffb300':'#29b6f6';ctx.lineWidth=cur?2.4:1.3;
       var A=_proj([0,p[0],0]),B=_proj([p[1],p[0],0]);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
       var A2=_proj([0,-p[0],0]),B2=_proj([p[1],-p[0],0]);ctx.beginPath();ctx.moveTo(A2[0],A2[1]);ctx.lineTo(B2[0],B2[1]);ctx.stroke();}
+    var pcc=SIM.passes[SIM.curBlk-1];if(pcc){var tpc=_proj([pcc[1],pcc[0],0]);ctx.fillStyle='#ff5252';ctx.beginPath();ctx.arc(tpc[0],tpc[1],5,0,2*Math.PI);ctx.fill();}
+    var posT=$('simpos');if(posT)posT.textContent=pcc?('X '+(pcc[0]*2).toFixed(3)+' (dia)    Z '+pcc[1].toFixed(3)):'';
     if(lbl)lbl.textContent='Pass '+SIM.curBlk+' / '+SIM.passes.length;
   } else {
     ctx.lineWidth=2;ctx.strokeStyle='#29b6f6';ctx.beginPath();var started=false;
@@ -423,13 +431,29 @@ function renderSim(){var ctx=SIM.ctx,W=SIM.W,H=SIM.H;if(!ctx)return;ctx.clearRec
     ctx.lineWidth=3.5;ctx.strokeStyle='#ffb300';ctx.beginPath();var s2=false;
     for(var k=0;k<SIM.pts.length;k++){if(SIM.blk[k]<SIM.curBlk)continue;if(SIM.blk[k]>SIM.curBlk)break;var p2=_proj(SIM.pts[k]);if(!s2){ctx.moveTo(p2[0],p2[1]);s2=true;}else ctx.lineTo(p2[0],p2[1]);}
     ctx.stroke();
-    if(lbl)lbl.textContent='Block '+SIM.curBlk+' / '+SIM.blocks+'  ·  drag = rotate, pinch = zoom';
+    var tip=null;for(var mi=0;mi<SIM.pts.length;mi++){if(SIM.blk[mi]>SIM.curBlk)break;tip=SIM.pts[mi];}
+    if(tip){var tp=_proj(tip);ctx.fillStyle='#ff5252';ctx.beginPath();ctx.arc(tp[0],tp[1],5,0,2*Math.PI);ctx.fill();}
+    var pos=$('simpos');if(pos)pos.textContent=tip?('X '+tip[0].toFixed(3)+'    Y '+tip[1].toFixed(3)+'    Z '+tip[2].toFixed(3)):'';
+    if(lbl)lbl.textContent='Block '+SIM.curBlk+' / '+SIM.blocks+'  ·  drag rotate · Top/Front/Left/3D';
   }
 }
-function simBlock(d){var mx=SIM.turning?SIM.passes.length:SIM.blocks;SIM.curBlk=Math.max(1,Math.min(mx,SIM.curBlk+d));renderSim();}
-function simAll(){SIM.curBlk=SIM.turning?SIM.passes.length:SIM.blocks;renderSim();}
+function simStop(){if(SIM.anim)cancelAnimationFrame(SIM.anim);SIM.playing=false;updatePlayBtn();}
+function updatePlayBtn(){var b=$('simplay');if(b)b.innerHTML=SIM.playing?'\u23F8 Pause':'\u25B6 Play';}
+function simPlay(){var mx=SIM.turning?SIM.passes.length:SIM.blocks;
+  if(SIM.playing){simStop();return;}
+  if(SIM.curBlk>=mx)SIM.curBlk=1;
+  SIM.playing=true;updatePlayBtn();
+  var inc=Math.max(1,Math.round(mx/240));
+  function frame(){if(!SIM.playing)return;var m=SIM.turning?SIM.passes.length:SIM.blocks;
+    SIM.curBlk=Math.min(m,SIM.curBlk+inc);renderSim();
+    if(SIM.curBlk>=m){SIM.playing=false;updatePlayBtn();return;}
+    SIM.anim=requestAnimationFrame(frame);}
+  SIM.anim=requestAnimationFrame(frame);}
+function simView(v){if(!SIM.turning){if(v==='top'){SIM.azim=0;SIM.tilt=1.5708;}else if(v==='front'){SIM.azim=0;SIM.tilt=0.0;}else if(v==='left'){SIM.azim=1.5708;SIM.tilt=0.0;}else{SIM.azim=0.6;SIM.tilt=0.95;}}renderSim();}
+function simBlock(d){simStop();var mx=SIM.turning?SIM.passes.length:SIM.blocks;SIM.curBlk=Math.max(1,Math.min(mx,SIM.curBlk+d));renderSim();}
+function simAll(){simStop();SIM.curBlk=SIM.turning?SIM.passes.length:SIM.blocks;renderSim();}
 function simZoom(f){SIM.zoom*=f;renderSim();}
-function simReset(){SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.azim=SIM.turning?0:0.6;SIM.tilt=SIM.turning?0:0.95;renderSim();}
+function simReset(){simStop();SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.azim=SIM.turning?0:0.6;SIM.tilt=SIM.turning?0:0.95;renderSim();}
 function bindSim(cv){if(SIM.bound)return;SIM.bound=true;var T={};cv.style.touchAction='none';
   cv.addEventListener('pointerdown',function(e){try{cv.setPointerCapture(e.pointerId);}catch(_){}T[e.pointerId]={x:e.clientX,y:e.clientY};});
   cv.addEventListener('pointermove',function(e){var pv=T[e.pointerId];if(!pv)return;T[e.pointerId]={x:e.clientX,y:e.clientY};var ids=Object.keys(T);
