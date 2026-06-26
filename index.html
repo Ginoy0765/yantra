@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.7</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.8</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -666,6 +666,7 @@ function init(){
   opt($('profile'),Object.keys(PROFILES).concat(['Custom']),'ISO Metric');profChange();$('size').value='M16';sizeChange();
   opt($('d_series'),['Coarse','Fine','All']);fillSizes();$('d_size').value='M16';calcData();
   setMethod('Mill');$('eqvol').value='Yes';setDefaultPasses();matChange();applyLockUI();
+  var _d=$('d');if(_d){var _dc=function(){_d.style.caretColor=(_d.value.trim()==='')?'#000':'';};_d.addEventListener('focus',_dc);_d.addEventListener('input',_dc);_d.addEventListener('blur',_dc);_dc();}
 }
 init();
 initPy();
