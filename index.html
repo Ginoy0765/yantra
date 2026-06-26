@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.4</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.5</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -333,10 +333,12 @@ function sizeChange(){clearD();var list=PROFILES[$('profile').value];if(list){va
 function tpiChange(){const t=parseFloat($('tpi').value);if(t>0)$('P').value=r(25.4/t,4);recalc();}
 function updateMR(){var m=matBy($('mat').value);var el=$('mrinfo');if(!el)return;if(!m||m[4]==null){el.innerHTML='<span class=\'isochip\' style=\'background:#9E9E9E\'>MANUAL</span> manual entry';return;}var c=ISO_COL[m[2]]||'#9E9E9E';el.innerHTML='<span class=\'isochip\' style=\'background:'+c+'\'>ISO '+m[2]+'</span> Machinability '+m[4]+'%';}
 function matChange(){updateMR();var m=matBy($('mat').value);if(!m||m[1]==null)return;var vc=m[1],fzb=m[3];var sm=Math.max(10,Math.min(100,num('stab',50)));var vfm=Math.max(0.33,sm/50);var fsm=sm>=50?(0.5+sm/100):Math.max(0.5,sm/50);if($('vc'))$('vc').value=Math.round(vc*vfm);var stt=Math.max(10,Math.min(100,num('t_stab',50)));var vft=Math.max(0.33,stt/50);if($('t_vc'))$('t_vc').value=Math.round(Math.round(vc*1.4)*vft);var d=num('d',0),nt=Math.max(1,Math.round(num('teeth',1)));var nf=Math.max(0.1,1-0.08*Math.min(9,nt-1)-0.02*Math.max(0,nt-10));if($('fz')){if(d>0){var vg=fzb*Math.min(d,40)/10;$('fz').value=(vg*nf*fsm).toFixed(3);}else $('fz').value='';}recalc();recalcT();}
-function recalc(){var dv=($('d')?$('d').value.trim():'');var Vc=num('vc',60);if($('rpm'))$('rpm').value=dv?rpmFor(Vc,parseFloat(dv)):'';if($('minor')&&!minorEdited){var internal=$('side').value==='Internal';var D0=num('D',16),P0=num('P',2);$('minor').value=r(internal?D0-P0:D0-1.226*P0,3);}}
+function isPipe(){return $('profile')&&$('profile').value==='NPT (Taper)';}
+function stdMinor(D,P,internal){return isPipe()?(D-1.6*P):(internal?(D-P):(D-1.226*P));}
+function recalc(){var dv=($('d')?$('d').value.trim():'');var Vc=num('vc',60);if($('rpm'))$('rpm').value=dv?rpmFor(Vc,parseFloat(dv)):'';if($('minor')&&!minorEdited){var internal=$('side').value==='Internal';var D0=num('D',16),P0=num('P',2);$('minor').value=r(stdMinor(D0,P0,internal),3);}}
 function buildTurnPasses(){
   var internal=$('side').value==='Internal';var D=num('D',16),P=num('P',2);
-  var mf=$('t_minor');var minor=(mf&&parseFloat(mf.value)>0)?parseFloat(mf.value):(internal?D-P:D-1.226*P);var td=(D-minor)/2;if(td<=0)return [];
+  var mf=$('t_minor');var minor=(mf&&parseFloat(mf.value)>0)?parseFloat(mf.value):stdMinor(D,P,internal);var td=(D-minor)/2;if(td<=0)return [];
   var first=Math.max(0.01,num('t_first',0.2));var trans=$('t_trans')?$('t_trans').value:'Linear';
   var zones=[[0.5,Math.max(0.01,num('t_e50',0.12))],[0.8,Math.max(0.01,num('t_e80',0.08))],[1.0,Math.max(0.01,num('t_e100',0.05))]];
   var out=[],prevPct=0,prevDoc=first;
@@ -511,7 +513,7 @@ function genMill(){
   var internal=$('side').value==='Internal';
   var D0=num('D',16),P=num('P',2),L=num('L',20),d=num('d',10);
   var D=D0+(LOCK_ADV?0:num('majadj',0));
-  var mfld=$('minor');var minor=(!LOCK_ADV&&mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):null;
+  var mfld=$('minor');var minor=(mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):stdMinor(D0,P,internal);
   var teeth=Math.max(1,Math.round(num('teeth',1)));
   var req=LOCK_ADV?'Standard':($('req')?$('req').value:'Standard');
   var stabEff=(req==='Productivity')?100:((req==='Weak setup')?0:num('stab',50));
@@ -545,7 +547,7 @@ function genTurn(){
   var internal=$('side').value==='Internal';
   var D=num('D',16),P=num('P',2),L=num('L',20);
   var toff=LOCK_ADV?0:taperOffset(internal,L);
-  var mfld=$('t_minor');var minor=(!LOCK_ADV&&mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):null;
+  var mfld=$('t_minor');var minor=(mfld&&parseFloat(mfld.value)>0)?parseFloat(mfld.value):stdMinor(D,P,internal);
   var P0={D:D,L:L,P:P,minor_dia:minor,side:internal?'Internal':'External',angle_deg:60,hand:$('hand').value,
     safe_x:num('t_safex',1),safe_z:num('t_safez',5),Vc:num('t_vc',120),first_doc:num('t_first',0.25),
     end_doc_50:num('t_e50',0.12),end_doc_80:num('t_e80',0.08),end_doc_100:num('t_e100',0.05),
