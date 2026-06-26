@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.4</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.5</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -725,7 +725,7 @@ function genDrill(){var d=parseFloat($('dr_d').value);if(!(d>0)){$('dr_res').inn
  var cyc=drAutoCycle(d),R=num('dr_r',3),safeZ=num('dr_safez',20),tc=$('dr_tc').value==='Yes',cp=num('dr_cp',0);
  var peck=cyc.c==='G73'?Math.max(0.2,d*0.5):(cyc.c==='G83'?d:0);
  var g=['%','O0001 (DRILL D'+d+' DEPTH'+depth+' '+$('dr_type').value.toUpperCase()+(tc?' THRU-COOL '+cp+'BAR':'')+')','N1 M06 T1','G54 G90 G94','G00 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' S'+rpm+' M03','G43 H1 Z'+r(safeZ,1)+' M08'];
- if($('dr_cen').value==='Yes'){g.push('(CENTERING)');for(var ci=0;ci<POS.length;ci++){if(ci===0)g.push('G82 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(Math.min(3,d*0.5),2)+' R'+r(R,1)+' P200 F'+Math.max(1,Math.round(fmin*0.6)));else g.push('X'+px(POS[ci][0])+' Y'+px(POS[ci][1]));}g.push('G80');}
+ if($('dr_cen').value==='Yes'){g.push('(CENTERING)');for(var ci=0;ci<POS.length;ci++){if(ci===0)g.push('G82 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(Math.min(3,d*0.5),2)+' R'+r(R,1)+' P200 F'+Math.max(1,Math.round(fmin*0.6)));else g.push('X'+px(POS[ci][0])+' Y'+px(POS[ci][1]));}g.push('G80');} else {g.push('(SELF-CENTER 1xD @50% FEED)');var scz=Math.min(d,depth);for(var si=0;si<POS.length;si++){if(si===0)g.push('G81 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(scz,2)+' R'+r(R,1)+' F'+Math.max(1,Math.round(fmin*0.5)));else g.push('X'+px(POS[si][0])+' Y'+px(POS[si][1]));}g.push('G80');}
  g.push('('+cyc.n.toUpperCase()+' x'+POS.length+')');for(var mi=0;mi<POS.length;mi++){if(mi===0){var zl=cyc.c+' G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(depth,2)+' R'+r(R,1);if(peck>0)zl+=' Q'+r(peck,2);zl+=' F'+fmin;g.push(zl);}else g.push('X'+px(POS[mi][0])+' Y'+px(POS[mi][1]));}g.push('G80');
  g.push('G00 Z'+r(safeZ,1)+' M09','M30','%');lastProg=g.join('\n');
  $('dr_res').innerHTML='<pre></pre>';$('dr_res').querySelector('pre').textContent=lastProg;$('dr_savebtn').style.display='block';}
