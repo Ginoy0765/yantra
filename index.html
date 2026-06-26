@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v1.8</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.0</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -90,7 +90,18 @@
         <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><defs><linearGradient id="mig" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#ffdf8a"/><stop offset=".5" stop-color="#ffb300"/><stop offset="1" stop-color="#c96600"/></linearGradient></defs><rect x="49" y="3" width="12" height="8" fill="#9fb0bf"/><rect x="45" y="11" width="20" height="31" rx="2" fill="url(#mig)" stroke="#6b3d00" stroke-width="1.6"/><g stroke="#7a4a00" stroke-width="2.2" opacity=".8"><path d="M45 16 L65 24"/><path d="M45 24 L65 32"/><path d="M45 32 L65 40"/></g><path d="M45 42 l4 5 4 -5 4 5 4 -5 4 5 v-5 z" fill="#1b2837"/></svg></div><div><div class="t">Milling</div><div class="s">Coming soon</div></div></div>
         <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 110 56" style="width:100%;height:40px" aria-hidden="true"><defs><linearGradient id="tug" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#ffdf8a"/><stop offset=".5" stop-color="#ffb300"/><stop offset="1" stop-color="#c96600"/></linearGradient></defs><path d="M30 28 L55 7 Q56 6 57 7 L82 28 Q83 29 82 30 L57 49 Q56 50 55 49 L30 30 Q29 29 30 28 Z" fill="url(#tug)" stroke="#6b3d00" stroke-width="2" stroke-linejoin="round"/><circle cx="56" cy="28" r="7.5" fill="#1b2837" stroke="#6b3d00" stroke-width="2"/></svg></div><div><div class="t">Turning</div><div class="s">Coming soon</div></div></div>
       </div>
+      <div class="tile" style="min-height:auto" onclick="show('fulljob');renderJob()"><span class="tag free">NEW</span><div style="display:flex;align-items:center;gap:12px"><div style="font-size:30px">&#128736;&#65039;</div><div><div class="t">Full Job</div><div class="s">Chain operations into one program &mdash; M01 between, M30 at end. No CAM needed.</div></div></div></div>
       <p class="note">Building one operation at a time. Threading first &mdash; everything works offline.</p>
+    </section>
+
+    <section id="fulljob" class="view">
+      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Full Job</h2><button class="back" style="margin-left:auto;width:auto;padding:0 12px;font-size:12.5px" onclick="clearJob()">Clear</button></div>
+      <p class="note" style="text-align:left">Build one program with several operations in sequence. Configure each in the Programming form, tap &ldquo;Add to job&rdquo;, then build. Runs top-to-bottom with M01 between and M30 at the end.</p>
+      <div id="joblist"></div>
+      <button class="btn" onclick="show('prog')">&#10133;  Add operation</button>
+      <button class="btn btn2" id="buildjobbtn" style="display:none" onclick="buildJob()">&#128295;  Build job program</button>
+      <div id="joboutwrap" style="display:none"><div id="jobout"></div>
+      <button class="btn btn2" onclick="saveJob()">&#128190;  Save job .txt</button></div>
     </section>
 
     <!-- THREADING submenu -->
@@ -226,6 +237,7 @@
       <button class="btn btn2" id="savebtn" style="display:none" onclick="saveProg()">&#128190;  Save .txt to Downloads</button>
       <button class="btn btn2" id="simbtn" style="display:none" onclick="runSim()">&#9654;  Simulate toolpath</button>
       <button class="btn btn2" id="editbtn" style="display:none" onclick="toggleEdit()">&#9998;  Edit: OFF</button>
+      <button class="btn btn2" id="addjobbtn" style="display:none" onclick="addToJob()">&#10133;  Add to job</button>
       <canvas id="simcv" width="640" height="520" style="display:none;width:100%;background:#0a1118;border:1px solid #293a4d;border-radius:12px;margin-top:12px"></canvas>
       <div id="simctrls" style="display:none;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
         <button class="btn btn2" id="simplay" style="width:auto;padding:8px 12px" onclick="simPlay()">&#9654; Play</button>
@@ -402,7 +414,7 @@ function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&t
 function parseSim(){
   var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
   if(turning){var passes=[],cZ=null;L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;var X=_sv('X',u),Z=_sv('Z',u);if(u.indexOf('G92')>=0){if(X!=null)passes.push([X/2,(Z!=null?Z:(cZ!=null?cZ:0)),(cZ!=null?cZ:(Z!=null?Z:0))]);if(Z!=null)cZ=Z;}else{if(Z!=null)cZ=Z;}});return {turning:true,passes:passes};}
-  var pts=[],blk=[],x=0,y=0,z=0,rel=false,b=0;
+  var pts=[],blk=[],x=0,y=0,z=100,rel=false,b=0;
   L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;
     if(/\bG91\b/.test(u))rel=true;if(/\bG90\b/.test(u))rel=false;
     var X=_sv('X',u),Y=_sv('Y',u),Z=_sv('Z',u),I=_sv('I',u),J=_sv('J',u);
@@ -631,7 +643,7 @@ function formatForControl(code,ctrl){var name=ctrl||'Fanuc I & J',out;
   L.splice(0,0,idLine(name,sie));return L.join('\n');}
 function renderProg(){var pp=$('p_res');if(!pp)return;if(editOn){pp.innerHTML='<textarea id="gedit" class="gedit" spellcheck="false"></textarea>'+lastExtra;var ta=$('gedit');ta.value=lastProg;ta.oninput=function(){lastProg=ta.value;};}else{pp.innerHTML='<pre id="gtext"></pre>'+lastExtra;$('gtext').textContent=lastProg;}}
 function toggleEdit(){editOn=!editOn;var e=$('editbtn');if(e)e.textContent=editOn?'\u270E Edit: ON (sim uses edits)':'\u270E Edit: OFF';renderProg();}
-function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;lastExtra=extra||'';renderProg();if($('copybtn'))$('copybtn').style.display='block';$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('editbtn'))$('editbtn').style.display='block';if($('simcv'))$('simcv').style.display='none';}
+function output(x,extra){lastProg=Array.isArray(x)?x.join('\n'):x;lastExtra=extra||'';renderProg();if($('copybtn'))$('copybtn').style.display='block';$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('editbtn'))$('editbtn').style.display='block';if($('addjobbtn'))$('addjobbtn').style.display='block';if($('simcv'))$('simcv').style.display='none';}
 var HKEY='yantra_hist';
 function getHist(){try{return JSON.parse(localStorage.getItem(HKEY)||'[]');}catch(e){return [];}}
 function setHist(a){try{localStorage.setItem(HKEY,JSON.stringify(a));}catch(e){}}
@@ -640,6 +652,18 @@ function delHist(i){var a=getHist();a.splice(i,1);setHist(a);renderHist();}
 function clearHist(){if(getHist().length&&confirm('Clear all saved programs on this device?')){setHist([]);renderHist();}}
 function openHist(i){var a=getHist(),e=a[i];if(!e)return;lastProg=e.p;lastExtra='';show('prog');renderProg();$('savebtn').style.display='block';if($('simbtn'))$('simbtn').style.display='block';if($('editbtn'))$('editbtn').style.display='block';if($('cyc'))$('cyc').innerHTML='';var pr=$('p_res');if(pr)pr.scrollIntoView({behavior:'smooth'});}
 function renderHist(){var c=$('histlist');if(!c)return;var a=getHist();if(!a.length){c.innerHTML='<p class="note">No saved programs yet. Generate a program and tap Save.</p>';return;}c.innerHTML=a.map(function(e,i){var d=new Date(e.t);var ds=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});var kb=Math.max(1,Math.round((e.p||'').length/1024));return '<div class="histrow" onclick="openHist('+i+')"><div class="hn">'+String(e.n).replace(/</g,'&lt;')+'</div>'+'<div class="hm">'+ds+' &middot; '+kb+' KB</div>'+'<button class="hx" onclick="event.stopPropagation();delHist('+i+')">&times;</button></div>';}).join('');}
+var JKEY='yantra_job';
+function getJob(){try{return JSON.parse(localStorage.getItem(JKEY)||'[]');}catch(e){return [];}}
+function setJob(a){try{localStorage.setItem(JKEY,JSON.stringify(a));}catch(e){}}
+function jobLabel(){var sd=$('side').value==='Internal'?'INT':'EXT';var m=(method==='Turn')?'Thread Turn':'Thread Mill';return 'M'+num('D',0)+'x'+num('P',0)+' '+sd+' '+m;}
+function addToJob(){if(!lastProg)return;var a=getJob();a.push({l:jobLabel(),p:lastProg});setJob(a);show('fulljob');renderJob();var jw=$('joboutwrap');if(jw)jw.style.display='none';}
+function delJobStep(i){var a=getJob();a.splice(i,1);setJob(a);renderJob();}
+function moveJobStep(i,d){var a=getJob();var j=i+d;if(j<0||j>=a.length)return;var t=a[i];a[i]=a[j];a[j]=t;setJob(a);renderJob();}
+function clearJob(){if(getJob().length&&confirm('Clear all job steps?')){setJob([]);renderJob();var jw=$('joboutwrap');if(jw)jw.style.display='none';}}
+function renderJob(){var c=$('joblist');if(!c)return;var a=getJob();var bb=$('buildjobbtn');if(!a.length){c.innerHTML='<p class="note">No steps yet. Tap Add operation, build a program, then Add to job.</p>';if(bb)bb.style.display='none';return;}if(bb)bb.style.display='block';c.innerHTML=a.map(function(e,i){return '<div class="histrow" style="padding-right:104px;cursor:default"><div class="hn">'+(i+1)+'. '+String(e.l).replace(/</g,'&lt;')+'</div>'+'<div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;gap:4px">'+'<button class="hx" onclick="moveJobStep('+i+',-1)">&#8593;</button>'+'<button class="hx" onclick="moveJobStep('+i+',1)">&#8595;</button>'+'<button class="hx" onclick="delJobStep('+i+')">&times;</button></div></div>';}).join('');}
+function jobBody(prog){var L=prog.split('\n'),o=[];for(var i=0;i<L.length;i++){var t=L[i].trim();if(t===''||t==='%'||t==='%1001')continue;if(/^O\d/.test(t))continue;if(/^\(CONTROL/.test(t))continue;if(t==='M30')continue;o.push(L[i]);}return o.join('\n');}
+function buildJob(){var a=getJob();if(!a.length)return;var out=['%','O1000 (FULL JOB - '+a.length+' OPS)'];for(var i=0;i<a.length;i++){out.push('(OP '+(i+1)+': '+a[i].l+')');out.push(jobBody(a[i].p));out.push(i<a.length-1?'M01':'M30');}out.push('%');lastProg=out.join('\n');var ex='<p class="warn" style="color:var(--ok)">\u2713 Job built: '+a.length+' ops, M01 between, M30 at end.</p>';var jo=$('jobout');jo.innerHTML='<pre></pre>'+ex;jo.querySelector('pre').textContent=lastProg;$('joboutwrap').style.display='block';$('joboutwrap').scrollIntoView({behavior:'smooth'});}
+function saveJob(){if(!lastProg)return;var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var x=document.createElement('a');x.href=u;x.download='YANTRA_FULL_JOB.txt';document.body.appendChild(x);x.click();setTimeout(function(){URL.revokeObjectURL(u);x.remove();},800);}
 function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');addHist(name,lastProg);var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
 function copyProg(){if(navigator.clipboard&&lastProg){navigator.clipboard.writeText(lastProg);$('copybtn').textContent='✓ Copied';setTimeout(function(){$('copybtn').textContent='📋  Copy program';},1500);}}
 
