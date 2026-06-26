@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.0</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.1</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -438,7 +438,7 @@ function runSim(){if(!lastProg)return;var cv=$('simcv');if(!cv)return;cv.style.d
   SIM.cv=cv;SIM.ctx=cv.getContext('2d');SIM.W=cv.width;SIM.H=cv.height;
   var d=parseSim();SIM.turning=d.turning;var all;
   if(d.turning){SIM.passes=d.passes;all=[];d.passes.forEach(function(p){all.push([p[1],p[0],0],[p[2],p[0],0],[p[2],-p[0],0],[p[1],-p[0],0]);});if(!all.length)all=[[0,0,0]];}
-  else{SIM.pts=d.pts;SIM.blk=d.blk;SIM.blocks=d.blocks;all=d.pts.length?d.pts:[[0,0,0]];}
+  else{SIM.pts=d.pts;SIM.blk=d.blk;SIM.blocks=d.blocks;var fit=d.pts.filter(function(pp){return pp[2]<=5;});all=(fit.length?fit:d.pts);if(!all.length)all=[[0,0,0]];}
   var bb=_bounds(all);SIM.c=bb.c;var ext=Math.max(bb.mx[0]-bb.mn[0],bb.mx[1]-bb.mn[1],bb.mx[2]-bb.mn[2])||1;
   SIM.base=Math.min(SIM.W,SIM.H)/(ext*1.7);SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.pd=0;
   SIM.azim=d.turning?0:0.6;SIM.tilt=d.turning?0:0.95;
@@ -493,7 +493,7 @@ function simPlay(){var mx=SIM.turning?SIM.passes.length:SIM.blocks;
 function simView(v){if(!SIM.turning){if(v==='top'){SIM.azim=0;SIM.tilt=1.5708;}else if(v==='front'){SIM.azim=0;SIM.tilt=0.0;}else if(v==='left'){SIM.azim=1.5708;SIM.tilt=0.0;}else{SIM.azim=0.6;SIM.tilt=0.95;}}renderSim();}
 function simBlock(d){simStop();var mx=SIM.turning?SIM.passes.length:SIM.blocks;SIM.curBlk=Math.max(1,Math.min(mx,Math.round(SIM.curBlk)+d));renderSim();}
 function simAll(){simStop();SIM.curBlk=SIM.turning?SIM.passes.length:SIM.blocks;renderSim();}
-function simReset(){simStop();SIM.curBlk=0;renderSim();}
+function simReset(){simStop();SIM.curBlk=0;SIM.zoom=1;SIM.panX=0;SIM.panY=0;SIM.pd=0;SIM.azim=SIM.turning?0:0.6;SIM.tilt=SIM.turning?0:0.95;renderSim();}
 function bindSim(cv){if(SIM.bound)return;SIM.bound=true;var T={};cv.style.touchAction='none';
   cv.addEventListener('pointerdown',function(e){try{cv.setPointerCapture(e.pointerId);}catch(_){}T[e.pointerId]={x:e.clientX,y:e.clientY};});
   cv.addEventListener('pointermove',function(e){var pv=T[e.pointerId];if(!pv)return;T[e.pointerId]={x:e.clientX,y:e.clientY};var ids=Object.keys(T);
