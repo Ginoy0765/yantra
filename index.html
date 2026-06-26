@@ -42,7 +42,7 @@
   select,input{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:12px;font-size:16px;outline:none}
   input[readonly]{color:var(--acc);font-weight:700;background:#101a25}
   select:focus,input:focus{border-color:var(--acc2)}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.row4{display:grid;grid-template-columns:.9fr 1.2fr .8fr .8fr;gap:6px}
   .btn{width:100%;background:linear-gradient(135deg,var(--acc),#ff8f00);color:#1a1200;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;letter-spacing:.5px;margin-top:16px;cursor:pointer}
   .btn:active{transform:scale(.98)}
   .btn2{background:var(--bg2);color:var(--txt);border:1px solid var(--line);font-weight:700}
@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.6</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v2.9</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -267,6 +267,7 @@
     <section id="drill" class="view">
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Drilling</h2></div>
       <div class="sec"><div class="st" onclick="tog(this)">DRILL &amp; HOLE <span>&#9662;</span></div><div class="sb">
+        <label>Machine</label><select id="dr_mach" onchange="drCalc()"><option>Milling (machining centre)</option><option>Turning (lathe, axial)</option></select>
         <label>Material</label><select id="dr_mat" onchange="drCalc()"></select><div id="dr_mr" class="mrinfo"></div>
         <div class="row2"><div><label>Drill type</label><select id="dr_type" onchange="drCalc()"><option>Carbide coated</option><option>Carbide uncoated</option><option>Insert type</option><option>U-drill</option><option>HSS</option></select></div><div><label>Stability %</label><input id="dr_stab" type="number" value="50" inputmode="numeric" oninput="drCalc()"></div></div>
         <div class="row2"><div><label>Drill dia (mm)</label><input id="dr_d" type="number" value="" placeholder="required" inputmode="decimal" oninput="drCalc()"></div><div><label>Depth (mm)</label><input id="dr_depth" type="number" value="20" inputmode="decimal" oninput="drCalc()"></div></div>
@@ -276,6 +277,20 @@
         <div class="row2"><div><label>Through coolant</label><select id="dr_tc" onchange="drCalc()"><option>No</option><option>Yes</option></select></div><div><label>Coolant pressure (bar)</label><input id="dr_cp" type="number" value="20" inputmode="numeric"></div></div>
         <div class="row2"><div><label>Cycle</label><select id="dr_cyc" onchange="drCalc()"><option>Auto (recommended)</option><option>Full plunge (G81)</option><option>Chip break (G73)</option><option>Full retract (G83)</option></select></div><div><label>Centering</label><select id="dr_cen"><option>No</option><option>Yes</option></select></div></div>
         <div id="dr_cycinfo" class="note" style="text-align:left"></div>
+      </div></div>
+      <div class="sec"><div class="st" onclick="tog(this)">DRILLING METHOD <span>&#9662;</span></div><div class="sb">
+        <div class="row2"><div><label>Mode</label><select id="dr_mode" onchange="drModeChange()"><option>Single cycle (auto)</option><option>Custom zones (G00/G01)</option><option>Mixed retract (advanced)</option></select></div><div><label>Peck units</label><select id="dr_zu"><option>mm</option><option>xD</option></select></div></div>
+        <div id="dr_zones" style="display:none">
+          <p class="note" style="text-align:left">Zone = previous end to its End depth (mm). P1 = peck/drill dist, P2 = retract/back-off (units above). Plunge: no retract. Full retract: peck P1, rapid fully out. Partial: drill P1, back off P2. Chip break: peck P1, tiny back P2.</p>
+          <div class="row4"><div><label>Z1 end</label><input id="dr_z1e" type="number" inputmode="decimal"></div><div><label>Method</label><select id="dr_z1m"><option>Plunge</option><option>Full retract</option><option>Partial retract</option><option>Chip break</option></select></div><div><label>P1</label><input id="dr_z1p1" type="number" inputmode="decimal"></div><div><label>P2</label><input id="dr_z1p2" type="number" inputmode="decimal"></div></div><div class="row4"><div><label>Z2 end</label><input id="dr_z2e" type="number" inputmode="decimal"></div><div><label>Method</label><select id="dr_z2m"><option>Plunge</option><option>Full retract</option><option>Partial retract</option><option>Chip break</option></select></div><div><label>P1</label><input id="dr_z2p1" type="number" inputmode="decimal"></div><div><label>P2</label><input id="dr_z2p2" type="number" inputmode="decimal"></div></div><div class="row4"><div><label>Z3 end</label><input id="dr_z3e" type="number" inputmode="decimal"></div><div><label>Method</label><select id="dr_z3m"><option>Plunge</option><option>Full retract</option><option>Partial retract</option><option>Chip break</option></select></div><div><label>P1</label><input id="dr_z3p1" type="number" inputmode="decimal"></div><div><label>P2</label><input id="dr_z3p2" type="number" inputmode="decimal"></div></div><div class="row4"><div><label>Z4 end</label><input id="dr_z4e" type="number" inputmode="decimal"></div><div><label>Method</label><select id="dr_z4m"><option>Plunge</option><option>Full retract</option><option>Partial retract</option><option>Chip break</option></select></div><div><label>P1</label><input id="dr_z4p1" type="number" inputmode="decimal"></div><div><label>P2</label><input id="dr_z4p2" type="number" inputmode="decimal"></div></div><div class="row4"><div><label>Z5 end</label><input id="dr_z5e" type="number" inputmode="decimal"></div><div><label>Method</label><select id="dr_z5m"><option>Plunge</option><option>Full retract</option><option>Partial retract</option><option>Chip break</option></select></div><div><label>P1</label><input id="dr_z5p1" type="number" inputmode="decimal"></div><div><label>P2</label><input id="dr_z5p2" type="number" inputmode="decimal"></div></div>
+        </div>
+        <div id="dr_mixed" style="display:none">
+          <p class="note" style="text-align:left">Layered retract by counts: Full retract &gt; Small &gt; Micro; biggest due wins. Plunge step = micro spacing. Degressive shrinks the plunge by % each step to a floor.</p>
+          <label>Full retracts (count over hole)</label><input id="dr_mxf" type="number" value="3" inputmode="numeric">
+          <div class="row2"><div><label>Small retracts / full</label><input id="dr_mxs" type="number" value="2" inputmode="numeric"></div><div><label>Small back-off (mm)</label><input id="dr_mxsb" type="number" value="3" inputmode="decimal"></div></div>
+          <div class="row2"><div><label>Micro retracts / small</label><input id="dr_mxm" type="number" value="4" inputmode="numeric"></div><div><label>Micro back-off (mm)</label><input id="dr_mxmb" type="number" value="0.3" inputmode="decimal"></div></div>
+          <div class="row3"><div><label>Degressive</label><select id="dr_mxdeg"><option>No</option><option>Yes</option></select></div><div><label>Reduction %</label><input id="dr_mxred" type="number" value="10" inputmode="numeric"></div><div><label>Floor (mm)</label><input id="dr_mxfloor" type="number" value="0.5" inputmode="decimal"></div></div>
+        </div>
       </div></div>
       <div class="sec"><div class="st" onclick="tog(this)">POSITION <span>&#9662;</span></div><div class="sb">
         <label>Pattern</label><select id="dr_pat" onchange="drPosChange()"><option>Point</option><option>Line</option><option>Rows (grid)</option><option>PCD circle</option><option>Manual coords</option></select>
@@ -708,7 +723,7 @@ function drAutoCycle(d){var sel=$('dr_cyc').value;if(sel.indexOf('G81')>=0)retur
 function drCalc(){var m=drMat();if(!m)return;var el=$('dr_mr');if(el&&m[4]!=null){var c=ISO_COL[m[2]]||'#9E9E9E';el.innerHTML='<span class="isochip" style="background:'+c+'">ISO '+m[2]+'</span> Machinability '+m[4]+'%';}
  var d=parseFloat($('dr_d').value);if(!(d>0)){$('dr_rpm').value='';$('dr_feed').value='';if($('dr_cycinfo'))$('dr_cycinfo').textContent='';return;}
  var vc=drVc();var rpm=Math.round(vc*1000/(Math.PI*d));if(rpm>5000)rpm=5000;var fpr=drFpr(d);var fmin=Math.max(1,Math.round(fpr*rpm));
- $('dr_rpm').value=rpm;$('dr_feed').value=fmin+' mm/min';if($('dr_cycinfo'))$('dr_cycinfo').textContent='Vc '+vc.toFixed(0)+' m/min  ·  '+fpr.toFixed(3)+' mm/rev  ·  cycle: '+drAutoCycle(d).n;}
+ $('dr_rpm').value=rpm;var _tu=$('dr_mach')&&$('dr_mach').value.indexOf('Turning')>=0;$('dr_feed').value=_tu?(fpr.toFixed(3)+' mm/rev'):(fmin+' mm/min ('+fpr.toFixed(3)+'/rev)');if($('dr_cycinfo'))$('dr_cycinfo').textContent='Vc '+vc.toFixed(0)+' m/min  ·  '+fpr.toFixed(3)+' mm/rev  ·  cycle: '+drAutoCycle(d).n;}
 function drPosChange(){var pt=$('dr_pat')?$('dr_pat').value:'Point';['dr_line','dr_grid','dr_pcd','dr_man'].forEach(function(id){if($(id))$(id).style.display='none';});
  if(pt==='Line'&&$('dr_line'))$('dr_line').style.display='block';if(pt==='Rows (grid)'&&$('dr_grid'))$('dr_grid').style.display='block';
  if(pt==='PCD circle'&&$('dr_pcd'))$('dr_pcd').style.display='block';if(pt==='Manual coords'&&$('dr_man'))$('dr_man').style.display='block';
@@ -720,14 +735,45 @@ function drPositions(){var pt=$('dr_pat')?$('dr_pat').value:'Point';var x0=num('
  else if(pt==='PCD circle'){var rr=num('dr_pd',50)/2,pn=Math.max(1,Math.round(num('dr_pn',1))),pa=num('dr_pa',0);for(var k=0;k<pn;k++){var ang=(pa+360*k/pn)*Math.PI/180;out.push([x0+rr*Math.cos(ang),y0+rr*Math.sin(ang)]);}}
  else if(pt==='Manual coords'){var t=$('dr_mc')?$('dr_mc').value:'';t.split('\n').forEach(function(ln){var mm=ln.split(/[ ,\t]+/).filter(function(z){return z!=='';});if(mm.length>=2){var xx=parseFloat(mm[0]),yy=parseFloat(mm[1]);if(!isNaN(xx)&&!isNaN(yy))out.push([xx,yy]);}});}
  return out;}
+function drModeChange(){var v=$('dr_mode').value;if($('dr_zones'))$('dr_zones').style.display=(v.indexOf('zones')>=0)?'block':'none';if($('dr_mixed'))$('dr_mixed').style.display=(v.indexOf('Mixed')>=0)?'block':'none';}
+function drZval(v){var u=$('dr_zu')&&$('dr_zu').value==='xD';var d=parseFloat($('dr_d').value)||1;return u?v*d:v;}
+function drZones(){var out=[];for(var i=1;i<=5;i++){var ee=$('dr_z'+i+'e');var e=ee?parseFloat(ee.value):NaN;if(isNaN(e)||e<=0)continue;out.push({end:e,m:$('dr_z'+i+'m').value,p1:parseFloat($('dr_z'+i+'p1').value)||0,p2:parseFloat($('dr_z'+i+'p2').value)||0});}out.sort(function(a,b){return a.end-b.end;});return out;}
+function drZoneMoves(out,x,y,depth,R,fmin,d,turning){var Z=drZones(),gap=0.5;if(turning){out.push('G00 X0. Z'+r(R,1));}else{out.push('G00 X'+(+x).toFixed(3)+' Y'+(+y).toFixed(3));out.push('G00 Z'+r(R,1));}var start=0;
+ for(var k=0;k<Z.length;k++){var zo=Z[k];var end=Math.min(zo.end,depth);if(end<=start+1e-6)continue;out.push('G00 Z'+r(start>0?-(start-gap):gap,2));
+  var p1=drZval(zo.p1),p2=drZval(zo.p2),m=zo.m,z=start,first=true;
+  if(m==='Plunge'){out.push('G01 Z'+r(-end,2)+' F'+fmin);}
+  else{var inc=p1>0?p1:(end-start);while(z<end-1e-6){var z2=Math.min(z+inc,end);out.push('G01 Z'+r(-z2,2)+(first?' F'+fmin:''));first=false;
+   if(m==='Full retract'){out.push('G00 Z'+r(R,1));if(z2<end-1e-6)out.push('G00 Z'+r(-(z2-gap),2));}
+   else if(z2<end-1e-6){var bk=(m==='Partial retract')?p2:(p2>0?p2:0.3);out.push('G00 Z'+r(-(z2-bk),2));}
+   z=z2;}}
+  start=end;}
+ if(out[out.length-1]!=='G00 Z'+r(R,1))out.push('G00 Z'+r(R,1));}
+function drMixedMoves(out,x,y,depth,R,feed,turning){var gap=0.5;
+ var Nf=Math.max(1,Math.round(num('dr_mxf',1))),Ns=Math.max(0,Math.round(num('dr_mxs',0))),Nm=Math.max(0,Math.round(num('dr_mxm',0)));
+ var Bs=Math.max(0.05,num('dr_mxsb',3)),Bm=Math.max(0.02,num('dr_mxmb',0.3));
+ var deg=$('dr_mxdeg')&&$('dr_mxdeg').value==='Yes',red=Math.max(0,Math.min(90,num('dr_mxred',0)))/100,floor=Math.max(0.05,num('dr_mxfloor',0.5));
+ var Lf=depth/Nf,Ls=Lf/(Ns+1),base=Ls/(Nm+1);
+ if(turning){out.push('G00 X0. Z'+r(R,1));}else{out.push('G00 X'+(+x).toFixed(3)+' Y'+(+y).toFixed(3));out.push('G00 Z'+r(R,1));}
+ out.push('G00 Z'+r(gap,2));
+ var z=0,sinceS=0,sinceF=0,pc=0,first=true,tol=1e-4,guard=0;
+ while(z<depth-tol&&guard++<3000){var pp=deg?Math.max(floor,base*Math.pow(1-red,pc)):base;pc++;var z2=Math.min(z+pp,depth);var cut=z2-z;
+  out.push('G01 Z'+r(-z2,2)+(first?' F'+feed:''));first=false;sinceS+=cut;sinceF+=cut;z=z2;
+  if(z>=depth-tol){out.push('G00 Z'+r(R,1));break;}
+  if(sinceF>=Lf-tol){out.push('G00 Z'+r(R,1));out.push('G00 Z'+r(-(z-gap),2));sinceF=0;sinceS=0;}
+  else if(sinceS>=Ls-tol){out.push('G00 Z'+r(-(z-Bs),2));sinceS=0;}
+  else{out.push('G00 Z'+r(-(z-Bm),2));}}}
 function genDrill(){var d=parseFloat($('dr_d').value);if(!(d>0)){$('dr_res').innerHTML='<p class="warn">Enter drill dia.</p>';return;}drCalc();var POS=drPositions();if(!POS.length){$('dr_res').innerHTML='<p class="warn">No hole positions.</p>';return;}var px=function(v){return (+v).toFixed(3);};
  var depth=num('dr_depth',20),rpm=parseInt($('dr_rpm').value)||1000,fpr=drFpr(d),fmin=Math.max(1,Math.round(fpr*rpm));
  var cyc=drAutoCycle(d),R=num('dr_r',3),safeZ=num('dr_safez',20),tc=$('dr_tc').value==='Yes',cp=num('dr_cp',0);
  var peck=cyc.c==='G73'?Math.max(0.2,d*0.5):(cyc.c==='G83'?d:0);
- var g=['%','O0001 (DRILL D'+d+' DEPTH'+depth+' '+$('dr_type').value.toUpperCase()+(tc?' THRU-COOL '+cp+'BAR':'')+')','N1 M06 T1','G54 G90 G94','G00 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' S'+rpm+' M03','G43 H1 Z'+r(safeZ,1)+' M08'];
- if($('dr_cen').value==='Yes'){g.push('(CENTERING)');for(var ci=0;ci<POS.length;ci++){if(ci===0)g.push('G82 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(Math.min(3,d*0.5),2)+' R'+r(R,1)+' P200 F'+Math.max(1,Math.round(fmin*0.6)));else g.push('X'+px(POS[ci][0])+' Y'+px(POS[ci][1]));}g.push('G80');} else {g.push('(SELF-CENTER 1xD @50% FEED)');var scz=Math.min(d,depth);for(var si=0;si<POS.length;si++){if(si===0)g.push('G81 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(scz,2)+' R'+r(R,1)+' F'+Math.max(1,Math.round(fmin*0.5)));else g.push('X'+px(POS[si][0])+' Y'+px(POS[si][1]));}g.push('G80');}
- g.push('('+cyc.n.toUpperCase()+' x'+POS.length+')');for(var mi=0;mi<POS.length;mi++){if(mi===0){var zl=cyc.c+' G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(depth,2)+' R'+r(R,1);if(peck>0)zl+=' Q'+r(peck,2);zl+=' F'+fmin;g.push(zl);}else g.push('X'+px(POS[mi][0])+' Y'+px(POS[mi][1]));}g.push('G80');
- g.push('G00 Z'+r(safeZ,1)+' M09','M30','%');lastProg=g.join('\n');
+ var turning=$('dr_mach')&&$('dr_mach').value.indexOf('Turning')>=0;if(turning)POS=[[0,0]];var feed=turning?Math.max(0.001,+fpr.toFixed(3)):fmin;
+ var g;if(turning){g=['%','O0001 (AXIAL DRILL D'+d+' DEPTH'+depth+' '+$('dr_type').value.toUpperCase()+' LATHE'+(tc?' THRU-COOL '+cp+'BAR':'')+')','N1 G40 G99','G00 T0101 M08','G97 S'+rpm+' M03'];}else{g=['%','O0001 (DRILL D'+d+' DEPTH'+depth+' '+$('dr_type').value.toUpperCase()+(tc?' THRU-COOL '+cp+'BAR':'')+')','N1 M06 T1','G54 G90 G94','G00 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' S'+rpm+' M03','G43 H1 Z'+r(safeZ,1)+' M08'];}
+ if(!turning&&$('dr_cen').value==='Yes'){g.push('(CENTERING)');for(var ci=0;ci<POS.length;ci++){if(ci===0)g.push('G82 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(Math.min(3,d*0.5),2)+' R'+r(R,1)+' P200 F'+Math.max(1,Math.round(fmin*0.6)));else g.push('X'+px(POS[ci][0])+' Y'+px(POS[ci][1]));}g.push('G80');} else if(!turning&&!($('dr_mode')&&($('dr_mode').value.indexOf('zones')>=0||$('dr_mode').value.indexOf('Mixed')>=0))){g.push('(SELF-CENTER 1xD @50% FEED)');var scz=Math.min(d,depth);for(var si=0;si<POS.length;si++){if(si===0)g.push('G81 G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(scz,2)+' R'+r(R,1)+' F'+Math.max(1,Math.round(fmin*0.5)));else g.push('X'+px(POS[si][0])+' Y'+px(POS[si][1]));}g.push('G80');}
+ if($('dr_mode')&&$('dr_mode').value.indexOf('Mixed')>=0){g.push(turning?'(AXIAL MIXED RETRACT FEED/REV)':'(MIXED RETRACT G00/G01 x'+POS.length+')');for(var qi=0;qi<POS.length;qi++){if(!turning)g.push('(HOLE '+(qi+1)+')');drMixedMoves(g,POS[qi][0],POS[qi][1],depth,R,feed,turning);}}
+ else if(turning){g.push('(AXIAL DRILL FEED/REV)');if($('dr_mode')&&$('dr_mode').value.indexOf('zones')>=0){if(!drZones().length){$('dr_res').innerHTML='<p class="warn">Add at least one zone end depth.</p>';return;}drZoneMoves(g,0,0,depth,R,feed,d,true);}else{var pk=(cyc.c==='G81')?0:(cyc.c==='G83'?d:Math.max(0.2,d*0.5));g.push('G00 X0. Z'+r(R,1));if(pk<=0){g.push('G01 Z-'+r(depth,2)+' F'+feed);}else{var zz=0;while(zz<depth-1e-6){var z2=Math.min(zz+pk,depth);g.push('G01 Z-'+r(z2,2)+(zz===0?' F'+feed:''));if(cyc.c==='G83'){g.push('G00 Z'+r(R,1));if(z2<depth-1e-6)g.push('G00 Z-'+r(z2-0.5,2));}else if(z2<depth-1e-6){g.push('G00 Z-'+r(z2-0.3,2));}zz=z2;}}g.push('G00 Z'+r(R,1));}}
+ else if($('dr_mode')&&$('dr_mode').value.indexOf('zones')>=0){if(!drZones().length){$('dr_res').innerHTML='<p class="warn">Add at least one zone end depth.</p>';return;}g.push('(CUSTOM ZONES G00/G01 x'+POS.length+')');for(var mi=0;mi<POS.length;mi++){g.push('(HOLE '+(mi+1)+')');drZoneMoves(g,POS[mi][0],POS[mi][1],depth,R,fmin,d,false);}}
+ else{g.push('('+cyc.n.toUpperCase()+' x'+POS.length+')');for(var mj=0;mj<POS.length;mj++){if(mj===0){var zl=cyc.c+' G99 X'+px(POS[0][0])+' Y'+px(POS[0][1])+' Z-'+r(depth,2)+' R'+r(R,1);if(peck>0)zl+=' Q'+r(peck,2);zl+=' F'+fmin;g.push(zl);}else g.push('X'+px(POS[mj][0])+' Y'+px(POS[mj][1]));}g.push('G80');}
+ if(turning){g.push('G00 Z'+r(safeZ,1)+' M09','M05','M30','%');}else{g.push('G00 Z'+r(safeZ,1)+' M09','M30','%');}lastProg=g.join('\n');
  $('dr_res').innerHTML='<pre></pre>';$('dr_res').querySelector('pre').textContent=lastProg;$('dr_savebtn').style.display='block';}
 function saveDrill(){if(!lastProg)return;var nm='YANTRA_DRILL_D'+($('dr_d').value||'')+'.txt';var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var x=document.createElement('a');x.href=u;x.download=nm;document.body.appendChild(x);x.click();setTimeout(function(){URL.revokeObjectURL(u);x.remove();},800);}
 function saveProg(){if(!lastProg)return;var D=num('D',16),P=num('P',2),side=$('side').value==='Internal'?'INT':'EXT',mth=method==='Turn'?'TURN':'MILL';var name=('YANTRA_M'+D+'x'+P+'_'+side+'_'+mth+'.txt').replace(/\s+/g,'');addHist(name,lastProg);var b=new Blob([lastProg],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
