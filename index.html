@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v4.8</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v4.9</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -116,7 +116,7 @@
 <path d="M129 49 L118 71 M151 49 L140 71 M107.5 49 L97 71" stroke="#f0fbff" stroke-width="2.2" opacity=".9"/></g>
 <rect x="172" y="53" width="50" height="14" rx="3" fill="url(#d_sh)" stroke="#14456e" stroke-width="1.6"/>
 <rect x="176" y="55" width="43" height="2.4" rx="1.2" fill="#f2fbff" opacity=".85"/></g></svg></div><div><div class="t">Drilling</div><div class="s">Cycles + speeds/feeds</div></div></div>
-        <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 240 128" style="width:100%;height:auto;display:block;border-radius:10px" xmlns="http://www.w3.org/2000/svg"><defs>
+        <div class="tile" onclick="show('groove')"><span class="tag free">NEW</span><div class="ic"><svg viewBox="0 0 240 128" style="width:100%;height:auto;display:block;border-radius:10px" xmlns="http://www.w3.org/2000/svg"><defs>
 <linearGradient id="g_job" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0f2f4"/><stop offset=".5" stop-color="#c2c7cc"/><stop offset="1" stop-color="#868d94"/></linearGradient>
 <linearGradient id="g_ins" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff1fd"/><stop offset=".45" stop-color="#5aa3dd"/><stop offset="1" stop-color="#184f7d"/></linearGradient></defs>
 <rect x="0" y="0" width="240" height="128" rx="16" fill="#101d29"/>
@@ -128,7 +128,7 @@
 <path d="M104 48 H132 V78 H104 Z" fill="#13212d"/><path d="M104 48 V78 M132 48 V78 M104 78 H132" stroke="#5a6068" stroke-width="1.8" fill="none"/>
 <rect x="111" y="12" width="18" height="66" rx="2" fill="url(#g_ins)" stroke="#14456e" stroke-width="1.7"/>
 <rect x="113.5" y="14" width="3" height="62" rx="1.2" fill="#eaf7ff" opacity=".75"/>
-<path d="M118 78 q5 -3 10 -1" fill="none" stroke="#ff9a3c" stroke-width="2.4" stroke-linecap="round"/></svg></div><div><div class="t">Grooving</div><div class="s">Coming soon</div></div></div>
+<path d="M118 78 q5 -3 10 -1" fill="none" stroke="#ff9a3c" stroke-width="2.4" stroke-linecap="round"/></svg></div><div><div class="t">Grooving</div><div class="s">OD / ID / face grooving</div></div></div>
         <div class="tile soon" onclick="show('soon')"><span class="tag soon">SOON</span><div class="ic"><svg viewBox="0 0 240 128" style="width:100%;height:auto;display:block;border-radius:10px" xmlns="http://www.w3.org/2000/svg"><defs>
 <linearGradient id="m_cyl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef0f2"/><stop offset=".5" stop-color="#bcc1c6"/><stop offset="1" stop-color="#848b92"/></linearGradient>
 <linearGradient id="m_bv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff1fd"/><stop offset=".4" stop-color="#7cbbe9"/><stop offset=".72" stop-color="#2f7cb6"/><stop offset="1" stop-color="#184f7d"/></linearGradient>
@@ -457,6 +457,20 @@
       </div>
     </section>
 
+    <section id="groove" class="view">
+      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Grooving</h2></div>
+      <div class="sec"><div class="st" onclick="tog(this)">OPERATION <span>&#9662;</span></div><div class="sb">
+        <label>Machine</label><select id="gv_mach"><option>Turning (lathe)</option><option>Milling (machining centre)</option></select>
+        <label>Grooving type</label><select id="gv_type"><option>External (OD)</option><option>Internal (ID / bore)</option><option>Face</option></select>
+        <label>Material</label><select id="gv_mat" onchange="gvMr()"></select><div id="gv_mr" class="mrinfo"></div>
+      </div></div>
+      <div class="sec"><div class="st" onclick="tog(this)">GEOMETRY <span>&#9662;</span></div><div class="sb">
+        <p id="gv_skel" class="note" style="text-align:left">Skeleton ready &mdash; tell me the fields + tool-path rules and I'll build it.</p>
+      </div></div>
+      <button class="btn" onclick="genGroove()">&#9881;&#65039;  GENERATE G-CODE</button>
+      <div id="gv_res"></div>
+    </section>
+
     <section id="soon" class="view">
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Coming soon</h2></div>
       <div class="prolock"><div class="ic">&#128736;&#65039;</div><h3>Being built next</h3>
@@ -557,6 +571,8 @@ function s2Speed(){var sp=[1,2,5,10,20],i=sp.indexOf(S2.speed);S2.speed=sp[(i+1)
 function s2Reset(){s2Pause();S2.prog=0;s2Render();}
 function s2All(){s2Pause();S2.prog=S2.segs.length;s2Render();}
 function s2Block(d){s2Pause();S2.prog=Math.max(0,Math.min(S2.segs.length,Math.round(S2.prog)+d));s2Render();}
+function gvMr(){var m=matBy($('gv_mat')?$('gv_mat').value:'');var el=$('gv_mr');if(el&&m&&m[4]!=null){var c=ISO_COL[m[2]]||'#9E9E9E';el.innerHTML='<span class="isochip" style="background:'+c+'">ISO '+m[2]+'</span> Machinability '+m[4]+'%';}}
+function genGroove(){var t=$('gv_type').value;$('gv_res').innerHTML='<p class="note" style="text-align:left">Grooving generator is a skeleton &mdash; toolpath rules not defined yet.<br>Type: <b>'+t+'</b>.</p>';}
 function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);}
 function tog(h){const b=h.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';h.querySelector('span').textContent=b.style.display==='none'?'▸':'▾';}
 function r(n,p){return Number(n).toFixed(p);}
@@ -1035,6 +1051,7 @@ function init(){
   setMethod('Mill');$('eqvol').value='Yes';setDefaultPasses();matChange();applyLockUI();
   if($('dr_mat')){opt($('dr_mat'),MATS.map(x=>x[0]),'Stainless 316 austenitic');drCalc();}
   if($('tn_mat')){opt($('tn_mat'),MATS.map(x=>x[0]),'Stainless 316 austenitic');tnRenderPts();tnBind();tnCalc();}
+  if($('gv_mat')){opt($('gv_mat'),MATS.map(x=>x[0]),'Stainless 316 austenitic');gvMr();}
   var _d=$('d');if(_d){var _dc=function(){_d.style.caretColor=(_d.value.trim()==='')?'#000':'';};_d.addEventListener('focus',_dc);_d.addEventListener('input',_dc);_d.addEventListener('blur',_dc);_dc();}
 }
 init();
