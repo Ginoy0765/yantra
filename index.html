@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#0f1720">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="YANTRA">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?ya">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?ya">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?ya">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?ya2">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?ya2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?ya2">
 <link rel="manifest" href="manifest.webmanifest">
 <title>YANTRA</title>
 <style>
@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v6.7</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v6.9</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -158,6 +158,7 @@
 <circle cx="136" cy="42" r="5" fill="#0d2740"/><path d="M121 56 L122 31" stroke="#eaf7ff" stroke-width="1.6" opacity=".8" fill="none"/>
 </svg></div><div><div class="t">Turning</div><div class="s">OD/ID turn + face</div></div></div>
         <div class="tile" onclick="show('fulljob');renderJob()"><span class="tag free">NEW</span><div class="ic" style="font-size:60px;line-height:1.05">&#128736;&#65039;</div><div><div class="t">Full Job</div><div class="s">Chain ops &mdash; M01 between, M30 at end</div></div></div>
+        <div class="tile" onclick="show('manual')"><span class="tag free">NEW</span><div class="ic" style="font-size:52px;line-height:1.05">&#128221;</div><div><div class="t">Manual Program</div><div class="s">Upload / write / edit NC code</div></div></div>
       </div>
       <p class="note">Building one operation at a time. Threading first &mdash; everything works offline.</p>
     </section>
@@ -501,6 +502,17 @@
       <button class="btn" onclick="tnCalc();show('turnops')">&#10003; Done</button>
     </section>
 
+    <section id="manual" class="view">
+      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Manual Program</h2></div>
+      <p class="note" style="text-align:left">Upload a program (.nc / .txt / .tap / .min / .mpf) or write one here. Edit it freely in the Yantra editor, then save.</p>
+      <input type="file" id="mp_file" accept=".nc,.txt,.tap,.cnc,.min,.mpf,.h,.ptp,.gcode" style="display:none" onchange="mpLoad(event)">
+      <button class="btn btn2" onclick="document.getElementById('mp_file').click()">&#128193;  Upload program</button>
+      <textarea id="mp_text" class="gedit" style="min-height:320px" spellcheck="false" placeholder="Paste or write your G-code program here..." oninput="mpCount()"></textarea>
+      <div id="mp_info" class="note" style="text-align:left">0 lines</div>
+      <div class="row2"><button class="btn btn2" onclick="mpSave('nc')">&#128190;  Save .nc</button><button class="btn btn2" onclick="mpSave('txt')">&#128190;  Save .txt</button></div>
+      <button class="btn btn2" onclick="mpClear()">Clear</button>
+    </section>
+
     <section id="soon" class="view">
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Coming soon</h2></div>
       <div class="prolock"><div class="ic">&#128736;&#65039;</div><h3>Being built next</h3>
@@ -614,6 +626,10 @@ function s2All(){s2Pause();S2.prog=S2.segs.length;s2Render();}
 function s2Block(d){s2Pause();S2.prog=Math.max(0,Math.min(S2.segs.length,Math.round(S2.prog)+d));s2Render();}
 function gvMr(){var m=matBy($('gv_mat')?$('gv_mat').value:'');var el=$('gv_mr');if(el&&m&&m[4]!=null){var c=ISO_COL[m[2]]||'#9E9E9E';el.innerHTML='<span class="isochip" style="background:'+c+'">ISO '+m[2]+'</span> Machinability '+m[4]+'%';}}
 function genGroove(){var t=$('gv_type').value;$('gv_res').innerHTML='<p class="note" style="text-align:left">Grooving generator is a skeleton &mdash; toolpath rules not defined yet.<br>Type: <b>'+t+'</b>.</p>';}
+function mpCount(){var t=$('mp_text'),i=$('mp_info');if(t&&i){var n=t.value?t.value.split('\n').length:0;i.textContent=n+' line'+(n===1?'':'s');}}
+function mpLoad(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){if($('mp_text')){$('mp_text').value=r.result;mpCount();}};r.readAsText(f);e.target.value='';}
+function mpSave(ext){var t=$('mp_text')?$('mp_text').value:'';if(!t.trim()){alert('Nothing to save.');return;}var b=new Blob([t],{type:'text/plain'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='YANTRA_MANUAL.'+ext;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},800);}
+function mpClear(){var t=$('mp_text');if(t){if(t.value&&!confirm('Clear the program?'))return;t.value='';mpCount();}}
 function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);var sb=document.getElementById('savestepbtn');if(sb)sb.style.display=(typeof jobEditIdx!=='undefined'&&jobEditIdx!=null&&v!=='fulljob'&&v!=='home')?'block':'none';if(v==='drill'||v==='prog'){var _fi=document.getElementById(v==='drill'?'dr_d':'d');if(_fi)setTimeout(function(){try{_fi.focus();}catch(x){}},60);}}
 function tog(h){const b=h.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';h.querySelector('span').textContent=b.style.display==='none'?'▸':'▾';}
 function r(n,p){return Number(n).toFixed(p);}
