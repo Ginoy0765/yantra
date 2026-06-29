@@ -149,13 +149,17 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
     use_g68 = abs(entry_angle) > 1e-6
     if use_g68:
         lines.append(f'G68 X0 Y0 R{fmt(entry_angle)}   ( ENTRY ANGLE = {fmt(entry_angle)} DEG )')
-    lines.append(f'G00 X{fmt(safe_R)} Y{fmt(0.0)} S{N_rpm} (M03/M04)')
+    # External 45/90: go STRAIGHT to the diagonal plunge corner (no
+    # redundant (safe_R,0) pre-position).  eO is A-independent (cr=safe_R).
+    _ext_clean = is_external and entry_style in ('45', '90') and mode == 'Helical'
+    _start_xy = _ext_arc_geo(D / 2.0)[0] if _ext_clean else (safe_R, 0.0)
+    lines.append(f'G00 X{fmt(_start_xy[0])} Y{fmt(_start_xy[1])} S{N_rpm} (M03/M04)')
     lines.append(f'G43 H1 Z{SAFE_Z}. M08')
 
     # U157: track XY position too — needed for external entry/exit which
-    # starts cutter at (safe_R, 0) instead of bore center.
+    # starts cutter at the standoff/plunge position instead of bore center.
     st = {'z': SAFE_Z, 'p': 0, 'time': RAPID_TIME, 'first_plunge': True,
-          'x': safe_R, 'y': 0.0}
+          'x': _start_xy[0], 'y': _start_xy[1]}
 
     def plunge_to(tz):
         # U47: first plunge stays G90 absolute as the editable anchor.
@@ -456,8 +460,9 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
             if st['z'] < SAFE_Z - 1e-9:
                 lines.append(f'G90 G00 Z{SAFE_Z}.')
                 st['z'] = SAFE_Z
-            lines.append(f'G90 G00 X{fmt(eO[0])} Y{fmt(eO[1])}')
-            st['x'], st['y'] = eO[0], eO[1]
+            if abs(st['x'] - eO[0]) > 1e-6 or abs(st['y'] - eO[1]) > 1e-6:
+                lines.append(f'G90 G00 X{fmt(eO[0])} Y{fmt(eO[1])}')
+                st['x'], st['y'] = eO[0], eO[1]
         plunge_to(plunge_z)
         phdr()
         # U219: pass the same per-pass feed_multiplier into emit_entry
