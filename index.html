@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 29 Jun 2026 17:09</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 29 Jun 2026 22:48</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -217,7 +217,7 @@
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Programming</h2><button class="back" style="margin-left:auto;width:auto;padding:0 12px;font-size:12.5px" onclick="show('data')">Thread data</button></div>
 
       <div class="sec"><div class="st" onclick="tog(this)">THREAD TYPE <span>&#9662;</span></div><div class="sb">
-        <div class="row2"><div><label>Milling / Turning</label><select id="opsel" onchange="setMethodSel()"><option>Milling</option><option>Turning</option></select></div><div><label>Internal / External</label><select id="side" onchange="minorEdited=false;clearD();recalc();recalcT();tmVis()"><option>Internal</option><option>External</option></select></div></div>
+        <div class="row2"><div><label>Milling / Turning</label><select id="opsel" onchange="setMethodSel()"><option>Milling</option><option>Turning</option></select></div><div><label>Internal / External</label><select id="side" onchange="minorEdited=false;clearD();recalc();recalcT();tmVis();entryVis()"><option>Internal</option><option>External</option></select></div></div>
         <div class="row2"><div><label>Thread profile</label><select id="profile" onchange="profChange()"><option>ISO Metric</option><option>UN (TPI)</option><option>NPT (Taper)</option><option>Custom</option></select></div><div><label>LH / RH</label><select id="hand" onchange="clearD()"><option>RH</option><option>LH</option></select></div></div>
         <div class="row2"><div><label>Thread standard</label><select id="size" onchange="sizeChange()"></select></div><div><label>No. of starts</label><input id="starts" type="number" value="1" inputmode="numeric" oninput="clearD()"></div></div>
       </div></div>
@@ -871,6 +871,7 @@ function applySubprogram(prog){var L=prog.split('\n'),o=[];for(var i=0;i<L.lengt
   if(/^G00\s+X\S+\s+Y\S+\s*$/.test(t)){continue;}
   if(t==='M30'){o.push(ln.replace('M30','M99'));continue;}
   o.push(ln);}return o.join('\n');}
+function entryVis(){var sel=$('entry');if(!sel)return;var ext=$('side')&&$('side').value==='External';for(var i=0;i<sel.options.length;i++){var v=sel.options[i].value||sel.options[i].text;if(v==='Old'||v==='90'){sel.options[i].disabled=ext;sel.options[i].hidden=ext;}}if(ext&&(sel.value==='Old'||sel.value==='90'))sel.value='45';}
 function tmVis(){var c=$('ctrl');if(!c)return;var idx=-1;for(var i=0;i<c.options.length;i++){if(c.options[i].text.indexOf('Turn-mill')>=0)idx=i;}var internal=(method!=='Turn')&&$('side')&&$('side').value==='Internal';if(internal&&idx<0){var o=document.createElement('option');o.text='Turn-mill (polar)';c.add(o);}else if(!internal&&idx>=0){if(c.selectedIndex===idx)c.selectedIndex=0;c.remove(idx);}}
 function genTurnMill(){
   var dEl=$('d');
@@ -968,7 +969,7 @@ function genMill(){
   var pcts=buildPcts();
   var P0={D:D,L:L,P:P,d:d,Z:num('Z',1),Vc:Vc,fz:fz,hand:$('hand').value,direction:$('dir').value,mode:$('path').value,
     num_passes:pcts.length,pcts:pcts,repass_pitches:(brepass?Math.max(1,Math.round(num('repp',1))):0),repass_offset:num('repoff',0),num_teeth:teeth,
-    bottom_offset:toff,spindle:(LOCK_ADV?'M03':$('mcode').value),dia_end_offset:toff,minor:minor,entry_style:(LOCK_ADV?'Old':$('entry').value),
+    bottom_offset:toff,spindle:(LOCK_ADV?'M03':$('mcode').value),dia_end_offset:toff,minor:minor,entry_style:(internal?(LOCK_ADV?'Old':$('entry').value):((!LOCK_ADV&&$('entry').value==='180')?'180':'45')),
     num_starts:Math.max(1,Math.round(num('starts',1))),entry_feed_reduction:(LOCK_ADV?0:num('engred',0)),max_rpm:(LOCK_ADV?5000:num('maxrpm',5000)),
     stepped_style:(LOCK_ADV?'Modified':($('sstyle').value.indexOf('Carmex')>=0?'Carmex':'Modified')),is_external:!internal,
     strategy:'Standard',finishing:(req==='Finishing'),entry_angle:(LOCK_ADV?0:num('entryang',0)),tool_offset_mode:(toolOD?'od':'centre'),

@@ -81,6 +81,8 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
     parity = (1 + is_rh + is_bu) % 2
     arc = 'G03' if parity == 1 else 'G02'
     comp = 'G41' if parity == 1 else 'G42'
+    if is_external:  # external flips comp side vs internal: G03->G42, G02->G41
+        comp = 'G42' if parity == 1 else 'G41'
     zs = 1 if is_bu else -1
     ys = 1 if parity == 1 else -1
 
@@ -209,13 +211,11 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
         if is_external:
             entry_feed = max(1, round(_entry_feed_for(F)))
             if entry_style in ('45', '90') and mode == 'Helical':
-                eO, S, Re, _exS, _exO = _ext_arc_geo(A)
-                dxr = S[0] - st['x']; dyr = S[1] - st['y']
-                lines.append(f'G91 G01 {comp} D1 X{fmt(dxr)} Y{fmt(dyr)} '
-                             f'Z0.0 F{entry_feed}')
-                Cx = A - Re; dxa = A - S[0]; dya = 0.0 - S[1]
-                lines.append(f'{arc} X{fmt(dxa)} Y{fmt(dya)} Z{fmt(zs*P8)} '
-                             f'I{fmt(Cx - S[0])} J{fmt(dya)} F{entry_feed}')
+                # CLEAN entry (no roll-in arc): single straight move from the
+                # clear plunge position straight to the orbit start (A, 0).
+                dxe = A - st['x']; dye = 0.0 - st['y']
+                lines.append(f'G91 G01 {comp} D1 X{fmt(dxe)} Y{fmt(dye)} '
+                             f'Z{fmt(zs*P8)} F{entry_feed}')
                 st['x'] = A; st['y'] = 0.0
                 return
             dx_ext = A - st['x']
@@ -367,12 +367,12 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
         # radial to the outer point.  Else legacy radial outward.
         if is_external:
             if entry_style in ('45', '90') and mode == 'Helical':
+                # CLEAN exit (no roll-out arc): single straight G40 move from
+                # the orbit end straight out to the clear exit point.
                 _eO, _S, Re, exS, exO = _ext_arc_geo(A_end)
-                Cx = A_end - Re; dxa = exS[0] - A_end; dya = exS[1] - 0.0
-                lines.append(f'{arc} X{fmt(dxa)} Y{fmt(dya)} Z{fmt(zs*P8)} '
-                             f'I{fmt(Cx - A_end)} J0.0 F1000')
-                dxr = exO[0] - exS[0]; dyr = exO[1] - exS[1]
-                lines.append(f'G91 G01 G40 X{fmt(dxr)} Y{fmt(dyr)} Z0.0 F1000')
+                dxx = exO[0] - A_end; dyy = exO[1] - 0.0
+                lines.append(f'G91 G01 G40 X{fmt(dxx)} Y{fmt(dyy)} '
+                             f'Z{fmt(zs*P8)} F1000')
                 st['x'] = exO[0]; st['y'] = exO[1]
                 return
             dx_ext = safe_R - st['x']
