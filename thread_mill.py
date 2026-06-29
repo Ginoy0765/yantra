@@ -97,7 +97,7 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
     # (start at bore center as before).
     if is_external:
         D_max_external = D + max(0.0, dia_end_offset)
-        safe_R = D_max_external / 2.0 + d / 2.0 + P
+        safe_R = D_max_external / 2.0 + d / 2.0 + 2 * P   # 2-pitch gap between thread OD and cutter
     else:
         safe_R = 0.0
     # U159: entry-arc feed helper.
@@ -127,7 +127,9 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
         cphi = math.cos(phi); sphi = math.sin(phi)
         s = safe_R                       # standoff radius = 1 pitch off MAJOR (D/2+d/2+P)
         Re = (A * A - 2 * A * s * cphi + s * s) / (2.0 * (A - s * cphi))
-        cr = safe_R + d / 2.0            # clearance (plunge/approach) radius for comp-on
+        # centre/baked mode (D=0): programmed = cutter centre, so plunge AT safe_R
+        # (close standoff). OD/active-comp mode keeps the +d/2 offset.
+        cr = safe_R if tool_offset_mode != 'od' else (safe_R + d / 2.0)
         e = -ys
         S = (s * cphi, e * s * sphi)
         eO = (cr * cphi, e * cr * sphi)
