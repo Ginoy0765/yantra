@@ -73,12 +73,12 @@
   .histrow .hx{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);color:var(--mut);font-size:16px;cursor:pointer}
 #d:placeholder-shown,#dr_d:placeholder-shown{background:#ffdede;border-color:#e57373;caret-color:#000}
 </style>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script src="https://unpkg.com/pyodide@0.26.4/pyodide.js"></script>
 </head>
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 29 Jun 2026 10:04</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 29 Jun 2026 17:09</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -567,7 +567,7 @@ async function initPy(){
   var wd=setTimeout(function(){if(!pyReady)S('Still downloading the engine \u2014 large first-time load; keep the tab open on a stable connection.','var(--pro)');},20000);
   try{
     S('Loading engine \u2014 runtime\u2026');
-    py=await loadPyodide();
+    py=await loadPyodide({indexURL:"https://unpkg.com/pyodide@0.26.4/"});
     S('Loading engine \u2014 thread modules\u2026');
     async function rd(n){var r=await fetch(n+'?'+Date.now());if(!r.ok)throw new Error(n+' HTTP '+r.status);return await r.text();}
     var FILES=['thread_mill.py','thread_turn.py','mill_post.py','axis_transform.py','webpost.py'];
