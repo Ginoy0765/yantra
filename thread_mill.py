@@ -147,7 +147,7 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
     # without changing every X/Y/I/J emission.  G69 cancels at end.
     # Default 0 = no rotation (G68/G69 lines suppressed).
     use_g68 = abs(entry_angle) > 1e-6
-    if use_g68:
+    if use_g68 and num_starts == 1:
         lines.append(f'G68 X0 Y0 R{fmt(entry_angle)}   ( ENTRY ANGLE = {fmt(entry_angle)} DEG )')
     # External 45/90: go STRAIGHT to the diagonal plunge corner (no
     # redundant (safe_R,0) pre-position).  eO is A-independent (cr=safe_R).
@@ -828,6 +828,7 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
                 # Straight helix uses 1 full circle per orbit at lead.
                 full_emit = float(fmt(-lead))                  # zs=-1
                 plunge_z = -L - float(fmt(-P8)) - n_z * full_emit
+        _cut_idx = len(lines)
         for p_idx in range(num_passes):
             pct = pcts[p_idx]
             if pct <= 0:
@@ -878,6 +879,65 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
                 A_r = A_r_face
             rp_z = -(L + P8) if is_bu else -(L - repass_pitches * lead) + P8
             continuous_helix(A_r, repass_pitches, rp_z, dia_taper=0.0)
+        # MULTI-START: replicate the single-start cutting, each rotated by
+        # k*360/num_starts about the workpiece axis.  Rotation is baked into
+        # REAL X/Y/I/J coordinates (NOT G68) so it runs on any control.
+        # lead = num_starts*P already advances Z so each helix covers depth;
+        # end-points inherit the single-start plunge_z math.
+        if num_starts > 1:
+            _cut_body = list(lines[_cut_idx:])
+            del lines[_cut_idx:]
+            _step = 360.0 / num_starts
+
+            def _rot_xy(x, y, ct, stt):
+                # rotate a point OR an incremental vector about the axis (CCW)
+                nx = x * ct - y * stt
+                ny = x * stt + y * ct
+                # snap floating-point dust (e.g. sin 180 = 1.2e-16) to 0
+                if abs(nx) < 1e-9: nx = 0.0
+                if abs(ny) < 1e-9: ny = 0.0
+                return (nx, ny)
+
+            def _rot_line(ln, ct, stt):
+                # rotate the X&Y pair and the I&J arc-centre pair in one G-code
+                # line.  Z, K, R, F, S, D, H and all G/M codes are untouched.
+                if ln.lstrip().startswith('('):
+                    return ln
+                toks = ln.split(' ')
+                pos = {}
+                for ix, tk in enumerate(toks):
+                    if len(tk) >= 2 and tk[0] in 'XYIJ' and (tk[1].isdigit() or tk[1] in '+-.'):
+                        try:
+                            pos[tk[0]] = (ix, float(tk[1:]))
+                        except ValueError:
+                            pass
+                if 'X' in pos and 'Y' in pos:
+                    nx, ny = _rot_xy(pos['X'][1], pos['Y'][1], ct, stt)
+                    toks[pos['X'][0]] = 'X' + fmt(nx)
+                    toks[pos['Y'][0]] = 'Y' + fmt(ny)
+                if 'I' in pos and 'J' in pos:
+                    ni, nj = _rot_xy(pos['I'][1], pos['J'][1], ct, stt)
+                    toks[pos['I'][0]] = 'I' + fmt(ni)
+                    toks[pos['J'][0]] = 'J' + fmt(nj)
+                return ' '.join(toks)
+
+            for _k in range(num_starts):
+                _ang = (entry_angle + _k * _step) % 360.0
+                lines.append(f'( ===== START {_k+1} OF {num_starts}  AT {fmt(_ang)} DEG ===== )')
+                if _k > 0:
+                    lines.append(f'G90 G00 Z{SAFE_Z}.')
+                if abs(_ang) < 1e-9:
+                    # identity (start 0 with no entry angle) -> verbatim cutting
+                    if _k > 0:
+                        lines.append(f'G90 G00 X{fmt(_start_xy[0])} Y{fmt(_start_xy[1])}')
+                    lines.extend(_cut_body)
+                else:
+                    _ct = math.cos(math.radians(_ang))
+                    _stt = math.sin(math.radians(_ang))
+                    _rx, _ry = _rot_xy(_start_xy[0], _start_xy[1], _ct, _stt)
+                    lines.append(f'G90 G00 X{fmt(_rx)} Y{fmt(_ry)}')
+                    for _ln in _cut_body:
+                        lines.append(_rot_line(_ln, _ct, _stt))
 
     elif mode == 'Stepped':
         # U152: Pitch-aligned axial passes for stepped milling.
@@ -1198,7 +1258,7 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
                              top_first=top_first)
 
     lines.append(f'G90 G00 Z{SAFE_Z}.')
-    if use_g68:
+    if use_g68 and num_starts == 1:
         # U159: cancel coordinate-system rotation before M30.
         lines.append('G69')
     lines.append('M30')
