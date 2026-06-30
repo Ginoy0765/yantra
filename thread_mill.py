@@ -86,6 +86,26 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
     zs = 1 if is_bu else -1
     ys = 1 if parity == 1 else -1
 
+    # U227: AUTO entry-style selection (internal only; external keeps its
+    # own clean-entry logic).  Ginoy's rules:
+    #   1. Top-to-Bottom helical -> ALWAYS 'Old'.
+    #   2. else (BTT helical / stepped): if the 45-style comp-activation
+    #      move's in-plane component would be < 0.2 mm -> 'Old' (45 starves
+    #      G41/G42 pickup when the cutter nearly fills the bore; Old gives a
+    #      bigger, readable move); else -> '45'.
+    if entry_style == 'Auto':
+        if is_external:
+            entry_style = '45'
+        elif mode == 'Helical' and not is_bu:
+            entry_style = 'Old'          # TTB helical -> always Old
+        else:
+            _minor_eff = minor if (minor and 0 < minor < D) else (D - 2.0 * thread_depth)
+            _gap = max(0.05, P / 10.0)
+            _T = (_minor_eff / 2.0) if tool_offset_mode == 'od' else ((_minor_eff - d) / 2.0)
+            _dist45 = max(0.0, _T - _gap)
+            _act = _dist45 / (2.0 ** 0.5)   # 45 deg -> equal X and Y components
+            entry_style = 'Old' if _act < 0.2 else '45'
+
     # U157: for EXTERNAL threading the cutter must approach from OUTSIDE
     # the workpiece — starting at bore center (X0 Y0) would crash through
     # a solid pipe / rod.  Compute a safe START radius equal to:
