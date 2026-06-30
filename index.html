@@ -40,6 +40,8 @@
   .sec>.sb{padding:4px 14px 14px}
   label{display:block;color:var(--mut);font-size:11.5px;font-weight:600;margin:12px 0 5px;letter-spacing:.2px}
   select,input{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:12px;font-size:16px;outline:none}
+  input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}
+  input[type=number]{-moz-appearance:textfield;appearance:textfield}
   input[readonly]{color:var(--acc);font-weight:700;background:#101a25}
   select:focus,input:focus{border-color:var(--acc2)}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.row4{display:grid;grid-template-columns:.9fr 1.2fr .8fr .8fr;gap:6px}
@@ -78,7 +80,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 30 Jun 2026 23:13</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 30 Jun 2026 23:32</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -767,19 +769,21 @@ function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&t
 function parseSim(){
   var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
   if(turning){var passes=[],cZ=null;L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;var X=_sv('X',u),Z=_sv('Z',u);if(u.indexOf('G92')>=0){if(X!=null)passes.push([X/2,(Z!=null?Z:(cZ!=null?cZ:0)),(cZ!=null?cZ:(Z!=null?Z:0))]);if(Z!=null)cZ=Z;}else{if(Z!=null)cZ=Z;}});return {turning:true,passes:passes};}
-  var pts=[],blk=[],x=0,y=0,z=100,rel=false,b=0;
+  var pts=[],blk=[],x=0,y=0,z=100,rel=false,b=0,pl=17;
   L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;
-    if(/\bG91\b/.test(u))rel=true;if(/\bG90\b/.test(u))rel=false;
-    var X=_sv('X',u),Y=_sv('Y',u),Z=_sv('Z',u),I=_sv('I',u),J=_sv('J',u);
+    if(/\bG91\b/.test(u))rel=true;if(/\bG90\b/.test(u))rel=false;if(/\bG17\b/.test(u))pl=17;else if(/\bG18\b/.test(u))pl=18;else if(/\bG19\b/.test(u))pl=19;
+    var X=_sv('X',u),Y=_sv('Y',u),Z=_sv('Z',u),I=_sv('I',u),J=_sv('J',u),K=_sv('K',u);
     var arc=u.indexOf('G02')>=0||u.indexOf('G03')>=0;
-    if(arc&&I!=null&&J!=null){b++;var sx=x,sy=y,sz=z;
-      var ex=rel?(X!=null?x+X:x):(X!=null?X:x),ey=rel?(Y!=null?y+Y:y):(Y!=null?Y:y),ez=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);
-      var cx=sx+I,cy=sy+J,r=Math.hypot(I,J),a0=Math.atan2(sy-cy,sx-cx),a1=Math.atan2(ey-cy,ex-cx),ccw=u.indexOf('G03')>=0;
-      var sw=(ccw?(a1-a0):(a0-a1));sw=((sw%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
-      if(Math.abs(ex-sx)<1e-6&&Math.abs(ey-sy)<1e-6)sw=2*Math.PI;if(sw<1e-6)sw=2*Math.PI;
-      var n=Math.max(8,Math.round(sw/(Math.PI/16)));
-      pts.push([sx,sy,sz]);blk.push(b);
-      for(var k=1;k<=n;k++){var t=k/n,ang=ccw?a0+sw*t:a0-sw*t;pts.push([cx+r*Math.cos(ang),cy+r*Math.sin(ang),sz+(ez-sz)*t]);blk.push(b);}
+    var P17=(pl===17),P18=(pl===18),P19=(pl===19);
+    var ax1=P19?1:0,ax2=P17?1:2,dpx=P17?2:(P18?1:0),o1=P19?J:I,o2=P17?J:K;
+    if(arc&&o1!=null&&o2!=null){b++;var s=[x,y,z];
+      var ex=rel?(X!=null?x+X:x):(X!=null?X:x),ey=rel?(Y!=null?y+Y:y):(Y!=null?Y:y),ez=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);var e=[ex,ey,ez];
+      var c1=s[ax1]+o1,c2=s[ax2]+o2,r=Math.hypot(o1,o2),a0=Math.atan2(s[ax2]-c2,s[ax1]-c1),aE=Math.atan2(e[ax2]-c2,e[ax1]-c1),ccw=u.indexOf('G03')>=0;
+      var sw=(ccw?(aE-a0):(a0-aE));sw=((sw%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+      if(Math.abs(e[ax1]-s[ax1])<1e-6&&Math.abs(e[ax2]-s[ax2])<1e-6)sw=2*Math.PI;if(sw<1e-6)sw=2*Math.PI;
+      var n=Math.max(8,Math.round(sw/(Math.PI/16))),sdp=s[dpx],edp=e[dpx];
+      pts.push([x,y,z]);blk.push(b);
+      for(var k=1;k<=n;k++){var t=k/n,ang=ccw?a0+sw*t:a0-sw*t;var pnt=[0,0,0];pnt[ax1]=c1+r*Math.cos(ang);pnt[ax2]=c2+r*Math.sin(ang);pnt[dpx]=sdp+(edp-sdp)*t;pts.push(pnt);blk.push(b);}
       x=ex;y=ey;z=ez;}
     else if(X!=null||Y!=null||Z!=null){b++;x=rel?(X!=null?x+X:x):(X!=null?X:x);y=rel?(Y!=null?y+Y:y):(Y!=null?Y:y);z=rel?(Z!=null?z+Z:z):(Z!=null?Z:z);pts.push([x,y,z]);blk.push(b);}
   });
