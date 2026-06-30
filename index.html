@@ -80,7 +80,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 30 Jun 2026 23:32</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 30 Jun 2026 23:59</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -767,6 +767,7 @@ function buildPcts(){
 function applyFR(t){var f=$('findr')?$('findr').value:'';if(f)t=t.split(f).join($('repl')?$('repl').value:'');var f2=$('t_findr')?$('t_findr').value:'';if(f2)t=t.split(f2).join($('t_repl')?$('t_repl').value:'');return t;}
 function _sv(a,l){var ts=l.split(/\s+/);for(var i=0;i<ts.length;i++){if(ts[i]&&ts[i][0]===a){var n=parseFloat(ts[i].slice(1));if(!isNaN(n))return n;}}return null;}
 function parseSim(){
+  if(/G12\.1/.test(lastProg)&&tmSimData)return tmSimData;
   var L=lastProg.split('\n');var turning=/%1001/.test(lastProg)||/G92/.test(lastProg);
   if(turning){var passes=[],cZ=null;L.forEach(function(l){var u=l.trim();if(!u||u[0]==='(')return;var X=_sv('X',u),Z=_sv('Z',u);if(u.indexOf('G92')>=0){if(X!=null)passes.push([X/2,(Z!=null?Z:(cZ!=null?cZ:0)),(cZ!=null?cZ:(Z!=null?Z:0))]);if(Z!=null)cZ=Z;}else{if(Z!=null)cZ=Z;}});return {turning:true,passes:passes};}
   var pts=[],blk=[],x=0,y=0,z=100,rel=false,b=0,pl=17;
@@ -947,11 +948,16 @@ function genTurnMill(){
   g.push('(Polar coordinate ON OFF G12.1 & G13.1  - G112 & G113)');
   g.push('(Incremental Move U V & W               - G90)');
   g.push('%');
+  var tmA1=(axisFam==='X')?1:0,tmA2=(axisFam==='Z')?1:2,tmDp=(axisFam==='Z')?2:((axisFam==='X')?0:1);
+  var _tp=[],_tb=[],_tbk=0;
+  for(var ps=0;ps<pcts.length;ps++){var dia2=minor+(D-minor)*pcts[ps]/100,rr=(dia2-d)/2,dep=0;
+    for(var tt=0;tt<turns;tt++){_tbk++;for(var kk=0;kk<=24;kk++){var an=2*Math.PI*kk/24*(rh?-1:1),pnt=[0,0,0];pnt[tmA1]=rr*Math.cos(an);pnt[tmA2]=rr*Math.sin(an);pnt[tmDp]=dep+depthInc*(kk/24);_tp.push(pnt);_tb.push(_tbk);}dep+=depthInc;}}
+  tmSimData={turning:false,pts:_tp,blk:_tb,blocks:_tbk};
   output(g.join('\n'),'');
-  if($('simbtn'))$('simbtn').style.display='none';
   if($('cyc'))$('cyc').innerHTML='<div class="cyc">TURN-MILL polar G12.1 · '+pcts.length+' pass'+(pcts.length>1?'es':'')+' · '+turns+' turns/pass · F'+feed+'</div>';
 }
 function genMill(){
+  tmSimData=null;
   if(!pyReady){notReady();return;}
   if(!$('d').value.trim()){$('p_res').innerHTML='<p class="warn">Enter Tool dia d (required).</p>';$('cyc').innerHTML='';if($('simbtn'))$('simbtn').style.display='none';if($('editbtn'))$('editbtn').style.display='none';if($('savebtn'))$('savebtn').style.display='none';return;}
   matChange();
@@ -1009,7 +1015,7 @@ function genTurn(){
     output(prog,'');
   }catch(e){$('p_res').innerHTML='<p class="warn">Engine error: '+e+'</p>';}
 }
-let lastProg='';var lastCycleSec=0;var editOn=false;var lastExtra='';
+let lastProg='';var lastCycleSec=0;var editOn=false;var lastExtra='';var tmSimData=null;
 /* ---- multi-control post-processor (ported from mill_post.py; absolute-coord aware) ---- */
 function ppf(v){v=Math.round(parseFloat(v)*10000)/10000;if(Math.abs(v)<5e-5)return'0.0';var s=''+v;if(s.indexOf('.')<0)s+='.0';return s;}
 function ppff(v){v=parseFloat(v);if(Math.abs(v-Math.round(v))<1e-6)return''+Math.round(v);return ppf(v);}
