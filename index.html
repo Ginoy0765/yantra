@@ -80,7 +80,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 30 Jun 2026 23:59</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 01 Jul 2026 14:50</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -897,6 +897,7 @@ function genTurnMill(){
   var R=function(v){var s=(Math.round(v*1000)/1000).toString();if(s.indexOf('.')<0)s+='.0';return s;};
   var tax=($('toolaxis')&&$('toolaxis').value)||'Z-';var axisFam=(tax.charAt(0)==='X'||tax.charAt(0)==='Y')?tax.charAt(0):'Z';var axisSign=(tax.indexOf('+')>=0)?1:-1;var radial=(axisFam==='X'||axisFam==='Y');var tmPlane=(axisFam==='X')?'G19':((axisFam==='Y')?'G18':'G17');var depthL=(axisFam==='X')?'U':((axisFam==='Y')?'V':'W');var depthInc=axisSign*P;
   var sx=num('start_x',0),sz=num('start_z',0);
+  var brepass=(!LOCK_ADV)&&$('brepass')&&$('brepass').value==='Yes';var repp=Math.min(turns,Math.max(1,Math.round(num('repp',1))));var repoff=num('repoff',0);
   var g=[];
   g.push('%');
   g.push('O0001 (TURN-MILL THREAD MILL M'+D+'X'+P+' L'+L+' d'+d+' INTERNAL '+hand+' '+tax+' AXIS'+')');
@@ -920,6 +921,13 @@ function genTurnMill(){
       for(var t=0;t<turns;t++)g.push(gRot+' Z'+R(holeZ+r)+' K'+R(-r)+' '+depthL+R(depthInc));
       g.push('G01 G40 Z'+R(holeZ)+' (RETRACT TO CENTRE)');
     }
+    if(brepass){var rr2=(D-d)/2+repoff/2,startX=odX+(turns-repp)*depthInc;
+      g.push('(BOTTOM REPASS - '+repp+' PITCH @ DIA '+R(D)+')');
+      g.push('G0 X'+R(startX));
+      g.push('G01 '+gComp+' Z'+R(holeZ+rr2)+' F'+feed+' (LEAD IN)');
+      for(var tr=0;tr<repp;tr++)g.push(gRot+' Z'+R(holeZ+rr2)+' K'+R(-rr2)+' '+depthL+R(depthInc));
+      g.push('G01 G40 Z'+R(holeZ)+' (RETRACT TO CENTRE)');
+    }
     g.push('G13.1 (POLAR OFF)');
     g.push('G0 X'+R(clearX)+' M09');
   }else{
@@ -932,6 +940,13 @@ function genTurnMill(){
       g.push('G01 Z'+R(faceZ)+' F'+feed);
       g.push('G01 '+gComp+' X'+R(orbitDia)+' F'+feed+' (LEAD IN)');
       for(var t=0;t<turns;t++)g.push(gRot+' X'+R(orbitDia)+' I'+R(-r)+' W'+R(depthInc));
+      g.push('G01 G40 X0.0 (RETRACT TO CENTRE)');
+    }
+    if(brepass){var rDia=(D-d)+repoff,rr2=rDia/2,startZ=faceZ+(turns-repp)*depthInc;
+      g.push('(BOTTOM REPASS - '+repp+' PITCH @ DIA '+R(D)+')');
+      g.push('G01 Z'+R(startZ)+' F'+feed);
+      g.push('G01 '+gComp+' X'+R(rDia)+' F'+feed+' (LEAD IN)');
+      for(var tr=0;tr<repp;tr++)g.push(gRot+' X'+R(rDia)+' I'+R(-rr2)+' W'+R(depthInc));
       g.push('G01 G40 X0.0 (RETRACT TO CENTRE)');
     }
     g.push('G13.1 (POLAR OFF)');
@@ -952,6 +967,8 @@ function genTurnMill(){
   var _tp=[],_tb=[],_tbk=0;
   for(var ps=0;ps<pcts.length;ps++){var dia2=minor+(D-minor)*pcts[ps]/100,rr=(dia2-d)/2,dep=0;
     for(var tt=0;tt<turns;tt++){_tbk++;for(var kk=0;kk<=24;kk++){var an=2*Math.PI*kk/24*(rh?-1:1),pnt=[0,0,0];pnt[tmA1]=rr*Math.cos(an);pnt[tmA2]=rr*Math.sin(an);pnt[tmDp]=dep+depthInc*(kk/24);_tp.push(pnt);_tb.push(_tbk);}dep+=depthInc;}}
+  if(brepass){var rRep=(D-d)/2+repoff/2,depR=(turns-repp)*depthInc;
+    for(var tt2=0;tt2<repp;tt2++){_tbk++;for(var kk2=0;kk2<=24;kk2++){var an2=2*Math.PI*kk2/24*(rh?-1:1),pn2=[0,0,0];pn2[tmA1]=rRep*Math.cos(an2);pn2[tmA2]=rRep*Math.sin(an2);pn2[tmDp]=depR+depthInc*(kk2/24);_tp.push(pn2);_tb.push(_tbk);}depR+=depthInc;}}
   tmSimData={turning:false,pts:_tp,blk:_tb,blocks:_tbk};
   output(g.join('\n'),'');
   if($('cyc'))$('cyc').innerHTML='<div class="cyc">TURN-MILL polar G12.1 · '+pcts.length+' pass'+(pcts.length>1?'es':'')+' · '+turns+' turns/pass · F'+feed+'</div>';
