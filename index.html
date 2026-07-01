@@ -80,7 +80,7 @@
 <body>
 <div class="wrap">
   <header><div class="brand"><div class="logo">&#2351;</div>
-    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 01 Jul 2026 15:18</span></small></div></div></header>
+    <div><h1>YANTRA<span class="advbadge" id="advbadge">ADVANCED</span></h1><small>MACHINIST TOOLKIT &middot; SHOP FLOOR &middot; <span id="appver">v8 · 01 Jul 2026 15:37</span></small></div></div></header>
   <main>
 
     <!-- HOME: operations roadmap -->
@@ -979,7 +979,10 @@ function genTurnMill(){
     _tmRetract(depR);}
   tmSimData={turning:false,pts:_tp,blk:_tb,blocks:_tbk};
   output(g.join('\n'),'');
-  if($('cyc'))$('cyc').innerHTML='<div class="cyc">TURN-MILL polar G12.1 · '+pcts.length+' pass'+(pcts.length>1?'es':'')+' · '+turns+' turns/pass · F'+feed+'</div>';
+  var _cycMin=0;for(var _pc=0;_pc<pcts.length;_pc++){var _dia=minor+(D-minor)*pcts[_pc]/100,_od=Math.max(0.1,_dia-d);_cycMin+=(turns*Math.PI*_od+_od/2)/feed;}
+  if(brepass){var _odR=(D-d)+repoff;_cycMin+=(repp*Math.PI*_odR)/feed;}
+  var _cycS=Math.max(1,Math.round(_cycMin*60));lastCycleSec=_cycS;var _cmm=Math.floor(_cycS/60),_css=_cycS%60;
+  if($('cyc'))$('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+_cmm+'m '+_css+'s &middot; polar G12.1 · '+pcts.length+' pass'+(pcts.length>1?'es':'')+' · '+turns+' turns/pass · F'+feed+'</div>';
 }
 function genMill(){
   tmSimData=null;
