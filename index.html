@@ -594,7 +594,13 @@ async function initPy(){
 }
 function notReady(){$('p_res').innerHTML='<p class="warn">Engine still loading \u2014 wait a few seconds and tap Generate again.</p>';$('cyc').innerHTML='';}
 
-const $=id=>document.getElementById(id);function cleanErr(e){
+const $=id=>document.getElementById(id);function cleanErr(e){var s=(e&&e.message)?e.message:String(e);var m=s.match(/
+\s*([A-Z][a-zA-Z]*(?:Error|Exception)):\s*([^
+]+)(?:
+|$)/g);if(m&&m.length){var last=m[m.length-1];var parts=last.match(/
+\s*([A-Z][a-zA-Z]*(?:Error|Exception)):\s*([^
+]+)/);if(parts){if(parts[1]==='ValueError'){return parts[2].trim();}return parts[1]+': '+parts[2].trim();}}var lines=s.split(/
+/).filter(function(x){return x.trim();});return lines.length ? lines[lines.length-1].trim() : s;}function cleanErr(e){
   var s=(e&&e.message)?e.message:String(e);
   var m=s.match(/\n\s*([A-Z][a-zA-Z]*(?:Error|Exception)):\s*([^\n]+)(?:\n|$)/g);
   if(m&&m.length){
@@ -1202,7 +1208,7 @@ function genMill(){
     var sec=Math.round(t),mm=Math.floor(sec/60),ss=sec%60;
     $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &middot; matches desktop engine</div>';
     output(prog,'');
-  }catch(e){$('p_res').innerHTML='<p class="warn">Engine error: '+e+'</p>';}
+  }catch(e){$('p_res').innerHTML='<p class="warn"><b>Cannot generate:</b><br>'+cleanErr(e)+'</p>';}
 }
 function genTurn(){
   if(!pyReady){notReady();return;}
@@ -1224,7 +1230,7 @@ function genTurn(){
     var sec=Math.round(res[1]),mm=Math.floor(sec/60),ss=sec%60;
     $('cyc').innerHTML='<div class="cyc">CYCLE \u2248 '+mm+'m '+ss+'s &middot; RPM '+res[2]+' (G97) &middot; '+res[3]+' cut passes</div>';
     output(prog,'');
-  }catch(e){$('p_res').innerHTML='<p class="warn">Engine error: '+e+'</p>';}
+  }catch(e){$('p_res').innerHTML='<p class="warn"><b>Cannot generate:</b><br>'+cleanErr(e)+'</p>';}
 }
 let lastProg='';var lastCycleSec=0;var editOn=false;var lastExtra='';
 /* ---- multi-control post-processor (ported from mill_post.py; absolute-coord aware) ---- */
