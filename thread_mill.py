@@ -48,6 +48,21 @@ def _build(D, L, P, d, Z, Vc, fz, hand, direction, mode,
     #     RPM, fz, and safe-approach radius still use the real d
     #     (those are physical-machine quantities, not path geometry).
     d_path = 0.0 if tool_offset_mode == 'od' else d
+    # v24.1 input validation — catch impossible geometry before math blows up
+    if d <= 0 or D <= 0 or P <= 0 or L <= 0:
+        raise ValueError(
+            f"Invalid dimensions: D={D}, L={L}, P={P}, d={d}. All must be > 0."
+        )
+    if Vc <= 0 or fz <= 0 or Z <= 0:
+        raise ValueError(
+            f"Invalid cutting parameters: Vc={Vc}, fz={fz}, flutes Z={Z}. All must be > 0."
+        )
+    if not is_external and d >= D:
+        raise ValueError(
+            f"Tool diameter d={d} mm cannot be >= thread major diameter D={D} mm for internal threading. "
+            f"The tool must fit inside the hole and orbit within it. "
+            f"Try a tool of ~{max(2, int(D * 0.65))} mm or smaller."
+        )
     # U138: Respect Max RPM cap (default 5000) when computing RPM and the
     # downstream lateral feed F1.  Previously the G-code used the uncapped
     # theoretical RPM = Vc * 1000 / (pi * d), so a small cutter (e.g. d=1.2)
