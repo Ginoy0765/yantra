@@ -605,27 +605,43 @@
 
   <!-- ============ 4. PROFILE ============ -->
   <div class="sec open"><div class="st" onclick="gv_toggle(this)">PROFILE <span class="badge live" id="modeBadge">auto</span> <span class="caret">&#9656;</span></div><div class="sb">
-    <div class="hint" style="margin-top:6px"><b>A</b> top-left &middot; <b>B</b> bottom-left &middot; <b>C</b> bottom-right &middot; <b>D</b> top-right &middot; independent chamfer legs toggle in GEOMETRY section above</div>
+    <div class="hint" style="margin-top:6px"><b>A</b> top-left &middot; <b>B</b> bottom-left &middot; <b>C</b> bottom-right &middot; <b>D</b> top-right<br>Each corner has its own X (diameter) and Z entry &mdash; edit directly for asymmetric grooves, or leave and use GEOMETRY / modifiers to auto-fill. Changes flow immediately into the points table below.</div>
     <div class="row4" style="margin-top:8px">
       <div class="cornerBox"><h4>A &mdash; top-L</h4>
+        <div class="row2" style="grid-template-columns:1fr 1fr;gap:5px">
+          <div><label>X (dia)</label><input id="A_x" type="number" step="0.001" value="32" oninput="gv_pointEdit('A')"></div>
+          <div><label>Z</label><input id="A_z" type="number" step="0.001" value="10" oninput="gv_pointEdit('A')"></div>
+        </div>
         <label>Type</label><select id="A_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
         <label>Size 1 (Z-leg / R)</label><input id="A_s1" type="number" value="0" step="0.01" oninput="gv_recalc()">
         <label class="indepOnly">Size 2 (X-leg)</label><input id="A_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
       </div>
       <div class="cornerBox"><h4>B &mdash; bot-L</h4>
+        <div class="row2" style="grid-template-columns:1fr 1fr;gap:5px">
+          <div><label>X (dia)</label><input id="B_x" type="number" step="0.001" value="26" oninput="gv_pointEdit('B')"></div>
+          <div><label>Z</label><input id="B_z" type="number" step="0.001" value="10" oninput="gv_pointEdit('B')"></div>
+        </div>
         <label>Type</label><select id="B_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-        <label>Size 1</label><input id="B_s1" type="number" value="0.2" step="0.01" oninput="gv_recalc()">
-        <label class="indepOnly">Size 2</label><input id="B_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+        <label>Size 1 (Z-leg / R)</label><input id="B_s1" type="number" value="0.2" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2 (X-leg)</label><input id="B_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
       </div>
       <div class="cornerBox"><h4>C &mdash; bot-R</h4>
+        <div class="row2" style="grid-template-columns:1fr 1fr;gap:5px">
+          <div><label>X (dia)</label><input id="C_x" type="number" step="0.001" value="26" oninput="gv_pointEdit('C')"></div>
+          <div><label>Z</label><input id="C_z" type="number" step="0.001" value="4" oninput="gv_pointEdit('C')"></div>
+        </div>
         <label>Type</label><select id="C_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-        <label>Size 1</label><input id="C_s1" type="number" value="0.2" step="0.01" oninput="gv_recalc()">
-        <label class="indepOnly">Size 2</label><input id="C_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+        <label>Size 1 (Z-leg / R)</label><input id="C_s1" type="number" value="0.2" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2 (X-leg)</label><input id="C_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
       </div>
       <div class="cornerBox"><h4>D &mdash; top-R</h4>
+        <div class="row2" style="grid-template-columns:1fr 1fr;gap:5px">
+          <div><label>X (dia)</label><input id="D_x" type="number" step="0.001" value="32" oninput="gv_pointEdit('D')"></div>
+          <div><label>Z</label><input id="D_z" type="number" step="0.001" value="4" oninput="gv_pointEdit('D')"></div>
+        </div>
         <label>Type</label><select id="D_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-        <label>Size 1</label><input id="D_s1" type="number" value="0" step="0.01" oninput="gv_recalc()">
-        <label class="indepOnly">Size 2</label><input id="D_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+        <label>Size 1 (Z-leg / R)</label><input id="D_s1" type="number" value="0" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2 (X-leg)</label><input id="D_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
       </div>
     </div>
 
@@ -2034,10 +2050,40 @@ function recalc(){
     B.z=A.z + (Z2>Z1?1:-1)*wallHL*Math.tan(aL);
     C.z=D.z - (Z2>Z1?1:-1)*wallHR*Math.tan(aR);
   }
-  var meta={A:cornerRow('A'),B:cornerRow('B'),C:cornerRow('C'),D:cornerRow('D')};
-  var pts=[Object.assign({p:'A'},A,meta.A),Object.assign({p:'B'},B,meta.B),Object.assign({p:'C'},C,meta.C),Object.assign({p:'D'},D,meta.D)];
-  renderTable(pts); drawPreview(pts);
+  // Write computed corner values into the X/Z entry cells
+  $('A_x').value=A.x.toFixed(3); $('A_z').value=A.z.toFixed(3);
+  $('B_x').value=B.x.toFixed(3); $('B_z').value=B.z.toFixed(3);
+  $('C_x').value=C.x.toFixed(3); $('C_z').value=C.z.toFixed(3);
+  $('D_x').value=D.x.toFixed(3); $('D_z').value=D.z.toFixed(3);
+
+  // Now build points from what's actually in the cells (allows manual override)
+  updateTableAndPreview();
   updateStratHint();
+}
+
+function readCorners(){
+  return ['A','B','C','D'].map(function(p){
+    var t=$(p+'_t').value;
+    var s1=parseFloat($(p+'_s1').value)||0;
+    var s2=$('indepLegs').checked?(parseFloat($(p+'_s2').value)||s1):s1;
+    return {
+      p:p,
+      x:parseFloat($(p+'_x').value)||0,
+      z:parseFloat($(p+'_z').value)||0,
+      ctype:t, cs1:s1, cs2:s2
+    };
+  });
+}
+
+function updateTableAndPreview(){
+  var pts=readCorners();
+  renderTable(pts);
+  drawPreview(pts);
+}
+
+function pointEdit(p){
+  // User edited a corner X or Z directly - just refresh table + preview without re-syncing from geometry
+  updateTableAndPreview();
 }
 
 function cornerRow(id){
@@ -2571,7 +2617,7 @@ initMaterials();
 drawInsertRef();
 recalc();
 
-// Expose gv_ functions for HTML onclick
+// Expose gv_ functions for HTML handlers
 window.gv_toggle = toggle;
 window.gv_recalc = recalc;
 window.gv_matChange = matChange;
@@ -2585,6 +2631,7 @@ window.gv_simPlay = simPlay;
 window.gv_simPause = simPause;
 window.gv_simReset = simReset;
 window.gv_simSeek = simSeek;
+window.gv_pointEdit = pointEdit;
 window.gv_init = function(){ try{ initMaterials(); recalc(); }catch(e){ console.warn("gv_init:", e); } };
 })();
 // ==== END GROOVING VIEW ====
