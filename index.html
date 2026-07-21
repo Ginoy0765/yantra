@@ -626,6 +626,30 @@
         <select id="tl_hand"><option>R</option><option>N</option><option>L</option></select>
       </div>
     </div>
+    <div class="row2">
+      <div><label>Tip position (1-9, for G41/G42 comp)</label>
+        <select id="tl_tip" onchange="gv_recalc()">
+          <option value="0">0 &mdash; no comp / manual</option>
+          <option value="1">1 &mdash; upper-right (rear turret OD)</option>
+          <option value="2">2 &mdash; upper-left</option>
+          <option value="3" selected>3 &mdash; lower-left (RH OD, standard)</option>
+          <option value="4">4 &mdash; lower-right (LH OD)</option>
+          <option value="5">5 &mdash; down (grooving/parting)</option>
+          <option value="6">6 &mdash; up (face groove)</option>
+          <option value="7">7 &mdash; left (face turn)</option>
+          <option value="8">8 &mdash; right</option>
+          <option value="9">9 &mdash; center / round nose</option>
+        </select>
+      </div>
+      <div><label>Nose radius compensation</label>
+        <select id="tl_comp" onchange="gv_recalc()">
+          <option value="off">Off (G40 &mdash; program sharp tip)</option>
+          <option value="auto" selected>Auto (dual G41/G42 finish for grooving)</option>
+          <option value="G42">G42 only (right of feed &mdash; OD)</option>
+          <option value="G41">G41 only (left of feed &mdash; ID)</option>
+        </select>
+      </div>
+    </div>
     <div style="background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:10px">
       <svg id="insertRef" viewBox="0 0 300 70" style="width:100%;max-width:340px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
@@ -1115,7 +1139,7 @@ function ppUndoUI(){var u=$('pp_undo'),r=$('pp_redo');var cu=ppHistI>0,cr=ppHist
 var ppCur=null,ppMap=null,ppAdded=false,ppLock=false,ppCarry=null;
 function ppNice(range,divs){var raw=(range||1)/divs;var p=Math.pow(10,Math.floor(Math.log10(raw)));var n=raw/p;var s=(n<1.5?1:(n<3?2:(n<7?5:10)))*p;return s;}function ppNiceFloor(x){if(!(x>0))return 1;var p=Math.pow(10,Math.floor(Math.log10(x)));var c=[10*p,5*p,2.5*p,2*p,p];for(var i=0;i<c.length;i++){if(c[i]<=x)return c[i];}return 0.5*p;}
 function ppArcSeg(ctx,PX,PY,q,p){var z0=q.z,r0=q.r,z1=p.z,r1=p.r,R=p.ar,dz=z1-z0,dr=r1-r0,d=Math.sqrt(dz*dz+dr*dr);if(d<1e-6){ctx.lineTo(PX(r1),PY(z1));return;}if(R<d/2)R=d/2;var mz=(z0+z1)/2,mr=(r0+r1)/2,hh=Math.sqrt(Math.max(0,R*R-d*d/4)),nz=-dr/d,nr=dz/d,sg=(p.arc==='CW')?-1:1,cz=mz+sg*hh*nz,cr=mr+sg*hh*nr,a0=Math.atan2(r0-cr,z0-cz),a1=Math.atan2(r1-cr,z1-cz);if(p.arc==='CW'){if(a1>a0)a1-=2*Math.PI;}else{if(a1<a0)a1+=2*Math.PI;}for(var k=1;k<=24;k++){var aa=a0+(a1-a0)*k/24;ctx.lineTo(PX(cr+R*Math.sin(aa)),PY(cz+R*Math.cos(aa)));}}
-function ppDraw(){var cv=$('tt_preview');if(!cv)return;var ctx=cv.getContext('2d');if(!ctx)return;var dpr=window.devicePixelRatio||1;var W=cv.clientWidth||380,H=cv.clientHeight||460;var bw=Math.round(W*dpr),bh=Math.round(H*dpr);if(cv.width!==bw)cv.width=bw;if(cv.height!==bh)cv.height=bh;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1118';ctx.fillRect(0,0,W,H);var Fp=tnFinPts(),Rw=tnRawPts();var all=Fp.slice();var mnz,mxz,mxr;if(all.length){var zs=all.map(function(p){return p.z;}),rs=all.map(function(p){return p.r;});mnz=Math.min.apply(null,zs);mxz=Math.max.apply(null,zs);mxr=Math.max.apply(null,rs);}else{mnz=-10;mxz=0;mxr=10;}if(mxz-mnz<1e-6){mnz-=5;mxz+=5;}if(mxr<1e-6)mxr=5;var x0=44,rp=22,tp=22,bp=28;var _msr=(W-x0-rp)/mxr,_msz=(H-tp-bp)/(mxz-mnz);var _s=Math.min(_msr,_msz);var scr=_s,scz=_s;var V=ttView;function BX(r){return x0+r*scr;}function BY(z){return (H-bp)-(mxz-z)*scz;}function PX(r){return W/2+(BX(r)-W/2)*V.z+V.ox;}function PY(z){return H/2+(BY(z)-H/2)*V.z+V.oy;}function zFromY(y){var by=(y-H/2-V.oy)/V.z+H/2;return mxz-((H-bp)-by)/scz;}function diaFromX(x){var bx=(x-W/2-V.ox)/V.z+W/2;return 2*((bx-x0)/scr);}var zA=zFromY(0),zB=zFromY(H),zLo=Math.min(zA,zB),zHi=Math.max(zA,zB);var dA=diaFromX(0),dB=diaFromX(W),dLo=Math.max(0,Math.min(dA,dB)),dHi=Math.max(dA,dB);var _cw=(cv&&cv.clientWidth)?cv.clientWidth:W;var _tgt=(10*96/25.4)*(W/_cw);var zStep=ppNiceFloor(_tgt/(scz*V.z))||1,dStep=ppNiceFloor(_tgt/(scr*V.z/2))||1;ppMap={x0:x0,scr:scr,scz:scz,mxz:mxz,mnz:mnz,mxr:mxr,W:W,H:H,rp:rp,tp:tp,bp:bp,vz:V.z,vox:V.ox,voy:V.oy,zStep:zStep,dStep:dStep,pts:Fp};ctx.strokeStyle='#14202c';ctx.lineWidth=1;ctx.fillStyle='#8296a8';ctx.font='10px "Segoe UI",system-ui,sans-serif';ctx.textAlign='left';var zdec=(zStep<1?1:0),ddec=(dStep<1?1:0);for(var zz=Math.floor(zLo/zStep)*zStep;zz<=zHi+1e-6;zz+=zStep){var yy=PY(zz);ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy);ctx.stroke();ctx.fillText('Z'+(+zz).toFixed(zdec),2,yy-2);}for(var dd=Math.max(0,Math.floor(dLo/dStep)*dStep);dd<=dHi+1e-6;dd+=dStep){var xx=PX(dd/2);ctx.beginPath();ctx.moveTo(xx,0);ctx.lineTo(xx,H);ctx.stroke();ctx.fillText('Ø'+(+dd).toFixed(ddec),xx+2,H-3);}ctx.strokeStyle='#3a5266';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(PX(0),0);ctx.lineTo(PX(0),H);ctx.stroke();ctx.setLineDash([]);if(Fp&&Fp.length){ctx.strokeStyle='#66d9ff';ctx.lineWidth=1.3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();ctx.moveTo(PX(Fp[0].r),PY(Fp[0].z));for(var fi=1;fi<Fp.length;fi++){var _fp=Fp[fi];if(_fp.arc&&_fp.ar>0)ppArcSeg(ctx,PX,PY,Fp[fi-1],_fp);else ctx.lineTo(PX(_fp.r),PY(_fp.z));}ctx.stroke();for(var hi=0;hi<Fp.length;hi++){var hx=PX(Fp[hi].r),hy=PY(Fp[hi].z),sel=(hi===0);ctx.beginPath();ctx.arc(hx,hy,sel?3.6:2.6,0,6.3);ctx.fillStyle=sel?'#9af0bd':'#6fd8ff';ctx.fill();if(sel){ctx.lineWidth=1.2;ctx.strokeStyle='#effff6';ctx.stroke();}}}if(ppCur){var cx=PX(ppCur.r),cy=PY(ppCur.z);ctx.strokeStyle='rgba(232,165,46,.8)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=ppLock?'#e8a52e':'#f4c869';ctx.beginPath();ctx.arc(cx,cy,ppLock?5.5:4,0,6.3);ctx.fill();if(ppLock){ctx.strokeStyle='#fff2d0';ctx.lineWidth=1.6;ctx.stroke();}}ppPlaceHud();}
+function ppDraw(){var cv=$('tt_preview');if(!cv)return;var ctx=cv.getContext('2d');if(!ctx)return;var dpr=window.devicePixelRatio||1;var W=cv.clientWidth||380,H=cv.clientHeight||460;var bw=Math.round(W*dpr),bh=Math.round(H*dpr);if(cv.width!==bw)cv.width=bw;if(cv.height!==bh)cv.height=bh;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1118';ctx.fillRect(0,0,W,H);var Fp=tnFinPts(),Rw=tnRawPts();var all=Fp.slice();var mnz,mxz,mxr;if(all.length){var zs=all.map(function(p){return p.z;}),rs=all.map(function(p){return p.r;});mnz=Math.min.apply(null,zs);mxz=Math.max.apply(null,zs);mxr=Math.max.apply(null,rs);}else{mnz=-10;mxz=0;mxr=10;}if(mxz-mnz<1e-6){mnz-=5;mxz+=5;}if(mxr<1e-6)mxr=5;var x0=44,rp=22,tp=22,bp=28;var scr=(W-x0-rp)/mxr,scz=(H-tp-bp)/(mxz-mnz);var V=ttView;function BX(r){return x0+r*scr;}function BY(z){return (H-bp)-(mxz-z)*scz;}function PX(r){return W/2+(BX(r)-W/2)*V.z+V.ox;}function PY(z){return H/2+(BY(z)-H/2)*V.z+V.oy;}function zFromY(y){var by=(y-H/2-V.oy)/V.z+H/2;return mxz-((H-bp)-by)/scz;}function diaFromX(x){var bx=(x-W/2-V.ox)/V.z+W/2;return 2*((bx-x0)/scr);}var zA=zFromY(0),zB=zFromY(H),zLo=Math.min(zA,zB),zHi=Math.max(zA,zB);var dA=diaFromX(0),dB=diaFromX(W),dLo=Math.max(0,Math.min(dA,dB)),dHi=Math.max(dA,dB);var _cw=(cv&&cv.clientWidth)?cv.clientWidth:W;var _tgt=(10*96/25.4)*(W/_cw);var zStep=ppNiceFloor(_tgt/(scz*V.z))||1,dStep=ppNiceFloor(_tgt/(scr*V.z/2))||1;ppMap={x0:x0,scr:scr,scz:scz,mxz:mxz,mnz:mnz,mxr:mxr,W:W,H:H,rp:rp,tp:tp,bp:bp,vz:V.z,vox:V.ox,voy:V.oy,zStep:zStep,dStep:dStep,pts:Fp};ctx.strokeStyle='#14202c';ctx.lineWidth=1;ctx.fillStyle='#8296a8';ctx.font='10px "Segoe UI",system-ui,sans-serif';ctx.textAlign='left';var zdec=(zStep<1?1:0),ddec=(dStep<1?1:0);for(var zz=Math.floor(zLo/zStep)*zStep;zz<=zHi+1e-6;zz+=zStep){var yy=PY(zz);ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy);ctx.stroke();ctx.fillText('Z'+(+zz).toFixed(zdec),2,yy-2);}for(var dd=Math.max(0,Math.floor(dLo/dStep)*dStep);dd<=dHi+1e-6;dd+=dStep){var xx=PX(dd/2);ctx.beginPath();ctx.moveTo(xx,0);ctx.lineTo(xx,H);ctx.stroke();ctx.fillText('Ø'+(+dd).toFixed(ddec),xx+2,H-3);}ctx.strokeStyle='#3a5266';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(PX(0),0);ctx.lineTo(PX(0),H);ctx.stroke();ctx.setLineDash([]);if(Fp&&Fp.length){ctx.strokeStyle='#66d9ff';ctx.lineWidth=1.3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();ctx.moveTo(PX(Fp[0].r),PY(Fp[0].z));for(var fi=1;fi<Fp.length;fi++){var _fp=Fp[fi];if(_fp.arc&&_fp.ar>0)ppArcSeg(ctx,PX,PY,Fp[fi-1],_fp);else ctx.lineTo(PX(_fp.r),PY(_fp.z));}ctx.stroke();for(var hi=0;hi<Fp.length;hi++){var hx=PX(Fp[hi].r),hy=PY(Fp[hi].z),sel=(hi===0);ctx.beginPath();ctx.arc(hx,hy,sel?3.6:2.6,0,6.3);ctx.fillStyle=sel?'#9af0bd':'#6fd8ff';ctx.fill();if(sel){ctx.lineWidth=1.2;ctx.strokeStyle='#effff6';ctx.stroke();}}}if(ppCur){var cx=PX(ppCur.r),cy=PY(ppCur.z);ctx.strokeStyle='rgba(232,165,46,.8)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=ppLock?'#e8a52e':'#f4c869';ctx.beginPath();ctx.arc(cx,cy,ppLock?5.5:4,0,6.3);ctx.fill();if(ppLock){ctx.strokeStyle='#fff2d0';ctx.lineWidth=1.6;ctx.stroke();}}ppPlaceHud();}
 function ppToRZ(mx,my){var M=ppMap;if(!M)return null;var bx=(mx-M.vox-M.W/2)/M.vz+M.W/2;var by=(my-M.voy-M.H/2)/M.vz+M.H/2;var r=(bx-M.x0)/M.scr;var z=M.mxz-((M.H-M.bp)-by)/M.scz;if(r<0)r=0;return {r:r,z:z};}
 function ppSnap(rz,noPt){var M=ppMap;if(!M)return rz;var gz=Math.round(rz.z/M.zStep)*M.zStep;if(Math.abs(gz-rz.z)*M.scz*M.vz<11)rz.z=gz;var dia=rz.r*2;var gd=Math.round(dia/M.dStep)*M.dStep,gr=gd/2;if(Math.abs(gr-rz.r)*M.scr*M.vz<11)rz.r=gr;if(rz.r<0)rz.r=0;return rz;}
 function ppNearestPt(rz){var M=ppMap;if(!M)return -1;var pr;try{pr=tnResolve().pts;}catch(e){return -1;}var best=-1,bd=1e9;for(var i=0;i<pr.length;i++){var p=pr[i];if(!p||!isFinite(p.x)||!isFinite(p.z))continue;var r=Math.abs(p.x)/2;var dx=(r-rz.r)*M.scr*M.vz,dy=(p.z-rz.z)*M.scz*M.vz;var d=Math.sqrt(dx*dx+dy*dy);if(d<bd){bd=d;best=i;}}return (bd<16)?best:-1;}function ppMoveCursor(mx,my){if(ppLock)return;var rz=ppToRZ(mx,my);if(!rz)return;ppCur=rz;ppSetReadout();ppDraw();}function ppClick(mx,my){var rz=ppToRZ(mx,my);if(!rz)return;rz=ppSnap(rz,true);ppCur=rz;ppLock=true;ppSetReadout();ppSetAdd(false);ppDraw();}
@@ -2166,11 +2190,8 @@ function drawPreview(pts){
   for(var i=1;i<N;i++){ Zs.push(pts[0].z+i*pitch*dir); Zs.push(pts[2].z+i*pitch*dir);}
   var Zmin=Math.min.apply(null,Zs)-4, Zmax=Math.max.apply(null,Zs)+4;
   var Zspan=Math.max(1,Zmax-Zmin);
-  // Unified scale to match physical proportions (see drawSim for explanation)
-  var _mSZ=(viewW-2*margin)/Zspan;
-  var _mSX=(viewH/2-margin)/stockOD;
-  var _px=Math.min(_mSZ,_mSX*2);
-  var scaleZ=_px, scaleX=_px/2;
+  var scaleZ=(viewW-2*margin)/Zspan;
+  var scaleX=(viewH/2-margin)/stockOD;
   var mapZ=function(z){return margin+(z-Zmin)*scaleZ;};
   var mapX=function(x){return viewH/2 - x*scaleX;};
   svg.innerHTML+='<line x1="'+margin+'" y1="'+(viewH/2)+'" x2="'+(viewW-margin)+'" y2="'+(viewH/2)+'" stroke="#5a6068" stroke-width="1" stroke-dasharray="5 4"/>';
@@ -2252,6 +2273,9 @@ function generate(){
   var mv=[];
   mv.push({t:'cmt', txt:'Groove program - '+stratLabel});
   mv.push({t:'cmt', txt:'Insert width: '+Wi.toFixed(3)+' mm  |  Offset origin: '+originLabel+' (Z shift '+(originShift>=0?'+':'')+originShift.toFixed(3)+' mm)'});
+  var tipPos=($('tl_tip')?$('tl_tip').value:'3');
+  var compSet=($('tl_comp')?$('tl_comp').value:'auto');
+  mv.push({t:'cmt', txt:'Tip position: '+tipPos+' (set in tool offset table) | Nose R: '+((parseFloat($('tl_rc').value)||0).toFixed(3))+' mm | Comp mode: '+compSet});
   mv.push({t:'cmt', txt:'Material: '+mat});
   mv.push({t:'cmt', txt:'Target control: '+ctrl+' (long-form G-code)'});
   mv.push({t:'cmt', txt:'Insert width Wi='+Wi+' mm - Offset reference: '+offLbl});
@@ -2361,13 +2385,103 @@ function pluneRough(mv, xTop, xBot, z, safeX, pd, pr, F, dwell){
   mv.push({t:'g0', X:safeX});
 }
 
-// Finish pass: walk A -> B -> C -> D with proper corner-treatment G-code
-// Corner geometry (with Z convention face=0 and z1 closer to face than z2):
-//   A = (D1, z1)  OD near face (approach corner)
-//   B = (D2, z1)  ID near face
-//   C = (D2, z2)  ID far
-//   D = (D1, z2)  OD far
+// Finish pass with G41/G42 nose radius compensation and tangent-arc lead-in/out.
+// Dual-comp mode: two half-passes meeting at floor midpoint.
+//   Near-face half: approach A, tangent lead-in, G42, wall A->B, half floor B->mid, tangent lead-out, G40
+//   Far-face half:  approach D, tangent lead-in, G41, wall D->C, half floor C->mid, tangent lead-out, G40
 function finishPass(mv, D1, D2, z1, z2, safeX, F, c, dwell){
+  var compMode = $('tl_comp') ? $('tl_comp').value : 'auto';
+  var noseR = parseFloat($('tl_rc').value) || 0;
+  var doComp = (compMode !== 'off') && (noseR > 0);
+  if(doComp && compMode==='auto'){
+    // DUAL pass with G42 near-face half + G41 far-face half
+    finishHalfComp(mv, 'near', D1, D2, z1, z2, safeX, F, c, dwell, noseR, 'G42');
+    finishHalfComp(mv, 'far',  D1, D2, z1, z2, safeX, F, c, dwell, noseR, 'G41');
+    return;
+  }
+  if(doComp){
+    // SINGLE pass with user-picked G41 or G42
+    finishHalfComp(mv, 'full', D1, D2, z1, z2, safeX, F, c, dwell, noseR, compMode);
+    return;
+  }
+  // No comp — fall through to legacy sharp-tip walk (existing code below)
+  finishPassNoComp(mv, D1, D2, z1, z2, safeX, F, c, dwell);
+}
+
+// Half-pass: enter from one side, cut wall + half floor, exit
+// side: 'near' | 'far' | 'full'
+function finishHalfComp(mv, side, D1, D2, z1, z2, safeX, F, c, dwell, R, compCode){
+  // z1 is closer to face (less negative), z2 further from face (more negative)
+  var zMid = (z1 + z2) / 2;
+  var startX, startZ, endZ, arcInCode, arcOutCode, walkCorner;
+  if(side === 'near'){
+    // Enter at A (D1, z1), walk down wall to B, along floor to midZ
+    startX = D1; startZ = z1; endZ = zMid;
+    // Feed direction after lead-in is -X (down the wall). Comp G42 puts nose center
+    // on RIGHT of feed direction (+Z side in Fanuc rear-turret XZ convention).
+    arcInCode = 'g3';   // CCW tangent lead-in from face side
+    arcOutCode = 'g2';  // CW lead-out from floor to safe
+    walkCorner = 'A';
+  } else if(side === 'far'){
+    // Enter at D (D1, z2), walk down wall to C, along floor to midZ
+    startX = D1; startZ = z2; endZ = zMid;
+    arcInCode = 'g2';   // CW tangent lead-in from chuck side
+    arcOutCode = 'g3';
+    walkCorner = 'D';
+  } else {
+    // Single pass — walk the whole profile with one comp direction
+    startX = D1; startZ = z1; endZ = z2;
+    arcInCode = 'g3';
+    arcOutCode = 'g2';
+    walkCorner = 'A';
+  }
+
+  var leadDx = 2 * R;       // horizontal offset (diameter) for lead-in start
+  var leadDz = R;           // axial offset for lead-in start
+  var approachX = D1 + 2 + leadDx;
+  var approachZ = startZ + (side === 'far' ? -1 : 1) * (1 + R);
+  var leadStartX = D1 + leadDx;
+  var leadStartZ = startZ + (side === 'far' ? -1 : 1) * leadDz;
+  var leadEndX = D1;
+  var leadEndZ = startZ;
+  var zDir = (side === 'far') ? -1 : 1;
+
+  // === Approach ===
+  mv.push({t:'cmt', txt:'--- Finish '+side+' half (comp '+compCode+') ---'});
+  mv.push({t:'g0', X: approachX, Z: approachZ});
+  mv.push({t:'g0', X: leadStartX + 0.2});  // rapid closer
+
+  // === Engage nose comp with straight-line move (safe: length > R) ===
+  mv.push({t:'raw', s: compCode + '   ( Engage nose radius comp )'});
+  mv.push({t:'g1', X: leadStartX, Z: leadStartZ, F: F, cmt: 'Comp engagement move'});
+
+  // === Tangent lead-in arc ===
+  // From (leadStartX, leadStartZ) curving smoothly onto profile at (leadEndX, leadEndZ)
+  // Tangent at end = -X direction (wall down)
+  mv.push({t: arcInCode, X: leadEndX, Z: leadEndZ, R: R, F: F, cmt: 'Tangent lead-in arc'});
+
+  // === Wall down (from D1 to D2) ===
+  mv.push({t:'g1', X: D2, cmt: side + ' wall to floor'});
+
+  // === Floor from wall side to midpoint ===
+  mv.push({t:'g1', Z: endZ, cmt: 'Half floor to middle'});
+
+  // === Tangent lead-out arc ===
+  // Arc from floor at midpoint out into safe space
+  var outX = D2 + 2*R;
+  var outZ = endZ + (side === 'far' ? R : -R);
+  mv.push({t: arcOutCode, X: outX, Z: outZ, R: R, F: F, cmt: 'Tangent lead-out arc'});
+
+  // === Straight retract with G40 ===
+  mv.push({t:'g1', X: outX + 2, Z: outZ + (side === 'far' ? 1 : -1), F: F, cmt: 'Lead-out to safe'});
+  mv.push({t:'raw', s: 'G40   ( Cancel nose radius comp )'});
+
+  // === Rapid to safe X ===
+  mv.push({t:'g0', X: safeX});
+}
+
+// Legacy no-comp finish walk (used when comp is Off).
+function finishPassNoComp(mv, D1, D2, z1, z2, safeX, F, c, dwell){
   // Rapid approach above and outside corner A
   mv.push({t:'g0', X:D1+2, Z:z1+1});
   mv.push({t:'g0', X:D1+0.5});
@@ -2524,6 +2638,60 @@ function simSeek(v){
   drawSim();
 }
 // Helper: emit peck plunges for a list of insert-center Z positions
+// Simulate a half finish pass with tangent lead-in arc, wall, half floor, tangent lead-out
+function simHalfPass(side, D1, D2, z1, z2, zMid, safeX, R, cA, cB, cC, cD){
+  var startZ = (side==='far') ? z2 : z1;
+  var endZ   = (side==='full') ? z2 : zMid;
+  var zDir = (side==='far') ? -1 : 1;
+
+  // Approach & engage
+  simFrames.push({x: D1 + 2 + 2*R, z: startZ + zDir*(1+R), type:'rapid'});
+  simFrames.push({x: D1 + 0.2 + 2*R, z: startZ + zDir*(1+R), type:'rapid'});
+  simFrames.push({x: D1 + 2*R, z: startZ + zDir*R, type:'feed'});
+
+  // Tangent lead-in arc: from (D1+2R, startZ+zDir*R) to (D1, startZ) — quarter circle radius R
+  var arcCX = D1;                    // arc center X (diameter)
+  var arcCZ = startZ + zDir*R;       // arc center Z
+  // interpolate 12 segments
+  var startAng = 0;                   // start is at +X of center (in radial coords)
+  var endAng = zDir === 1 ? -Math.PI/2 : Math.PI/2;
+  var da = endAng - startAng;
+  for(var s=1; s<=12; s++){
+    var t = s/12;
+    var a = startAng + da*t;
+    var xi = arcCX + 2*R*Math.cos(a);
+    var zi = arcCZ + R*Math.sin(a);
+    simFrames.push({x: xi, z: zi, type:'feed'});
+  }
+
+  // Wall D1 -> D2 at startZ
+  simFrames.push({x: D2, z: startZ, type:'feed'});
+
+  // Floor startZ -> endZ (or full to z2 if not dual mode)
+  simFrames.push({x: D2, z: endZ, type:'feed'});
+
+  // Tangent lead-out arc from (D2, endZ) out to (D2+2R, endZ - zDir*R)
+  arcCX = D2 + 2*R;
+  arcCZ = endZ;
+  startAng = Math.PI;
+  endAng = zDir === 1 ? -Math.PI/2 : Math.PI/2;
+  da = endAng - startAng;
+  // Ensure shortest arc direction
+  while(da > Math.PI) da -= 2*Math.PI;
+  while(da < -Math.PI) da += 2*Math.PI;
+  for(var s2=1; s2<=12; s2++){
+    var t2 = s2/12;
+    var a2 = startAng + da*t2;
+    var xi2 = arcCX + 2*R*Math.cos(a2);
+    var zi2 = arcCZ + R*Math.sin(a2);
+    simFrames.push({x: xi2, z: zi2, type:'feed'});
+  }
+
+  // Straight lead-out + retract
+  simFrames.push({x: D2 + 2*R + 2, z: endZ - zDir*R - zDir*1, type:'feed'});
+  simFrames.push({x: safeX, z: endZ - zDir*R, type:'retract'});
+}
+
 function simDoPasses(centers, oShift, D1, D2, safeX, pd, pr){
   centers.forEach(function(ctr){
     var zPos = ctr + oShift;
@@ -2619,38 +2787,32 @@ function buildSimFrames(){
       simFrames.push({x:safeX,z:z1g,type:'retract'});
     }
   }
-  // Finish pass with proper chamfer and radius geometry that matches the G-code output
+  // Finish pass — dual G42/G41 mode with tangent lead-in/out arcs
   var doFin=(rf==='finish'||rf==='both');
   if(doFin){
+    var compMode=($('tl_comp')?$('tl_comp').value:'auto');
+    var noseR=parseFloat($('tl_rc').value)||0;
+    var doComp=(compMode!=='off') && noseR>0;
     var cA=readCorners()[0], cB=readCorners()[1], cC=readCorners()[2], cD=readCorners()[3];
     for(var g2=0;g2<N;g2++){
       var zoff=g2*pitch*dir;
       var z1g=cA.z+zoff, z2g=cC.z+zoff;
-      // Approach
-      simFrames.push({x:D1+2,z:z1g+1,type:'rapid'});
-      simFrames.push({x:D1+0.5,z:z1g+1,type:'rapid'});
-      // === Corner A: enter to (D1, z1+s) then chamfer/arc to (D1-2s, z1) ===
-      var Aoff = (cA.ctype!=='Sharp' && cA.cs1>0) ? cA.cs1 : 0;
-      simFrames.push({x:D1, z:z1g+Aoff, type:'feed'});
-      simEmitCornerV2(cA, D1, z1g, 'A', zoff);
-      // Wall A->B on X=D1-2*sA to X=D2+2*sB (or full if sharp)
-      var exitA_x = D1 - 2*((cA.ctype==='Chamfer')?cA.cs2:(cA.ctype==='Radius'?cA.cs1:0));
-      var enterB_x = D2 + 2*((cB.ctype==='Chamfer')?cB.cs2:(cB.ctype==='Radius'?cB.cs1:0));
-      simFrames.push({x:enterB_x, z:z1g, type:'feed'});
-      // === Corner B: chamfer/arc to (D2, z1 - sB) ===
-      simEmitCornerV2(cB, D2, z1g, 'B', zoff);
-      // Floor B->C from Z=z1-sB to Z=z2+sC
-      var exitB_z = z1g - ((cB.ctype!=='Sharp' && cB.cs1>0) ? cB.cs1 : 0);
-      var enterC_z = z2g + ((cC.ctype!=='Sharp' && cC.cs1>0) ? cC.cs1 : 0);
-      simFrames.push({x:D2, z:enterC_z, type:'feed'});
-      // === Corner C: to (D2+2*sC, z2) ===
-      simEmitCornerV2(cC, D2, z2g, 'C', zoff);
-      // Wall C->D from X=D2+2*sC to X=D1-2*sD
-      var enterD_x = D1 - 2*((cD.ctype==='Chamfer')?cD.cs2:(cD.ctype==='Radius'?cD.cs1:0));
-      simFrames.push({x:enterD_x, z:z2g, type:'feed'});
-      // === Corner D: to (D1, z2 + sD) ===
-      simEmitCornerV2(cD, D1, z2g, 'D', zoff);
-      simFrames.push({x:safeX, z:z2g, type:'retract'});
+      var zMid=(z1g+z2g)/2;
+      if(doComp && compMode==='auto'){
+        simHalfPass('near', D1, D2, z1g, z2g, zMid, safeX, noseR, cA, cB, cC, cD);
+        simHalfPass('far',  D1, D2, z1g, z2g, zMid, safeX, noseR, cA, cB, cC, cD);
+      } else if(doComp){
+        simHalfPass('full', D1, D2, z1g, z2g, z2g, safeX, noseR, cA, cB, cC, cD);
+      } else {
+        // No-comp: walk full profile A->B->C->D directly
+        simFrames.push({x:D1+2, z:z1g+1, type:'rapid'});
+        simFrames.push({x:D1+0.5, z:z1g+1, type:'rapid'});
+        simFrames.push({x:D1, z:z1g, type:'feed'});
+        simFrames.push({x:D2, z:z1g, type:'feed'});
+        simFrames.push({x:D2, z:z2g, type:'feed'});
+        simFrames.push({x:D1, z:z2g, type:'feed'});
+        simFrames.push({x:safeX, z:z2g, type:'retract'});
+      }
     }
   }
   simFrames.push({x:safeX,z:0+3,type:'rapid'});
@@ -2804,13 +2966,8 @@ function drawSim(){
   var Zs=[0]; simFrames.forEach(function(f){Zs.push(f.z);});
   var Zmin=Math.min.apply(null,Zs)-6, Zmax=Math.max.apply(null,Zs)+6;
   var Zspan=Math.max(1,Zmax-Zmin);
-  // Unified scale: X (diameter) mm vs Z (length) mm must map so the drawing is proportional
-  // 1 mm on Z = 1 mm physical length; 1 mm on X = 0.5 mm physical distance (radius)
-  var maxSZ = (VW-2*MG)/Zspan;                 // max pixels per Z-mm we can afford
-  var maxSX_dia = (VH/2-MG)/stockOD;           // max pixels per diameter-mm we can afford
-  var pxPerMm = Math.min(maxSZ, maxSX_dia*2);  // pixels per PHYSICAL mm (radius or Z)
-  var scaleZ = pxPerMm;
-  var scaleX = pxPerMm/2;                      // pixels per diameter-mm (half the physical scale)
+  var scaleZ=(VW-2*MG)/Zspan;
+  var scaleX=(VH/2-MG)/stockOD;
   var mapZ=function(z){return MG+(z-Zmin)*scaleZ;};
   var mapX=function(x){return VH/2 - x*scaleX;};
 
