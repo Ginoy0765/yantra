@@ -2861,8 +2861,46 @@ function simPlay(){
   }, speed);
   $('simPlayBtn').classList.add('on');
 }
-function simPause(){clearInterval(simTimer); $('simPlayBtn').classList.remove('on');}
+function simPause(){clearInterval(simTimer); $('simPlayBtn').classList.remove('on'); if($('simRevBtn'))$('simRevBtn').classList.remove('on');}
 function simReset(){simPause(); simIdx=0; if($('simFull').classList.contains('on')){buildSimFrames(); drawSim();}}
+
+// Advance one frame (single-block)
+function simStep(){
+  simPause();
+  if(!simFrames.length) buildSimFrames();
+  if(simIdx < simFrames.length-1){
+    simIdx++;
+    drawSim();
+  }
+}
+// Go back one frame
+function simStepBack(){
+  simPause();
+  if(!simFrames.length) buildSimFrames();
+  if(simIdx > 0){
+    simIdx--;
+    drawSim();
+  }
+}
+// Play continuously in reverse
+function simPlayReverse(){
+  if(!simFrames.length) buildSimFrames();
+  if(simIdx <= 0) simIdx = simFrames.length-1;
+  clearInterval(simTimer);
+  var speed = 520 - parseInt(($('simSpeed') && $('simSpeed').value) || 120);
+  simTimer = setInterval(function(){
+    if(simIdx <= 0){
+      clearInterval(simTimer);
+      $('simPlayBtn').classList.remove('on');
+      $('simRevBtn') && $('simRevBtn').classList.remove('on');
+      return;
+    }
+    simIdx--;
+    drawSim();
+  }, speed);
+  $('simRevBtn') && $('simRevBtn').classList.add('on');
+  $('simPlayBtn').classList.remove('on');
+}
 
 initMaterials();
 drawInsertRef();
@@ -2883,6 +2921,9 @@ window.gv_simReset = simReset;
 window.gv_simSeek = simSeek;
 window.gv_pointEdit = pointEdit;
 window.gv_resetZoom = resetZoom;
+window.gv_simStep = simStep;
+window.gv_simStepBack = simStepBack;
+window.gv_simPlayReverse = simPlayReverse;
 window.gv_init = function(){ try{ initMaterials(); recalc(); }catch(e){ console.warn("gv_init:", e); } };
 })();
 </script>
@@ -2898,8 +2939,11 @@ window.gv_init = function(){ try{ initMaterials(); recalc(); }catch(e){ console.
     <svg id="simSvg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
   <div class="simFullCtrl">
+    <button onclick="gv_simStepBack()" title="Step back one move">&#8676; Back</button>
+    <button onclick="gv_simPlayReverse()" id="simRevBtn" title="Play in reverse">&#9664;&#9664; Reverse</button>
     <button onclick="gv_simPlay()" id="simPlayBtn">&#9654; Play</button>
     <button onclick="gv_simPause()">&#10074;&#10074; Pause</button>
+    <button onclick="gv_simStep()" title="Single block: advance one move">Step &#8677;</button>
     <button onclick="gv_simReset()">&#8634; Reset</button>
     <div class="simScrub">
       <span>0</span>
