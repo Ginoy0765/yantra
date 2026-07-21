@@ -2436,45 +2436,46 @@ function finishHalfComp(mv, side, D1, D2, z1, z2, safeX, F, c, dwell, R, compCod
     walkCorner = 'A';
   }
 
-  var leadDx = 2 * R;       // horizontal offset (diameter) for lead-in start
-  var leadDz = R;           // axial offset for lead-in start
-  var approachX = D1 + 2 + leadDx;
-  var approachZ = startZ + (side === 'far' ? -1 : 1) * (1 + R);
-  var leadStartX = D1 + leadDx;
-  var leadStartZ = startZ + (side === 'far' ? -1 : 1) * leadDz;
-  var leadEndX = D1;
+  // Co-axial lead-in/out: the pre-move is colinear with the first cut,
+  // so the tool is already moving in the cutting direction when comp engages.
+  // For the wall (first cut direction = -X), the lead-in is a straight -X move at Z=startZ.
+  // Lead-in length = 2R (safely > nose radius for engagement).
+  var leadLen = 2 * R;               // radial length of lead-in (physical mm)
+  var startAbovePad = 1;             // small extra clearance above OD before feeding
+  var approachX = D1 + 2*leadLen + 2*startAbovePad;   // rapid to well outside stock
+  var approachZ = startZ;                              // same Z as the wall (co-axial)
+  var leadStartX = D1 + 2*leadLen;                     // engagement move START, still outside stock
+  var leadStartZ = startZ;
+  var leadEndX = D1;                                    // engagement move END = profile start
   var leadEndZ = startZ;
-  var zDir = (side === 'far') ? -1 : 1;
 
-  // === Approach ===
+  // === Approach — rapid to safe X at target Z ===
   mv.push({t:'cmt', txt:'--- Finish '+side+' half (comp '+compCode+') ---'});
   mv.push({t:'g0', X: approachX, Z: approachZ});
-  mv.push({t:'g0', X: leadStartX + 0.2});  // rapid closer
+  mv.push({t:'g0', X: leadStartX + startAbovePad});   // rapid close to engagement start
 
-  // === Engage nose comp with straight-line move (safe: length > R) ===
+  // === Engage nose comp on a straight co-axial move ===
+  // Direction = -X (same as the first cutting move), length = 2R (> R, safe engagement)
   mv.push({t:'raw', s: compCode + '   ( Engage nose radius comp )'});
-  mv.push({t:'g1', X: leadStartX, Z: leadStartZ, F: F, cmt: 'Comp engagement move'});
+  mv.push({t:'g1', X: leadStartX, Z: leadStartZ, F: F, cmt: 'Co-axial engagement move'});
 
-  // === Tangent lead-in arc ===
-  // From (leadStartX, leadStartZ) curving smoothly onto profile at (leadEndX, leadEndZ)
-  // Tangent at end = -X direction (wall down)
-  mv.push({t: arcInCode, X: leadEndX, Z: leadEndZ, R: R, F: F, cmt: 'Tangent lead-in arc'});
+  // === Continue same direction into the profile (no direction change) ===
+  // This is the "profile-start" move; tool nose is already offset by R when it arrives at (D1, startZ).
+  mv.push({t:'g1', X: D2, Z: startZ, F: F, cmt: side + ' wall (D1 to D2)'});
 
-  // === Wall down (from D1 to D2) ===
-  mv.push({t:'g1', X: D2, cmt: side + ' wall to floor'});
-
-  // === Floor from wall side to midpoint ===
+  // === Floor from wall to midpoint (perpendicular cut) ===
   mv.push({t:'g1', Z: endZ, cmt: 'Half floor to middle'});
 
-  // === Tangent lead-out arc ===
-  // Arc from floor at midpoint out into safe space
-  var outX = D2 + 2*R;
-  var outZ = endZ + (side === 'far' ? R : -R);
-  mv.push({t: arcOutCode, X: outX, Z: outZ, R: R, F: F, cmt: 'Tangent lead-out arc'});
+  // === Co-axial lead-out: straight move continuing the floor direction ===
+  // Floor direction was in Z. Continue further past the midpoint in the same direction,
+  // then rapid out. The lead-out move is colinear with the last cut.
+  var zDir = (side === 'far') ? +1 : -1;   // opposite of the entry Z direction
+  var leadOutEndZ = endZ + zDir * leadLen; // 2R past the midpoint in the floor direction
+  mv.push({t:'g1', Z: leadOutEndZ, F: F, cmt: 'Co-axial lead-out (extend floor direction)'});
 
-  // === Straight retract with G40 ===
-  mv.push({t:'g1', X: outX + 2, Z: outZ + (side === 'far' ? 1 : -1), F: F, cmt: 'Lead-out to safe'});
+  // === Cancel comp on a straight retract move ===
   mv.push({t:'raw', s: 'G40   ( Cancel nose radius comp )'});
+  mv.push({t:'g1', X: D2 + 2*leadLen, Z: leadOutEndZ, F: F, cmt: 'Retract after G40'});
 
   // === Rapid to safe X ===
   mv.push({t:'g0', X: safeX});
@@ -2638,58 +2639,30 @@ function simSeek(v){
   drawSim();
 }
 // Helper: emit peck plunges for a list of insert-center Z positions
-// Simulate a half finish pass with tangent lead-in arc, wall, half floor, tangent lead-out
+// Simulate a half finish pass with CO-AXIAL straight lead-in/out (colinear with cut direction)
 function simHalfPass(side, D1, D2, z1, z2, zMid, safeX, R, cA, cB, cC, cD){
   var startZ = (side==='far') ? z2 : z1;
   var endZ   = (side==='full') ? z2 : zMid;
-  var zDir = (side==='far') ? -1 : 1;
+  var leadLen = 2 * R;
+  var zDir = (side==='far') ? +1 : -1;   // floor lead-out direction
 
-  // Approach & engage
-  simFrames.push({x: D1 + 2 + 2*R, z: startZ + zDir*(1+R), type:'rapid'});
-  simFrames.push({x: D1 + 0.2 + 2*R, z: startZ + zDir*(1+R), type:'rapid'});
-  simFrames.push({x: D1 + 2*R, z: startZ + zDir*R, type:'feed'});
-
-  // Tangent lead-in arc: from (D1+2R, startZ+zDir*R) to (D1, startZ) — quarter circle radius R
-  var arcCX = D1;                    // arc center X (diameter)
-  var arcCZ = startZ + zDir*R;       // arc center Z
-  // interpolate 12 segments
-  var startAng = 0;                   // start is at +X of center (in radial coords)
-  var endAng = zDir === 1 ? -Math.PI/2 : Math.PI/2;
-  var da = endAng - startAng;
-  for(var s=1; s<=12; s++){
-    var t = s/12;
-    var a = startAng + da*t;
-    var xi = arcCX + 2*R*Math.cos(a);
-    var zi = arcCZ + R*Math.sin(a);
-    simFrames.push({x: xi, z: zi, type:'feed'});
-  }
-
-  // Wall D1 -> D2 at startZ
+  // Rapid to safe approach position at target Z (co-axial with first cut)
+  simFrames.push({x: D1 + 2*leadLen + 2, z: startZ, type:'rapid'});
+  simFrames.push({x: D1 + 2*leadLen + 1, z: startZ, type:'rapid'});
+  // Co-axial engagement move — straight -X, no Z change
+  simFrames.push({x: D1 + 2*leadLen, z: startZ, type:'feed'});
+  // Continue same direction into the profile
+  simFrames.push({x: D1, z: startZ, type:'feed'});
+  // Wall down to floor
   simFrames.push({x: D2, z: startZ, type:'feed'});
-
-  // Floor startZ -> endZ (or full to z2 if not dual mode)
+  // Floor to midpoint
   simFrames.push({x: D2, z: endZ, type:'feed'});
-
-  // Tangent lead-out arc from (D2, endZ) out to (D2+2R, endZ - zDir*R)
-  arcCX = D2 + 2*R;
-  arcCZ = endZ;
-  startAng = Math.PI;
-  endAng = zDir === 1 ? -Math.PI/2 : Math.PI/2;
-  da = endAng - startAng;
-  // Ensure shortest arc direction
-  while(da > Math.PI) da -= 2*Math.PI;
-  while(da < -Math.PI) da += 2*Math.PI;
-  for(var s2=1; s2<=12; s2++){
-    var t2 = s2/12;
-    var a2 = startAng + da*t2;
-    var xi2 = arcCX + 2*R*Math.cos(a2);
-    var zi2 = arcCZ + R*Math.sin(a2);
-    simFrames.push({x: xi2, z: zi2, type:'feed'});
-  }
-
-  // Straight lead-out + retract
-  simFrames.push({x: D2 + 2*R + 2, z: endZ - zDir*R - zDir*1, type:'feed'});
-  simFrames.push({x: safeX, z: endZ - zDir*R, type:'retract'});
+  // Co-axial lead-out (extend floor direction)
+  simFrames.push({x: D2, z: endZ + zDir*leadLen, type:'feed'});
+  // Retract after G40
+  simFrames.push({x: D2 + 2*leadLen, z: endZ + zDir*leadLen, type:'feed'});
+  // Rapid to safe X
+  simFrames.push({x: safeX, z: endZ + zDir*leadLen, type:'retract'});
 }
 
 function simDoPasses(centers, oShift, D1, D2, safeX, pd, pr){
