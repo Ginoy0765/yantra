@@ -120,6 +120,31 @@
 .chbox .cc{display:flex;align-items:center;gap:5px;background:#16283a;border:1px solid #2b4658;border-radius:16px;padding:4px 9px 4px 5px;font-size:10.5px;color:#cfe0ee;font-weight:600}
 .chbox .cc b{width:15px;height:15px;border-radius:50%;background:#5fd0ff;color:#0a1118;font-size:8.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .chbox .ar{color:#4c6377;font-size:11px;align-self:center}
+
+/* GROOVING VIEW STYLES */
+#groove .backbtn{background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer}#groove .strat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}#groove .strat h3{margin:0 0 6px;font-size:11.5px;color:var(--mut);font-weight:700;letter-spacing:.4px}#groove .pills{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}#groove .pills.two{grid-template-columns:1fr 1fr}#groove .pills3{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+@media(max-width:520px){#groove .pills3{grid-template-columns:1fr 1fr}}#groove .pill{background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:10px;text-align:center;font-weight:700;font-size:13px;color:var(--mut);cursor:pointer;user-select:none}#groove .pill.on{background:var(--acc);color:#1a1200;border-color:var(--acc)}#groove .pill.suggested{border-color:var(--acc2);color:var(--acc2)}#groove .pill.suggested::after{content:' \2605';font-size:10px}#groove .postbtns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}#groove .pbtn{background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:12px;font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}#groove .pbtn:hover{border-color:var(--acc2);color:var(--acc2)}#groove .pbtn.primary{background:linear-gradient(135deg,#29b6f6,#0288d1);color:#fff;border:none}#groove .pbtn.save{background:linear-gradient(135deg,var(--ok),#2e8f52);color:#0a2016;border:none}#groove /* Full-page simulation overlay */
+.simFull{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column;padding:14px;overflow:hidden}
+.simFull.on{display:flex}
+.simFullHead{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.simFullHead h2{margin:0;font-size:20px;letter-spacing:2px;font-weight:800;flex:1}
+.simFullHead .badge{background:rgba(41,182,246,.15);color:var(--acc2);font-size:11px;padding:4px 10px}
+.simClose{background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 16px;font-size:14px;font-weight:700;cursor:pointer}
+.simClose:hover{border-color:var(--warn);color:var(--warn)}
+.simCanvasWrap{flex:1;background:#0a1015;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;min-height:340px}
+.simCanvasWrap svg{width:100%;height:100%;max-height:calc(100vh - 220px)}
+.simFullCtrl{display:flex;align-items:center;gap:10px;padding:14px 4px 4px;flex-wrap:wrap}
+.simFullCtrl button{background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.simFullCtrl button:hover{border-color:var(--acc2)}
+.simFullCtrl button.on{background:var(--acc);color:#1a1200;border-color:var(--acc)}
+.simFullCtrl .status{color:var(--acc2);font-size:13px;font-weight:600;margin-left:auto;font-family:monospace}
+.simScrub{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12px}
+.simScrub input[type=range]{flex:1;accent-color:var(--acc)}
+.simLegend{display:flex;gap:12px;font-size:11.5px;color:var(--mut);flex-wrap:wrap}
+.simLegend .lg{display:inline-flex;align-items:center;gap:5px}
+.simLegend .sw{width:16px;height:3px;display:inline-block}#groove .sec{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:10px;overflow:hidden}#groove .sec>.st{background:var(--bg2);padding:11px 14px;font-weight:700;font-size:12.5px;letter-spacing:.5px;color:var(--acc2);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}#groove .sec>.st .caret{transition:transform .2s;font-size:11px}#groove .sec.open>.st .caret{transform:rotate(90deg)}#groove .sec>.sb{padding:4px 14px 14px;display:none}#groove .sec.open>.sb{display:block}#groove label{display:block;color:var(--mut);font-size:11px;font-weight:600;margin:10px 0 5px;letter-spacing:.2px}#groove input[type=number], #groove input[type=text], #groove select, #groove textarea{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none}#groove input[type=number]::-webkit-outer-spin-button, #groove input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}#groove input[type=number]{-moz-appearance:textfield;appearance:textfield}#groove input:focus, #groove select:focus, #groove textarea:focus{border-color:var(--acc2)}#groove .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}#groove .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}#groove .row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}#groove .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg2);border:1px solid var(--line);border-radius:20px;font-size:12.5px;font-weight:600;color:var(--mut);cursor:pointer;user-select:none;margin-right:6px;margin-top:6px}#groove .chip.on{background:var(--acc);color:#1a1200;border-color:var(--acc)}#groove .chips{margin:2px 0 6px}#groove .cornerBox{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px}#groove .cornerBox h4{margin:0 0 6px;font-size:12px;font-weight:700;color:var(--acc)}#groove .cornerBox label{margin-top:6px}#groove .cornerBox input, #groove .cornerBox select{padding:7px 8px;font-size:12.5px}#groove .chkrow{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--txt);cursor:pointer;user-select:none}#groove .chkrow input[type=checkbox]{width:16px;height:16px;margin:0;cursor:pointer;accent-color:var(--acc)}#groove table{width:100%;border-collapse:collapse;margin-top:8px;background:var(--bg2);border-radius:9px;overflow:hidden;font-size:13px}#groove th{background:#1f2b3a;padding:8px 6px;text-align:left;font-size:11px;letter-spacing:.4px;color:var(--mut);font-weight:700}#groove td{padding:4px 6px;border-top:1px solid var(--line)}#groove td input, #groove td select{padding:6px 7px;font-size:12.5px;border-radius:6px}#groove .previewbox{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}#groove .hint{color:var(--mut);font-size:11.5px;margin-top:6px;line-height:1.4}#groove .warn{color:var(--warn);font-size:12.5px;margin-top:6px;font-weight:600}#groove .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:700;letter-spacing:.4px;background:var(--bg2);color:var(--mut);margin-left:6px}#groove .badge.live{background:rgba(67,209,122,.15);color:var(--ok)}#groove .genbtn{width:100%;background:linear-gradient(135deg,var(--acc),#ff8f00);color:#1a1200;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:800;letter-spacing:.5px;cursor:pointer;margin-top:14px;box-shadow:0 6px 20px rgba(255,179,0,.25)}#groove .genbtn:active{transform:translateY(1px)}#groove .gcode{background:#080d13;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px;font-family:'Consolas','Courier New',monospace;font-size:12.5px;color:#b8ffb8;white-space:pre;overflow-x:auto;max-height:320px;overflow-y:auto}#groove .gcodehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}#groove .gcodehead .cyc{color:var(--acc);font-weight:700;font-size:12.5px}#groove .gcodehead .copy{background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer}
+
+/* END */
 </style>
 <script src="https://unpkg.com/pyodide@0.26.4/pyodide.js"></script>
 </head>
@@ -498,23 +523,290 @@
     </section>
 
     <section id="groove" class="view">
-      <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Grooving</h2></div>
-      <div class="sec"><div class="st" onclick="tog(this)">OPERATION <span>&#9662;</span></div><div class="sb">
-        <label>Outside / Inside</label><div class="segbtns"><button type="button" class="on" onclick="segPick('gv_odid','OD (outside)',this)">OD (outside)</button><button type="button" onclick="segPick('gv_odid','ID (bore)',this)">ID (bore)</button></div><input id="gv_odid" type="hidden" value="OD (outside)"><label>Strategy</label><div class="segbtns"><button type="button" class="on" onclick="segPick('gv_strat','Plunge',this)">Plunge</button><button type="button" onclick="segPick('gv_strat','Turn',this)">Turn</button><button type="button" onclick="segPick('gv_strat','Copy',this)">Copy</button></div><input id="gv_strat" type="hidden" value="Plunge"><label>Rough / Finish</label><div class="segbtns"><button type="button" class="on" onclick="segPick('gv_mode','Roughing',this)">Rough</button><button type="button" onclick="segPick('gv_mode','Finishing',this)">Finish</button><button type="button" onclick="segPick('gv_mode','Rough + Finish',this)">Rough + Finish</button></div><input id="gv_mode" type="hidden" value="Roughing"><input id="gv_type" type="hidden" value="External (OD)">
-      </div></div>
-      <div class="sec" style="display:none"><div class="st" onclick="tog(this)">GEOMETRY <span>&#9662;</span></div><div class="sb">
-        <p id="gv_skel" class="note" style="text-align:left">Skeleton ready &mdash; tell me the fields + tool-path rules and I'll build it.</p>
-      </div></div>
-      
-      <div class="sec"><div class="st" onclick="tog(this)">TOOL <span>&#9656;</span></div><div class="sb" style="display:none"><div class="row2"><div><label>Insert width (mm)</label><input id="gv_iw" type="number" value="3" inputmode="decimal"></div><div><label>Corner radius (mm)</label><input id="gv_cr" type="number" value="0.2" inputmode="decimal"></div></div><label>Spindle direction</label><div class="segbtns"><button type="button" class="on" onclick="segPick('gv_sdir','M03',this)">M03 (CW)</button><button type="button" onclick="segPick('gv_sdir','M04',this)">M04 (CCW)</button></div><input id="gv_sdir" type="hidden" value="M03"><label>Tip orientation</label><div style="display:flex;align-items:center;gap:11px;background:#101a25;border:1px solid #26404f;border-radius:11px;padding:10px 12px"><svg viewBox="0 0 120 68" width="96" style="flex:none"><line x1="6" y1="54" x2="114" y2="54" stroke="#5f7185" stroke-width="1.1" stroke-dasharray="10 3 2 3"/><rect x="14" y="30" width="40" height="24" fill="url(#steel)"/><rect x="14" y="31.5" width="40" height="2" fill="#fff" opacity="0.4"/><rect x="66" y="30" width="40" height="24" fill="url(#steel)"/><rect x="66" y="31.5" width="40" height="2" fill="#fff" opacity="0.4"/><rect x="54" y="30" width="12" height="17" fill="url(#bore)"/><rect x="54" y="6" width="12" height="26" rx="1" fill="url(#gold)" stroke="#a8791e" stroke-width="0.8"/><circle cx="54" cy="31" r="2.3" fill="#ff5a5a" stroke="#fff" stroke-width="0.6"/><circle cx="66" cy="31" r="2.3" fill="#ff5a5a" stroke="#fff" stroke-width="0.6"/></svg><div style="font-size:11.5px;color:#8aa2b4;line-height:1.5">Grooving insert &mdash; two cutting corners (L &amp; R). The reference corner follows the cut direction; width sets the far wall.</div></div></div></div>
-      <div class="sec"><div class="st" onclick="tog(this)">PROFILE <span>&#9656;</span></div><div class="sb" style="display:none"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="btn btn2" type="button" onclick="openProfileTable()" style="margin:0">&#128203; Open profile table</button><span id="gv_ptsum" class="note" style="margin:0">shared with Turning profile</span></div><button class="btn btn2" type="button" onclick="spOpen()" style="margin-top:8px">&#9881;&#65039; Specials &mdash; Profile + Insert (Generative)</button></div></div>
-      <div class="sec"><div class="st" onclick="tog(this)">PARAMETERS <span>&#9656;</span></div><div class="sb" style="display:none"><div class="row2"><div><label>Cutting speed Vc (m/min)</label><input id="gv_vc" type="number" value="120" inputmode="decimal"></div><div><label>Plunging depth / peck (mm)</label><input id="gv_pdepth" type="number" value="0.5" inputmode="decimal"></div></div><label>Feed (mm/rev)</label><input id="gv_feed" type="number" value="0.08" inputmode="decimal"><div class="row2"><div><label>Finish allow &mdash; base (mm)</label><input id="gv_falb" type="number" value="0.1" inputmode="decimal"></div><div><label>Finish allow &mdash; flank (mm)</label><input id="gv_falf" type="number" value="0.1" inputmode="decimal"></div></div></div></div>
-      <div class="sec"><div class="st" onclick="tog(this)">POSITIONING <span>&#9656;</span></div><div class="sb" style="display:none"><p class="note" style="text-align:left">Safe position &amp; tool-change (G28) inherited from Job Setup.</p><div class="row2"><div><label>Safe X</label><input id="gv_safex" type="number" inputmode="decimal"></div><div><label>Safe Z</label><input id="gv_safez" type="number" inputmode="decimal"></div></div><div class="row2"><div><label>Approach X</label><input id="gv_infx" type="number" inputmode="decimal"></div><div><label>Approach Z</label><input id="gv_infz" type="number" inputmode="decimal"></div></div></div></div>
-      <div class="sec"><div class="st" onclick="tog(this)">CUT SETUP <span>&#9656;</span></div><div class="sb" style="display:none"><div class="row2"><div><label>Retract (mm)</label><input id="gv_retr" type="number" value="1" inputmode="decimal"></div><div><label>Retract angle&deg;</label><input id="gv_reta" type="number" value="45" inputmode="decimal"></div></div><div class="row2"><div><label>Step-over % (wide groove)</label><input id="gv_step" type="number" value="75" inputmode="decimal"></div><div><label>Bottom dwell (s)</label><input id="gv_dwell" type="number" value="0" inputmode="decimal"></div></div></div></div>
-      <div class="sec"><div class="st" onclick="tog(this)">MACHINE / SETUP <span>&#9656;</span></div><div class="sb" style="display:none"><div class="row2"><div><label>Program no. (O)</label><input id="gv_onum" type="number" value="2004" inputmode="numeric"></div></div><div class="row3"><div><label>Feed mm/inch</label><select id="gv_fmode"><option value="G99">G99 (mm)</option><option value="G98">G98 (inch)</option></select></div><div><label>RPM/Vc</label><select id="gv_smode"><option>G96</option><option>G97</option></select></div></div><div class="row2"><div><label>Home return (G28)</label><select id="gv_home"><option>Yes</option><option>No</option></select></div><div><label>Coolant</label><select id="gv_cool"><option>M08</option><option>None</option></select></div></div><p class="note" style="text-align:left">Machine frame (chuck / turret / hand) shared from Job Setup.</p></div></div>
-      <button class="btn" onclick="genGroove()">&#9881;&#65039;  GENERATE G-CODE</button><button class="btn btn2" type="button" onclick="gvSim()" style="margin-top:8px">&#128202;  Simulate</button>
-      <div id="gv_res"></div>
-    </section>
+<div style="max-width:920px;margin:0 auto;padding:14px 14px 40px">
+<!-- ============ 1. OPERATION ============ -->
+  <div class="sec open"><div class="st" onclick="gv_toggle(this)">OPERATION <span class="caret">&#9656;</span></div><div class="sb">
+    <label>Material</label>
+    <select id="mat" onchange="gv_matChange()"></select>
+    <div id="matInfo" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+      <span id="matChip" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;color:#0a1015">
+        <span id="matIso">P</span>
+      </span>
+      <span style="color:var(--mut);font-size:12.5px">Machinability <b id="matMach" style="color:var(--txt)">78%</b></span>
+      <span style="color:var(--mut);font-size:11px;margin-left:auto">rel. to AISI 1212 = 100%</span>
+    </div>
+    <label>Comment (optional)</label>
+    <textarea id="op_com" rows="2" placeholder="Reference note for this operation"></textarea>
+    <label>Groove type</label>
+    <div class="chips" id="typeChips">
+      <span class="chip on" data-t="od">OD radial</span>
+      <span class="chip" data-t="id">ID radial</span>
+      <span class="chip" data-t="face">Face (front)</span>
+      <span class="chip" data-t="back">Face (back)</span>
+    </div>
+  </div></div>
+
+  <!-- ============ 2. GEOMETRY ============ -->
+  <div class="sec open"><div class="st" onclick="gv_toggle(this)">GEOMETRY <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="row2">
+      <div><label>Top dia D1 (mm)</label><input id="D1" type="number" value="32" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>Bottom dia D2 (mm)</label><input id="D2" type="number" value="26" step="0.001" oninput="gv_recalc()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Start Z1 (mm)</label><input id="Z1" type="number" value="10" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>End Z2 (mm)</label><input id="Z2" type="number" value="4" step="0.001" oninput="gv_recalc()"></div>
+    </div>
+    <div class="hint">Width = |Z1&minus;Z2| = <span id="wCalc">6</span> mm &nbsp;&middot;&nbsp; Depth = (D1&minus;D2)/2 = <span id="dCalc">3</span> mm</div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+      <label style="margin-top:0">Common corner treatment (quick-set for all 4)</label>
+      <div class="row3">
+        <div><select id="allc_t"><option>None</option><option>Chamfer</option><option>Radius</option></select></div>
+        <div><input id="allc_s" type="number" step="0.01" value="0.2" placeholder="Size 1 (mm)"></div>
+        <div><button class="pbtn" style="padding:9px;font-size:12.5px" onclick="gv_applyAllCorners()">Apply to A B C D</button></div>
+      </div>
+      <label class="chkrow" style="margin-top:10px"><input type="checkbox" id="indepLegs" onchange="gv_recalc()"> Independent chamfer legs (Z-leg &ne; X-leg)</label>
+      <div id="allcS2Box" style="display:none;margin-top:6px">
+        <label style="margin-top:0">Common X-leg size (chamfer only)</label>
+        <input id="allc_s2" type="number" step="0.01" value="0.2">
+      </div>
+      <div class="hint">Sets all four corners at once. You can still tweak individual corners in the PROFILE section afterwards.</div>
+    </div>
+  </div></div>
+
+  <!-- ============ 3. TOOL ============ -->
+  <div class="sec"><div class="st" onclick="gv_toggle(this)">TOOL <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="row2">
+      <div><label>Tool number (T)</label><input id="tl_num" type="number" value="6"></div>
+      <div><label>Offset (D)</label><input id="tl_off" type="number" value="6"></div>
+    </div>
+    <div class="row2">
+      <div><label>Insert width Wi (mm)</label><input id="tl_wi" type="number" value="3" step="0.01"></div>
+      <div><label>Corner radius r (mm)</label><input id="tl_rc" type="number" value="0.2" step="0.01"></div>
+    </div>
+    <div class="row2">
+      <div><label>Offset reference (where tool offset is touched off)</label>
+        <select id="tl_off_ref" onchange="drawInsertRef();recalc();">
+          <option value="L">Left edge of insert (&minus;Z side)</option>
+          <option value="C" selected>Center of insert</option>
+          <option value="R">Right edge of insert (+Z side)</option>
+        </select>
+      </div>
+      <div><label>Hand</label>
+        <select id="tl_hand"><option>R</option><option>N</option><option>L</option></select>
+      </div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:10px">
+      <svg id="insertRef" viewBox="0 0 300 70" style="width:100%;max-width:340px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <label>Insert code (optional)</label>
+    <input id="tl_ins" type="text" placeholder="e.g. GIPI 3.18-0.20 IC328">
+    <div class="hint">YANTRA shifts programmed Z coordinates so groove wall positions land exactly where you specified, regardless of where you touched off the tool. Fanuc, Siemens, Mazatrol, and Heidenhain all handle this the same way &mdash; whichever edge you touched off, the offset table stores that as the reference point.</div>
+  </div></div>
+
+  <!-- ============ 4. PROFILE ============ -->
+  <div class="sec open"><div class="st" onclick="gv_toggle(this)">PROFILE <span class="badge live" id="modeBadge">auto</span> <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="hint" style="margin-top:6px"><b>A</b> top-left &middot; <b>B</b> bottom-left &middot; <b>C</b> bottom-right &middot; <b>D</b> top-right &middot; independent chamfer legs toggle in GEOMETRY section above</div>
+    <div class="row4" style="margin-top:8px">
+      <div class="cornerBox"><h4>A &mdash; top-L</h4>
+        <label>Type</label><select id="A_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+        <label>Size 1 (Z-leg / R)</label><input id="A_s1" type="number" value="0" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2 (X-leg)</label><input id="A_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+      </div>
+      <div class="cornerBox"><h4>B &mdash; bot-L</h4>
+        <label>Type</label><select id="B_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+        <label>Size 1</label><input id="B_s1" type="number" value="0.2" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2</label><input id="B_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+      </div>
+      <div class="cornerBox"><h4>C &mdash; bot-R</h4>
+        <label>Type</label><select id="C_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+        <label>Size 1</label><input id="C_s1" type="number" value="0.2" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2</label><input id="C_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+      </div>
+      <div class="cornerBox"><h4>D &mdash; top-R</h4>
+        <label>Type</label><select id="D_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+        <label>Size 1</label><input id="D_s1" type="number" value="0" step="0.01" oninput="gv_recalc()">
+        <label class="indepOnly">Size 2</label><input id="D_s2" class="indepOnly" type="number" value="0" step="0.01" oninput="gv_recalc()">
+      </div>
+    </div>
+
+    <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:8px">
+      <label class="chkrow"><input type="checkbox" id="mod_trap" onchange="gv_recalc()"> Trapezoidal (separate bottom width)</label>
+      <div id="trapBox" style="display:none;margin-left:24px">
+        <label>Bottom width (mm)</label><input id="botW" type="number" value="5" step="0.01" oninput="gv_recalc()">
+      </div>
+      <label class="chkrow"><input type="checkbox" id="mod_asym" onchange="gv_recalc()"> Asymmetric depth (left &ne; right)</label>
+      <div id="asymBox" style="display:none;margin-left:24px">
+        <div class="row2">
+          <div><label>Depth left</label><input id="depL" type="number" value="3" step="0.01" oninput="gv_recalc()"></div>
+          <div><label>Depth right</label><input id="depR" type="number" value="3" step="0.01" oninput="gv_recalc()"></div>
+        </div>
+      </div>
+      <label class="chkrow"><input type="checkbox" id="mod_ang" onchange="gv_recalc()"> Angled walls / bottom</label>
+      <div id="angBox" style="display:none;margin-left:24px">
+        <div class="row3">
+          <div><label>Left wall &deg;</label><input id="angL" type="number" value="0" step="0.1" oninput="gv_recalc()"></div>
+          <div><label>Right wall &deg;</label><input id="angR" type="number" value="0" step="0.1" oninput="gv_recalc()"></div>
+          <div><label>Bottom slope &deg;</label><input id="angB" type="number" value="0" step="0.1" oninput="gv_recalc()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:8px">
+      <label class="chkrow"><input type="checkbox" id="patOn" onchange="gv_recalc()"> Multi-groove pattern</label>
+      <div id="patBox" style="display:none">
+        <div class="chips" style="margin-top:8px">
+          <span class="chip on" data-p="pitch">Enter pitch</span>
+          <span class="chip" data-p="span">Fit N in span</span>
+        </div>
+        <div class="row3">
+          <div><label>Count N</label><input id="patN" type="number" value="3" min="1" step="1" oninput="gv_recalc()"></div>
+          <div><label id="pat2lbl">Pitch (mm)</label><input id="pat2" type="number" value="10" step="0.01" oninput="gv_recalc()"></div>
+          <div><label>Direction</label><select id="patDir" onchange="gv_recalc()"><option value="1">+Z</option><option value="-1" selected>&minus;Z</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:8px">
+      <label class="chkrow"><input type="checkbox" id="manual" onchange="gv_recalc()"> Manual mode &mdash; edit points table directly</label>
+      <table id="ptTbl">
+        <thead><tr><th>Pt</th><th>X (dia)</th><th>Z</th><th>Corner</th><th>Sz 1</th><th>Sz 2</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="hint" id="ptStatus" style="margin-top:6px"></div>
+    </div>
+  </div></div>
+
+  <!-- ============ 5. PARAMETERS (cutting) ============ -->
+  <div class="sec"><div class="st" onclick="gv_toggle(this)">PARAMETERS <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="row3">
+      <div><label>Vc (m/min)</label><input id="p_vc" type="number" value="120" step="1" oninput="gv_recalc()"></div>
+      <div><label>RPM (auto)</label><input id="p_rpm" type="number" value="1194" step="1" style="color:var(--acc);font-weight:700" readonly></div>
+      <div><label>Max RPM</label><input id="p_maxrpm" type="number" value="3000" step="100"></div>
+    </div>
+    <div class="row2">
+      <div><label>Rough feed (mm/rev)</label><input id="p_fr" type="number" value="0.08" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>Finish feed (mm/rev)</label><input id="p_ff" type="number" value="0.05" step="0.001" oninput="gv_recalc()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Radial DOC per plunge (mm)</label><input id="p_doc" type="number" value="1.5" step="0.01" oninput="gv_recalc()"></div>
+      <div><label>Stepover (Turn strategy)</label><input id="p_step" type="number" value="0.7" step="0.01" oninput="gv_recalc()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Dwell at bottom (rev)</label><input id="p_dw" type="number" value="0.5" step="0.1" oninput="gv_recalc()"></div>
+      <div><label>Coolant</label><select id="p_cool" onchange="gv_recalc()"><option>M08 flood</option><option>M07 mist</option><option>M09 off</option></select></div>
+    </div>
+  </div></div>
+
+  <!-- ============ STRATEGY + ROUGH/FINISH (top strip) ============ -->
+  <div class="sec"><div class="st" onclick="gv_toggle(this)">STRATEGY <span class="caret">&#9656;</span></div><div class="sb">
+    <h3 style="margin:10px 0 4px">ROUGHING STRATEGY</h3>
+    <div class="pills3" id="stratPills">
+      <div class="pill on" data-v="single">Single plunge</div>
+      <div class="pill" data-v="multi">Multi-plunge</div>
+      <div class="pill" data-v="plturn">Plunge turning</div>
+      <div class="pill" data-v="ramp">Ramping</div>
+    </div>
+    <div class="hint" id="stratHint" style="margin:-6px 0 10px">Recommended strategy updates automatically based on the groove geometry you enter above.</div>
+    <h3>FINISHING STRATEGY</h3>
+    <div class="pills two" id="finPills">
+      <div class="pill on" data-v="profile">Profile pass</div>
+      <div class="pill" data-v="walls">Walls-then-floor</div>
+    </div>
+    <h3>ROUGH / FINISH</h3>
+    <div class="pills" id="rfPills">
+      <div class="pill" data-v="rough">Rough only</div>
+      <div class="pill" data-v="finish">Finish only</div>
+      <div class="pill on" data-v="both">Rough + Finish</div>
+    </div>
+  </div></div>
+
+  <!-- ============ 6. POSITIONING (approach/retract) ============ -->
+  <div class="sec"><div class="st" onclick="gv_toggle(this)">POSITIONING <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="row2">
+      <div><label>Safe X (mm above OD)</label><input id="pos_sx" type="number" value="5" step="0.1" oninput="gv_recalc()"></div>
+      <div><label>Safe Z (mm before groove)</label><input id="pos_sz" type="number" value="3" step="0.1" oninput="gv_recalc()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Approach X (rapid to)</label><input id="pos_ax" type="number" value="2" step="0.1" oninput="gv_recalc()"></div>
+      <div><label>Approach Z</label><input id="pos_az" type="number" value="0.5" step="0.1" oninput="gv_recalc()"></div>
+    </div>
+    <label>Retract mode</label>
+    <select id="pos_ret" onchange="gv_recalc()">
+      <option>Radial only (X+, keep Z)</option>
+      <option>Angular (45&deg; away from wall)</option>
+      <option>To safe X then Z</option>
+    </select>
+    <div class="hint">Angular retract reduces witness marks on the side wall of finish grooves.</div>
+  </div></div>
+
+  <!-- ============ 7. CUT SETUP (peck / chip break) ============ -->
+  <div class="sec"><div class="st" onclick="gv_toggle(this)">CUT SETUP <span class="caret">&#9656;</span></div><div class="sb">
+    <label class="chkrow"><input type="checkbox" id="cs_peck" onchange="gv_recalc()" checked> Peck the plunge</label>
+    <div id="peckBox" style="margin-left:24px">
+      <div class="row2">
+        <div><label>Peck depth (mm)</label><input id="cs_pd" type="number" value="0.5" step="0.05" oninput="gv_recalc()"></div>
+        <div><label>Retract per peck (mm)</label><input id="cs_pr" type="number" value="0.3" step="0.05" oninput="gv_recalc()"></div>
+      </div>
+    </div>
+    <label class="chkrow"><input type="checkbox" id="cs_cb" onchange="gv_recalc()"> Chip-break interrupts</label>
+    <div id="cbBox" style="display:none;margin-left:24px">
+      <div class="row2">
+        <div><label>Break after (mm feed)</label><input id="cs_cbf" type="number" value="0.4" step="0.05"></div>
+        <div><label>Retract (mm)</label><input id="cs_cbr" type="number" value="0.1" step="0.01"></div>
+      </div>
+    </div>
+    <label>Plunge feed override (mm/rev, blank = use rough feed)</label>
+    <input id="cs_pf" type="number" step="0.001" placeholder="0.05">
+  </div></div>
+
+  <!-- ============ 8. MACHINE / SETUP ============ -->
+  <div class="sec"><div class="st" onclick="gv_toggle(this)">MACHINE / SETUP <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="row2">
+      <div><label>Control</label>
+        <select id="ms_ctrl" onchange="gv_recalc()">
+          <option>Fanuc</option><option>Siemens</option><option>Mazatrol</option><option>Heidenhain</option><option>Haas</option><option>Mitsubishi</option>
+        </select>
+      </div>
+      <div><label>Spindle direction</label>
+        <select id="ms_sp" onchange="gv_recalc()"><option>M03 CW</option><option>M04 CCW</option></select>
+      </div>
+    </div>
+    <div class="row2">
+      <div><label>Machine frame</label>
+        <select id="ms_fr" onchange="gv_recalc()"><option>Left chuck &middot; Rear turret &middot; R hand</option><option>Right chuck &middot; Front turret &middot; L hand</option></select>
+      </div>
+      <div><label>Units</label><select><option>mm</option><option>inch</option></select></div>
+    </div>
+    <label>Tool-change position</label>
+    <input id="ms_tcp" type="text" value="G28 U0 W0">
+  </div></div>
+
+  <!-- ============ VISUAL PREVIEW ============ -->
+  <div class="sec open"><div class="st" onclick="gv_toggle(this)">PREVIEW <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="previewbox">
+      <svg id="prev" viewBox="0 0 620 260" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="hint">Longitudinal cross-section &mdash; centerline dashed. Grey shapes = groove copies.</div>
+  </div></div>
+
+  <!-- ============ GENERATE + OUTPUT ============ -->
+  <button class="genbtn" onclick="gv_generate()">&#9881; GENERATE G-CODE</button>
+
+  <div id="outputArea" style="display:none;margin-top:14px">
+    <div class="sec open"><div class="st" onclick="gv_toggle(this)">PROGRAM <span class="badge live" id="cycBadge">-</span> <span class="caret">&#9656;</span></div><div class="sb">
+      <div class="gcodehead"><span class="cyc" id="cycLabel">Cycle: -</span></div>
+      <div class="gcode" id="gcode"></div>
+      <div class="postbtns">
+        <button class="pbtn primary" onclick="gv_toggleSim()">&#9654; Simulate (full screen)</button>
+        <button class="pbtn save" onclick="gv_saveProg()">&#128190; Save</button>
+        <button class="pbtn" onclick="gv_copyGcode()">&#128203; Copy</button>
+      </div>
+
+      <div id="saveConfirm" class="hint" style="display:none;color:var(--ok);font-weight:600;margin-top:8px"></div>
+    </div></div>
+  </div>
+</div>
+</section>
 
     <section id="ttbl" class="view">
       <div class="vhead"><button class="back" onclick="show('turnops')">&lsaquo;</button><h2>Profile points</h2></div>
@@ -1573,6 +1865,764 @@ function cloudUI(){
 try{cloudUI();}catch(e){}
 
 
+
+// ==== GROOVING VIEW (v25 integration) ====
+(function(){
+
+var typ='od', patMode='pitch', strat='single', finStrat='profile', rf='both';
+
+function $(id){return document.getElementById(id);}
+function toggle(el){el.parentNode.classList.toggle('open');}
+
+document.querySelectorAll('#stratPills .pill').forEach(function(p){p.onclick=function(){document.querySelectorAll('#stratPills .pill').forEach(function(x){x.classList.remove('on');});p.classList.add('on');strat=p.getAttribute('data-v');updateStratHint();};});
+document.querySelectorAll('#finPills .pill').forEach(function(p){p.onclick=function(){document.querySelectorAll('#finPills .pill').forEach(function(x){x.classList.remove('on');});p.classList.add('on');finStrat=p.getAttribute('data-v');};});
+document.querySelectorAll('#rfPills .pill').forEach(function(p){p.onclick=function(){document.querySelectorAll('#rfPills .pill').forEach(function(x){x.classList.remove('on');});p.classList.add('on');rf=p.getAttribute('data-v');};});
+document.querySelectorAll('#typeChips .chip').forEach(function(c){c.onclick=function(){document.querySelectorAll('#typeChips .chip').forEach(function(x){x.classList.remove('on');});c.classList.add('on');typ=c.getAttribute('data-t');recalc();};});
+document.querySelectorAll('.chip[data-p]').forEach(function(c){c.onclick=function(){document.querySelectorAll('.chip[data-p]').forEach(function(x){x.classList.remove('on');});c.classList.add('on');patMode=c.getAttribute('data-p');$('pat2lbl').textContent=(patMode==='pitch'?'Pitch (mm)':'Total span (mm)');recalc();};});
+
+function updateStratHint(){
+  var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
+  var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
+  var Wi=parseFloat($('tl_wi').value)||3;
+  var W=Math.abs(Z1-Z2), D=Math.abs(D1-D2)/2;
+  var suggested='single';
+  var reason='';
+  if(W<=Wi*1.02){suggested='single'; reason='Groove width ('+W.toFixed(2)+') &le; insert width ('+Wi+'). Single plunge is fastest.';}
+  else if(D>=W){suggested='multi'; reason='Depth ('+D.toFixed(2)+') &ge; width ('+W.toFixed(2)+'). Rule of thumb: use multi-plunge for deep grooves.';}
+  else{suggested='plturn'; reason='Width ('+W.toFixed(2)+') > depth ('+D.toFixed(2)+'). Rule of thumb: use plunge-turning for wide grooves.';}
+  // Update badge on suggested pill
+  document.querySelectorAll('#stratPills .pill').forEach(function(p){p.classList.toggle('suggested', p.getAttribute('data-v')===suggested && !p.classList.contains('on'));});
+  $('stratHint').innerHTML='<b>Suggested: '+({single:'Single plunge',multi:'Multi-plunge',plturn:'Plunge turning',ramp:'Ramping'})[suggested]+'</b> &mdash; '+reason;
+}
+
+var MATERIALS=[
+  {v:'steel_lc',    name:'Low carbon steel <0.55%C',    iso:'P', vc:120, fz:0.08, mach:78,  c:'#3b8bd9'},
+  {v:'steel_1045',  name:'AISI 1045 medium carbon',     iso:'P', vc:100, fz:0.08, mach:65,  c:'#3b8bd9'},
+  {v:'steel_4140',  name:'AISI 4140 annealed',          iso:'P', vc:90,  fz:0.07, mach:65,  c:'#3b8bd9'},
+  {v:'steel_4340',  name:'AISI 4340 annealed',          iso:'P', vc:85,  fz:0.07, mach:57,  c:'#3b8bd9'},
+  {v:'steel_1018',  name:'AISI 1018 mild steel',        iso:'P', vc:110, fz:0.08, mach:78,  c:'#3b8bd9'},
+  {v:'ss304',       name:'Stainless 304 austenitic',    iso:'M', vc:70,  fz:0.06, mach:45,  c:'#e6b800'},
+  {v:'ss316',       name:'Stainless 316 austenitic',    iso:'M', vc:60,  fz:0.05, mach:36,  c:'#e6b800'},
+  {v:'ss416',       name:'Stainless 416 martensitic',   iso:'M', vc:100, fz:0.07, mach:78,  c:'#e6b800'},
+  {v:'ss17_4',      name:'17-4 PH H900',                iso:'M', vc:65,  fz:0.05, mach:32,  c:'#e6b800'},
+  {v:'ci_gray',     name:'Cast iron (gray, GG25)',      iso:'K', vc:100, fz:0.09, mach:70,  c:'#d94b3b'},
+  {v:'ci_nodular',  name:'Cast iron (nodular, SG500)',  iso:'K', vc:80,  fz:0.08, mach:55,  c:'#d94b3b'},
+  {v:'al6061',      name:'Aluminium 6061-T6',           iso:'N', vc:300, fz:0.12, mach:250, c:'#4ba85a'},
+  {v:'al7075',      name:'Aluminium 7075-T6',           iso:'N', vc:250, fz:0.10, mach:200, c:'#4ba85a'},
+  {v:'al2024',      name:'Aluminium 2024-T4',           iso:'N', vc:280, fz:0.11, mach:220, c:'#4ba85a'},
+  {v:'brass_fm',    name:'Free-machining brass C36000', iso:'N', vc:180, fz:0.10, mach:300, c:'#4ba85a'},
+  {v:'copper',      name:'Copper C110',                 iso:'N', vc:150, fz:0.10, mach:80,  c:'#4ba85a'},
+  {v:'ti_64',       name:'Titanium Ti-6Al-4V',          iso:'S', vc:45,  fz:0.04, mach:22,  c:'#c17840'},
+  {v:'ti_cp',       name:'Titanium CP (grade 2)',       iso:'S', vc:60,  fz:0.05, mach:30,  c:'#c17840'},
+  {v:'inconel718',  name:'Inconel 718',                 iso:'S', vc:20,  fz:0.03, mach:10,  c:'#c17840'},
+  {v:'inconel625',  name:'Inconel 625',                 iso:'S', vc:25,  fz:0.03, mach:12,  c:'#c17840'},
+  {v:'hastelloy',   name:'Hastelloy X',                 iso:'S', vc:18,  fz:0.03, mach:8,   c:'#c17840'},
+  {v:'hard_4340',   name:'4340 hardened HRC 45-50',     iso:'H', vc:60,  fz:0.05, mach:20,  c:'#4a4a4a'},
+  {v:'hard_d2',     name:'D2 tool steel HRC 58-62',     iso:'H', vc:40,  fz:0.03, mach:12,  c:'#4a4a4a'},
+];
+
+function initMaterials(){
+  var sel=$('mat');
+  MATERIALS.forEach(function(m){
+    var op=document.createElement('option');
+    op.value=m.v; op.textContent=m.name;
+    op.setAttribute('data-vc',m.vc);
+    op.setAttribute('data-fz',m.fz);
+    op.setAttribute('data-mach',m.mach);
+    op.setAttribute('data-iso',m.iso);
+    op.setAttribute('data-color',m.c);
+    sel.appendChild(op);
+  });
+  matChange();
+}
+
+function matChange(){
+  var opt=$('mat').selectedOptions[0];
+  if(!opt)return;
+  $('p_vc').value=opt.getAttribute('data-vc');
+  $('p_fr').value=opt.getAttribute('data-fz');
+  var iso=opt.getAttribute('data-iso');
+  var mach=opt.getAttribute('data-mach');
+  var col=opt.getAttribute('data-color');
+  $('matIso').textContent='ISO '+iso;
+  $('matChip').style.background=col;
+  $('matMach').textContent=mach+'%';
+  recalc();
+}
+
+function drawInsertRef(){
+  var svg=$('insertRef'); if(!svg)return;
+  var ref=$('tl_off_ref').value;
+  var Wi=parseFloat($('tl_wi').value)||3;
+  var W=180, H=36, cx=150, cy=45;
+  // Left edge position
+  var lx=cx-W/2, rx=cx+W/2;
+  // Reference dot position
+  var refX=(ref==='L')?lx:(ref==='R'?rx:cx);
+  // Draw insert as a rectangle
+  var g='';
+  g+='<defs><linearGradient id="grInsert" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe083"/><stop offset="0.5" stop-color="#f0c24a"/><stop offset="1" stop-color="#a06800"/></linearGradient></defs>';
+  // Shank above
+  g+='<rect x="'+(cx-W/2-6)+'" y="4" width="'+(W+12)+'" height="18" fill="#5a6068" stroke="#3a4048" stroke-width="1"/>';
+  // Insert body
+  g+='<rect x="'+lx+'" y="'+(cy-H/2)+'" width="'+W+'" height="'+H+'" fill="url(#grInsert)" stroke="#5a3800" stroke-width="1.5"/>';
+  // Corner radii dots (both leading edges)
+  g+='<circle cx="'+lx+'" cy="'+(cy+H/2)+'" r="3" fill="#8b4513"/>';
+  g+='<circle cx="'+rx+'" cy="'+(cy+H/2)+'" r="3" fill="#8b4513"/>';
+  // Reference dot
+  g+='<circle cx="'+refX+'" cy="'+cy+'" r="6" fill="#ff5252" stroke="#1a1200" stroke-width="1.5"/>';
+  // Reference label
+  g+='<text x="'+refX+'" y="'+(cy-16)+'" fill="#ff5252" font-size="12" font-weight="800" text-anchor="middle">OFFSET REF</text>';
+  // -Z / +Z labels
+  g+='<text x="'+(lx-14)+'" y="'+cy+'" fill="#90a4b8" font-size="11" font-weight="700" text-anchor="middle">-Z</text>';
+  g+='<text x="'+(rx+14)+'" y="'+cy+'" fill="#90a4b8" font-size="11" font-weight="700" text-anchor="middle">+Z</text>';
+  // Insert width label
+  g+='<text x="'+cx+'" y="'+(cy+H/2+14)+'" fill="#90a4b8" font-size="10" text-anchor="middle">Wi = '+Wi+' mm</text>';
+  svg.innerHTML=g;
+}
+
+function applyAllCorners(){
+  var t=$('allc_t').value;
+  var s=$('allc_s').value||'0';
+  var s2=($('allc_s2')&&$('indepLegs').checked)?($('allc_s2').value||s):s;
+  ['A','B','C','D'].forEach(function(id){
+    $(id+'_t').value=t;
+    $(id+'_s1').value=s;
+    $(id+'_s2').value=s2;
+  });
+  recalc();
+}
+
+function recalc(){
+  $('trapBox').style.display=$('mod_trap').checked?'block':'none';
+  $('asymBox').style.display=$('mod_asym').checked?'block':'none';
+  $('angBox').style.display=$('mod_ang').checked?'block':'none';
+  $('patBox').style.display=$('patOn').checked?'block':'none';
+  $('cbBox').style.display=$('cs_cb').checked?'block':'none';
+  $('peckBox').style.display=$('cs_peck').checked?'block':'none';
+  document.querySelectorAll('.indepOnly').forEach(function(el){el.style.display=$('indepLegs').checked?'':'none';});
+  if($('allcS2Box'))$('allcS2Box').style.display=$('indepLegs').checked?'block':'none';
+  var m=$('manual').checked;
+  $('modeBadge').textContent=m?'manual':'auto';
+  $('modeBadge').style.background=m?'rgba(255,112,67,.15)':'rgba(67,209,122,.15)';
+  $('modeBadge').style.color=m?'var(--warn)':'var(--ok)';
+
+  var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
+  var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
+  $('wCalc').textContent=Math.abs(Z1-Z2).toFixed(3);
+  $('dCalc').textContent=(Math.abs(D1-D2)/2).toFixed(3);
+
+  var Vc=parseFloat($('p_vc').value)||0;
+  var maxR=parseFloat($('p_maxrpm').value)||99999;
+  var rpm=(D1>0&&Vc>0)?Math.min(maxR,Math.round(Vc*1000/(Math.PI*D1))):0;
+  $('p_rpm').value=rpm;
+
+  var A={x:D1, z:Z1}, B={x:D2, z:Z1}, C={x:D2, z:Z2}, D={x:D1, z:Z2};
+  if($('mod_trap').checked){
+    var botW=parseFloat($('botW').value)||Math.abs(Z1-Z2);
+    var zMid=(Z1+Z2)/2, half=botW/2, dir=(Z2>Z1?1:-1);
+    B.z=zMid-half*dir; C.z=zMid+half*dir;
+  }
+  if($('mod_asym').checked){
+    var dL=parseFloat($('depL').value)||0, dR=parseFloat($('depR').value)||0;
+    B.x=D1-2*dL; C.x=D1-2*dR;
+  }
+  if($('mod_ang').checked){
+    var aL=(parseFloat($('angL').value)||0)*Math.PI/180;
+    var aR=(parseFloat($('angR').value)||0)*Math.PI/180;
+    var wallHL=Math.abs((A.x-B.x)/2), wallHR=Math.abs((D.x-C.x)/2);
+    B.z=A.z + (Z2>Z1?1:-1)*wallHL*Math.tan(aL);
+    C.z=D.z - (Z2>Z1?1:-1)*wallHR*Math.tan(aR);
+  }
+  var meta={A:cornerRow('A'),B:cornerRow('B'),C:cornerRow('C'),D:cornerRow('D')};
+  var pts=[Object.assign({p:'A'},A,meta.A),Object.assign({p:'B'},B,meta.B),Object.assign({p:'C'},C,meta.C),Object.assign({p:'D'},D,meta.D)];
+  renderTable(pts); drawPreview(pts);
+  updateStratHint();
+}
+
+function cornerRow(id){
+  var t=$(id+'_t').value;
+  var s1=parseFloat($(id+'_s1').value)||0;
+  var s2=parseFloat($(id+'_s2').value)||0;
+  return {ctype:t, cs1:s1, cs2:$('indepLegs').checked?s2:s1};
+}
+
+function renderTable(pts){
+  var tb=$('ptTbl').querySelector('tbody'); tb.innerHTML='';
+  var manual=$('manual').checked;
+  pts.forEach(function(pt){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+pt.p+'</b></td>'
+      +'<td>'+(manual?('<input type="number" value="'+pt.x.toFixed(3)+'" step="0.001">'):pt.x.toFixed(3))+'</td>'
+      +'<td>'+(manual?('<input type="number" value="'+pt.z.toFixed(3)+'" step="0.001">'):pt.z.toFixed(3))+'</td>'
+      +'<td>'+pt.ctype+'</td>'
+      +'<td>'+pt.cs1.toFixed(3)+'</td>'
+      +'<td>'+(pt.ctype==='Chamfer'?pt.cs2.toFixed(3):'&mdash;')+'</td>';
+    tb.appendChild(tr);
+  });
+  if($('patOn').checked){
+    var N=parseInt($('patN').value)||1, p2=parseFloat($('pat2').value)||0;
+    var pitch=(patMode==='pitch')?p2:(N>1?p2/(N-1):p2);
+    $('ptStatus').innerHTML='<b>4 pts</b> per groove &middot; <b>&times; '+N+'</b> grooves at pitch '+pitch.toFixed(3)+' mm';
+  } else {
+    $('ptStatus').innerHTML='<b>4 corner points</b> &middot; single groove';
+  }
+}
+
+function drawPreview(pts){
+  var svg=$('prev'); svg.innerHTML='';
+  var D1=pts[0].x;
+  var stockOD=D1*1.15+4;
+  var margin=30, viewW=620, viewH=260;
+  var patOn=$('patOn').checked;
+  var N=patOn?(parseInt($('patN').value)||1):1;
+  var p2=parseFloat($('pat2').value)||0;
+  var dir=parseInt($('patDir').value)||-1;
+  var pitch=patOn?(patMode==='pitch'?p2:(N>1?p2/(N-1):p2)):0;
+  var Zs=[]; pts.forEach(function(p){Zs.push(p.z);});
+  for(var i=1;i<N;i++){ Zs.push(pts[0].z+i*pitch*dir); Zs.push(pts[2].z+i*pitch*dir);}
+  var Zmin=Math.min.apply(null,Zs)-4, Zmax=Math.max.apply(null,Zs)+4;
+  var Zspan=Math.max(1,Zmax-Zmin);
+  var scaleZ=(viewW-2*margin)/Zspan;
+  var scaleX=(viewH/2-margin)/stockOD;
+  var mapZ=function(z){return margin+(z-Zmin)*scaleZ;};
+  var mapX=function(x){return viewH/2 - x*scaleX;};
+  svg.innerHTML+='<line x1="'+margin+'" y1="'+(viewH/2)+'" x2="'+(viewW-margin)+'" y2="'+(viewH/2)+'" stroke="#5a6068" stroke-width="1" stroke-dasharray="5 4"/>';
+  var stockYtop=mapX(stockOD);
+  svg.innerHTML+='<rect x="'+margin+'" y="'+stockYtop+'" width="'+(viewW-2*margin)+'" height="'+(viewH/2-stockYtop)+'" fill="#101d29" stroke="#5a6068" stroke-width="1"/>';
+  svg.innerHTML+='<rect x="'+margin+'" y="'+(viewH/2)+'" width="'+(viewW-2*margin)+'" height="'+(viewH/2-stockYtop)+'" fill="#101d29" stroke="#5a6068" stroke-width="1"/>';
+  var odY=mapX(D1);
+  svg.innerHTML+='<line x1="'+margin+'" y1="'+odY+'" x2="'+(viewW-margin)+'" y2="'+odY+'" stroke="#c2c7cc" stroke-width="1.5"/>';
+  svg.innerHTML+='<line x1="'+margin+'" y1="'+(viewH-odY)+'" x2="'+(viewW-margin)+'" y2="'+(viewH-odY)+'" stroke="#c2c7cc" stroke-width="1.5"/>';
+  for(var k=0;k<N;k++){
+    var off=k*pitch*dir;
+    var Ax=mapZ(pts[0].z+off), Ay=mapX(pts[0].x);
+    var Bx=mapZ(pts[1].z+off), By=mapX(pts[1].x);
+    var Cx=mapZ(pts[2].z+off), Cy=mapX(pts[2].x);
+    var Dx=mapZ(pts[3].z+off), Dy=mapX(pts[3].x);
+    svg.innerHTML+='<path d="M '+Ax+' '+Ay+' L '+Bx+' '+By+' L '+Cx+' '+Cy+' L '+Dx+' '+Dy+' Z" fill="#293a4d" stroke="#ffb300" stroke-width="1.4"/>';
+    svg.innerHTML+='<path d="M '+Ax+' '+(viewH-Ay)+' L '+Bx+' '+(viewH-By)+' L '+Cx+' '+(viewH-Cy)+' L '+Dx+' '+(viewH-Dy)+' Z" fill="#293a4d" stroke="#ffb300" stroke-width="1.4" opacity="0.7"/>';
+    if(k===0){
+      [pts[0],pts[1],pts[2],pts[3]].forEach(function(p,i){
+        var px=[Ax,Bx,Cx,Dx][i], py=[Ay,By,Cy,Dy][i];
+        svg.innerHTML+='<circle cx="'+px+'" cy="'+py+'" r="2.5" fill="#ffb300"/>';
+        svg.innerHTML+='<text x="'+(px+5)+'" y="'+(py-4)+'" font-size="10" fill="#ffb300" font-weight="700">'+p.p+'</text>';
+      });
+    }
+  }
+}
+
+// -------- G-CODE GENERATION --------
+function generate(){
+  // === Collect inputs ===
+  var ctrl=$('ms_ctrl').value;
+  var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
+  var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
+  var W=(D1-D2)/2;                              // radial depth
+  var GW=Math.abs(Z2-Z1);                       // axial width
+  var Wi=parseFloat($('tl_wi').value)||3;       // insert width
+  var rIns=parseFloat($('tl_rc').value)||0.2;   // insert corner radius
+  var T=$('tl_num').value, TD=$('tl_off').value;
+  var Vc=parseFloat($('p_vc').value)||0;
+  var S=parseInt($('p_rpm').value)||0;
+  var maxRPM=parseInt($('p_maxrpm').value)||3000;
+  var Fr=parseFloat($('p_fr').value)||0.08;
+  var Ff=parseFloat($('p_ff').value)||0.05;
+  var pd=parseFloat($('cs_pd').value)||0.5;     // peck depth (radial)
+  var pr=parseFloat($('cs_pr').value)||0.3;     // retract per peck
+  var dwell=parseFloat($('p_dw').value)||0;
+  var sX=parseFloat($('pos_sx').value)||5;
+  var sZ=parseFloat($('pos_sz').value)||3;
+  var mat=$('mat').selectedOptions[0].text;
+  var origin=$('tl_off_ref').value;  // 'L', 'C', or 'R'
+  var originShift={L:-Wi/2, C:0, R:+Wi/2}[origin];  // added to insert-center Z to get programmed Z
+  var originLabel={L:'LEFT corner',C:'CENTER',R:'RIGHT corner'}[origin];
+  var safeX=D1+sX*2;
+  var patOn=$('patOn').checked;
+  var N=patOn?(parseInt($('patN').value)||1):1;
+  var p2=parseFloat($('pat2').value)||0;
+  var dir=parseInt($('patDir').value)||-1;
+  var pitch=patOn?(patMode==='pitch'?p2:(N>1?p2/(N-1):p2)):0;
+  var stratLabel={single:'Single plunge',multi:'Multi-plunge',plturn:'Plunge turning',ramp:'Ramping'}[strat];
+  // Offset reference — shifts programmed Z so wall positions land exactly
+  var offRef=$('tl_off_ref').value;  // 'L' | 'C' | 'R'
+  var offShift={L:-Wi/2, C:0, R:+Wi/2}[offRef];  // add to insert-center to get Z_prog
+  var offLbl={L:'Left edge (-Z)', C:'Center', R:'Right edge (+Z)'}[offRef];
+  var doFin=(rf==='finish'||rf==='both');
+  var doRgh=(rf==='rough' ||rf==='both');
+  // Corner info
+  var corners={};
+  ['A','B','C','D'].forEach(function(k){
+    corners[k]={t:$(k+'_t').value, s1:parseFloat($(k+'_s1').value)||0, s2:$('indepLegs').checked?(parseFloat($(k+'_s2').value)||0):(parseFloat($(k+'_s1').value)||0)};
+  });
+
+  // === Build a linear list of moves ===
+  var mv=[];
+  mv.push({t:'cmt', txt:'Groove program - '+stratLabel});
+  mv.push({t:'cmt', txt:'Insert width: '+Wi.toFixed(3)+' mm  |  Offset origin: '+originLabel+' (Z shift '+(originShift>=0?'+':'')+originShift.toFixed(3)+' mm)'});
+  mv.push({t:'cmt', txt:'Material: '+mat});
+  mv.push({t:'cmt', txt:'Target control: '+ctrl+' (long-form G-code)'});
+  mv.push({t:'cmt', txt:'Insert width Wi='+Wi+' mm - Offset reference: '+offLbl});
+  mv.push({t:'cmt', txt:'Groove: D '+D1.toFixed(2)+' to '+D2.toFixed(2)+' x '+GW.toFixed(2)+' wide'+(N>1?', '+N+'x at '+pitch.toFixed(2)+' pitch':'')});
+  mv.push({t:'raw', s:'G21 G18 G40 G97'});
+  mv.push({t:'raw', s:'G28 U0 W0'});
+  mv.push({t:'raw', s:'T'+T+(TD||T).toString().padStart(2,'0')});
+  mv.push({t:'raw', s:'G96 S'+Vc+' M03 M08'});
+  mv.push({t:'raw', s:'G50 S'+maxRPM});
+  mv.push({t:'g0', X:safeX, Z:Z1+sZ});
+
+  for(var g=0;g<N;g++){
+    var z1g=Z1+g*pitch*dir, z2g=Z2+g*pitch*dir;
+    var origin=$('tl_off_ref')?$('tl_off_ref').value:'C';
+    var oShift={L:-Wi/2,C:0,R:+Wi/2}[origin];
+    if(N>1)mv.push({t:'cmt', txt:'-- Groove '+(g+1)+'/'+N+' at Z='+z1g.toFixed(3)+' --'});
+    if(doRgh){
+      // Compute insert-center Z positions
+      var zLeftWall=Math.min(z1g,z2g), zRightWall=Math.max(z1g,z2g);
+      var grooveW=zRightWall-zLeftWall;
+      if(strat==='single'){
+        // One plunge centered in the groove
+        var zc=(zLeftWall+zRightWall)/2;
+        var zp=zc+offShift;
+        pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell);
+      } else if(strat==='multi'){
+        // Multi-plunge: insert-center steps from (zLeftWall+Wi/2) to (zRightWall-Wi/2)
+        // Step size = Wi - 2*rIns (leaves lands smaller than insert width for finish clean-up)
+        var step=Math.max(0.1, Wi-2*rIns);
+        var zCFirst=zLeftWall+Wi/2, zCLast=zRightWall-Wi/2;
+        var span=zCLast-zCFirst;
+        var N_p=(span<=0.001)?1:Math.max(2, Math.ceil(span/step)+1);
+        var actualStep=(N_p>1)?span/(N_p-1):0;
+        var centers=[];
+        for(var iP=0;iP<N_p;iP++)centers.push(zCFirst+iP*actualStep);
+        mv.push({t:'cmt', txt:N_p+' plunge(s), step '+actualStep.toFixed(3)+' mm between insert centers'});
+        centers.forEach(function(zc){
+          var zp=zc+offShift;
+          mv.push({t:'g0', Z:zp});
+          pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell);
+        });
+      } else if(strat==='plturn'){
+        // Plunge one end first, then turn to opposite. Practical Machinist rule: turn one direction only.
+        // Start-side plunge insert-center at (zLeftWall + Wi/2)
+        var zcStart=zLeftWall+Wi/2, zcEnd=zRightWall-Wi/2;
+        var zpStart=zcStart+offShift, zpEnd=zcEnd+offShift;
+        mv.push({t:'cmt', txt:'Plunge one end (leaves right shoulder for turn)'});
+        mv.push({t:'g0', Z:zpStart});
+        pluneRough(mv, D1, D2+0.2, zpStart, safeX, pd, pr, Fr, dwell);
+        mv.push({t:'cmt', txt:'Turn axially between shoulders to opposite Z'});
+        mv.push({t:'g1', X:D2+0.2, Z:zpStart, F:Fr});
+        mv.push({t:'g1', Z:zpEnd, F:Fr*1.3});
+        mv.push({t:'g1', X:D2, F:Ff});
+        mv.push({t:'g1', Z:zpStart, F:Ff});
+        mv.push({t:'g0', X:safeX});
+      } else if(strat==='ramp'){
+        // Ramp entry — simultaneous X-Z at an angle, then clean the bottom
+        var zcStart=zLeftWall+Wi/2, zcEnd=zRightWall-Wi/2;
+        var zpStart=zcStart+offShift, zpEnd=zcEnd+offShift;
+        mv.push({t:'cmt', txt:'Ramp entry (simultaneous X-Z)'});
+        mv.push({t:'g0', Z:zpStart});
+        mv.push({t:'g1', X:D2, Z:zpEnd, F:Fr});
+        mv.push({t:'g1', Z:zpStart, F:Fr});
+        mv.push({t:'g0', X:safeX});
+      }
+    }
+    if(doFin){
+      mv.push({t:'cmt', txt:'Finish pass - profile contour with corner geometry'});
+      var dirZ_f=(z2g>z1g?1:-1);
+      var z1_finProg=(z1g+Wi/2*dirZ_f)+originShift;
+      var z2_finProg=(z2g-Wi/2*dirZ_f)+originShift;
+      finishPass(mv, D1, D2, z1_finProg, z2_finProg, safeX, Ff, corners, dwell);
+    }
+  }
+  mv.push({t:'g0', X:safeX});
+  mv.push({t:'raw', s:'G28 U0 W0'});
+  mv.push({t:'raw', s:'M09 M05'});
+  mv.push({t:'raw', s:'M30'});
+  mv.push({t:'raw', s:'%'});
+
+  // === Emit ===
+  var out=emitMoves(mv, ctrl);
+  var cyc='Long-form G-code (G0/G1/G2/G3) - '+stratLabel;
+  $('outputArea').style.display='block';
+  $('gcode').textContent=out;
+  $('cycLabel').textContent=cyc;
+  $('cycBadge').textContent=ctrl;
+  $('outputArea').scrollIntoView({behavior:'smooth',block:'start'});
+  simReset();
+}
+
+// Peck-plunge with chip-break retract, ending with dwell at bottom + retract to safeX
+function pluneRough(mv, xTop, xBot, z, safeX, pd, pr, F, dwell){
+  var d = 0;
+  var totalD = (xTop - xBot)/2;
+  while(d < totalD - 0.0001){
+    var next = Math.min(totalD, d+pd);
+    mv.push({t:'g1', X:xTop-2*next, Z:z, F:F});
+    if(next < totalD){
+      mv.push({t:'g1', X:xTop-2*next+2*pr});  // chip-break retract
+      mv.push({t:'g1', X:xTop-2*next});
+    }
+    d = next;
+  }
+  if(dwell>0)mv.push({t:'dwell', p:dwell});
+  mv.push({t:'g0', X:safeX});
+}
+
+// Finish pass: A -> B -> C -> D -> return, with corner treatments
+function finishPass(mv, D1, D2, z1, z2, safeX, F, c, dwell){
+  // Approach point above corner A
+  mv.push({t:'g0', X:D1+2, Z:z1+1});
+  mv.push({t:'g0', X:D1+0.5});
+  // Move to just above A
+  mv.push({t:'g1', X:D1, Z:z1, F:F});
+  // Corner A: top-left, going down the left wall from A to B
+  cornerEmit(mv, {x:D1,z:z1}, 'down', 'left', c.A, F);
+  // Wall A->B (subtract corner sizes)
+  var Bx = D2;
+  mv.push({t:'g1', X:Bx});
+  // Corner B: bottom-left
+  cornerEmit(mv, {x:D2,z:z1}, 'right', 'down', c.B, F);
+  // Floor B->C
+  mv.push({t:'g1', Z:z2});
+  // Corner C: bottom-right
+  cornerEmit(mv, {x:D2,z:z2}, 'up', 'right', c.C, F);
+  // Wall C->D
+  mv.push({t:'g1', X:D1});
+  // Corner D: top-right
+  cornerEmit(mv, {x:D1,z:z2}, 'left', 'up', c.D, F);
+  if(dwell>0)mv.push({t:'dwell', p:dwell});
+  mv.push({t:'g0', X:safeX});
+}
+
+function cornerEmit(mv, pt, dirOut, dirIn, corner, F){
+  // Simplified: only emit corner if not sharp
+  if(corner.t==='Sharp' || corner.s1<=0)return;
+  if(corner.t==='Radius'){
+    // For a simple radius corner - use G02/G03 with I,K
+    // This is a placeholder that emits the arc symbolically
+    mv.push({t:'cmt', txt:'Corner '+corner.t+' r='+corner.s1});
+  } else if(corner.t==='Chamfer'){
+    // Chamfer = single G01 diagonal move to opposite side
+    mv.push({t:'cmt', txt:'Corner '+corner.t+' '+corner.s1+'x'+corner.s2});
+  }
+}
+
+// Emit moves as G-code strings
+function emitMoves(mv, ctrl){
+  var lines=[];
+  var cmtOpen=(ctrl==='Siemens'||ctrl==='Heidenhain')?';':'(';
+  var cmtClose=(ctrl==='Siemens'||ctrl==='Heidenhain')?'':')';
+  function fmt(v){return (v<0?'-':'')+Math.abs(v).toFixed(3);}
+  mv.forEach(function(m){
+    if(m.t==='cmt'){
+      lines.push(cmtOpen+' '+m.txt+' '+cmtClose);
+    } else if(m.t==='raw'){
+      lines.push(m.s);
+    } else if(m.t==='g0'){
+      var s='G00';
+      if(m.X!==undefined)s+=' X'+fmt(m.X);
+      if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
+      lines.push(s);
+    } else if(m.t==='g1'){
+      var s='G01';
+      if(m.X!==undefined)s+=' X'+fmt(m.X);
+      if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
+      if(m.F!==undefined)s+=' F'+m.F;
+      lines.push(s);
+    } else if(m.t==='g2'||m.t==='g3'){
+      var s=(m.t==='g2'?'G02':'G03');
+      if(m.X!==undefined)s+=' X'+fmt(m.X);
+      if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
+      if(m.R!==undefined)s+=' R'+m.R.toFixed(3);
+      if(m.I!==undefined)s+=' I'+fmt(m.I);
+      if(m.K!==undefined)s+=' K'+fmt(m.K);
+      if(m.F!==undefined)s+=' F'+m.F;
+      lines.push(s);
+    } else if(m.t==='dwell'){
+      lines.push('G04 P'+(m.p*1000).toFixed(0));
+    }
+  });
+  return lines.join('\n');
+}
+
+function copyGcode(){
+  var t=$('gcode').textContent;
+  if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){
+    $('saveConfirm').style.display='block';
+    $('saveConfirm').textContent='&#10003; Copied to clipboard';
+    setTimeout(function(){$('saveConfirm').style.display='none';},2000);
+  });
+}
+
+// -------- SAVE --------
+function saveProg(){
+  var mat=$('mat').selectedOptions[0].text.split(' ')[0].toLowerCase();
+  var name='groove_'+mat;
+  var safe=name.replace(/[^a-zA-Z0-9_-]/g,'_');
+  var ctrl=$('ms_ctrl').value;
+  var ext=(ctrl==='Heidenhain'?'.h':(ctrl==='Mazatrol'?'.txt':'.nc'));
+  var content=$('gcode').textContent;
+  // Save to browser localStorage (list of saved programs)
+  try{
+    var savedList=JSON.parse(localStorage.getItem('yantra_grooves')||'[]');
+    savedList.push({name:safe,ctrl:ctrl,ts:new Date().toISOString(),content:content});
+    localStorage.setItem('yantra_grooves', JSON.stringify(savedList));
+  }catch(e){}
+  // Trigger download
+  var blob=new Blob([content],{type:'text/plain'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=safe+ext;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  $('saveConfirm').style.display='block';
+  $('saveConfirm').innerHTML='&#10003; Saved as <b>'+safe+ext+'</b> &middot; also in browser storage (Saved programs)';
+  setTimeout(function(){$('saveConfirm').style.display='none';},4000);
+}
+
+// -------- SIMULATION --------
+var simFrames=[], simIdx=0, simTimer=null;
+
+function toggleSim(){
+  var box=$('simFull');
+  box.classList.add('on');
+  document.body.style.overflow='hidden';
+  buildSimFrames();
+  $('simFullBadge').textContent={single:'Single plunge',multi:'Multi-plunge',plturn:'Plunge turning',ramp:'Ramping'}[strat]+' &middot; '+$('ms_ctrl').value;
+  $('simScrub').max=Math.max(0, simFrames.length-1);
+  $('simScrub').value=0;
+  $('simMax').textContent=Math.max(0, simFrames.length-1);
+  drawSim();
+}
+
+function closeSim(){
+  simPause();
+  $('simFull').classList.remove('on');
+  document.body.style.overflow='';
+}
+
+function simSeek(v){
+  simPause();
+  simIdx=parseInt(v)||0;
+  drawSim();
+}
+function buildSimFrames(){
+  simFrames=[];
+  var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
+  var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
+  var sX=parseFloat($('pos_sx').value)||5;
+  var pd=parseFloat($('cs_pd').value)||0.5;
+  var pr=parseFloat($('cs_pr').value)||0.3;
+  var Wi=parseFloat($('tl_wi').value)||3;
+  var offRef=$('tl_off_ref').value;
+  var offShift={L:-Wi/2, C:0, R:+Wi/2}[offRef];
+  var patOn=$('patOn').checked;
+  var N=patOn?(parseInt($('patN').value)||1):1;
+  var p2=parseFloat($('pat2').value)||0;
+  var dir=parseInt($('patDir').value)||-1;
+  var pitch=patOn?(patMode==='pitch'?p2:(N>1?p2/(N-1):p2)):0;
+  var safeX=D1+sX*2;
+  // Start at safe position
+  simFrames.push({x:safeX,z:Z1+3,type:'rapid'});
+  for(var g=0;g<N;g++){
+    var z1g=Z1+g*pitch*dir, z2g=Z2+g*pitch*dir;
+    simFrames.push({x:safeX,z:z1g,type:'rapid'});
+    if(strat==='single' || strat==='multi'){
+      // Multi-plunge along Z first if width > insert width
+      var W=Math.abs(z1g-z2g);
+      var passes=Math.max(1,Math.ceil(W/Wi));
+      var dirZ_s=(z2g>z1g?1:-1);
+      var firstCtr_s=z1g+Wi/2*dirZ_s, lastCtr_s=z2g-Wi/2*dirZ_s;
+      for(var pass=0;pass<passes;pass++){
+        var ctr_s=firstCtr_s+(lastCtr_s-firstCtr_s)*(passes>1?pass/(passes-1):0);
+        var zPos=ctr_s+oShift;
+        simFrames.push({x:safeX,z:zPos,type:'rapid'});
+        // Peck plunge
+        var curX=D1;
+        while(curX>D2){
+          var nextX=Math.max(D2, curX-pd*2);
+          simFrames.push({x:nextX,z:zPos,type:'plunge'});
+          if(nextX>D2){
+            simFrames.push({x:nextX+pr*2,z:zPos,type:'retract'});
+            simFrames.push({x:nextX,z:zPos,type:'plunge'});
+          }
+          curX=nextX;
+        }
+        simFrames.push({x:safeX,z:zPos,type:'retract'});
+        if(passes==1)break;
+      }
+    } else if(strat==='plturn'){
+      // Plunge one end, then turn to other end
+      simFrames.push({x:D2+0.4,z:z1g,type:'plunge'});
+      simFrames.push({x:D2+0.2,z:z1g,type:'retract'});
+      simFrames.push({x:D2+0.2,z:z2g,type:'feed'});
+      simFrames.push({x:D2,z:z2g,type:'feed'});
+      simFrames.push({x:D2,z:z1g,type:'feed'});
+      simFrames.push({x:safeX,z:z1g,type:'retract'});
+    } else if(strat==='ramp'){
+      // Simultaneous X-Z
+      simFrames.push({x:D2,z:z2g,type:'feed'});
+      simFrames.push({x:D2,z:z1g,type:'feed'});
+      simFrames.push({x:safeX,z:z1g,type:'retract'});
+    }
+  }
+  simFrames.push({x:safeX,z:Z1+3,type:'rapid'});
+  simIdx=0;
+  $('simStatus').textContent='Move 0 / '+simFrames.length;
+}
+function drawSim(){
+  var svg=$('simSvg'); svg.innerHTML='';
+  if(!simFrames.length)return;
+  var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
+  var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
+  var stockOD=D1*1.2+10;
+  var VW=1000, VH=500, MG=50;
+
+  var Zs=simFrames.map(function(f){return f.z;});
+  var Zmin=Math.min.apply(null,Zs)-6, Zmax=Math.max.apply(null,Zs)+6;
+  var Zspan=Math.max(1,Zmax-Zmin);
+  var scaleZ=(VW-2*MG)/Zspan;
+  var scaleX=(VH/2-MG)/stockOD;
+  var mapZ=function(z){return MG+(z-Zmin)*scaleZ;};
+  var mapX=function(x){return VH/2 - x*scaleX;};
+
+  // Chuck (left side) - simple rectangle
+  var chuckW=30, chuckH=(stockOD*1.4)*scaleX;
+  svg.innerHTML+='<rect x="'+MG+'" y="'+(VH/2-chuckH)+'" width="'+chuckW+'" height="'+(chuckH*2)+'" fill="#3a3f45" stroke="#5a6068" stroke-width="1"/>';
+  svg.innerHTML+='<text x="'+(MG+chuckW/2)+'" y="'+(VH/2+chuckH+16)+'" fill="#5a6068" font-size="11" text-anchor="middle">CHUCK</text>';
+
+  // Workpiece as horizontal cylinder (both halves)
+  var stockYtop=mapX(stockOD);
+  var wpX=MG+chuckW;
+  var wpW=VW-MG-wpX;
+  // Top half (above centerline)
+  svg.innerHTML+='<rect x="'+wpX+'" y="'+stockYtop+'" width="'+wpW+'" height="'+(VH/2-stockYtop)+'" fill="url(#steelGrad)" stroke="#5a6068" stroke-width="1"/>';
+  // Bottom half (below centerline)
+  svg.innerHTML+='<rect x="'+wpX+'" y="'+(VH/2)+'" width="'+wpW+'" height="'+(VH/2-stockYtop)+'" fill="url(#steelGradB)" stroke="#5a6068" stroke-width="1"/>';
+  // Steel gradient defs
+  var defs='<defs><linearGradient id="steelGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8ecf0"/><stop offset=".5" stop-color="#b3bec8"/><stop offset="1" stop-color="#7c8791"/></linearGradient><linearGradient id="steelGradB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c8791"/><stop offset=".5" stop-color="#b3bec8"/><stop offset="1" stop-color="#e8ecf0"/></linearGradient></defs>';
+  svg.innerHTML=defs+svg.innerHTML;
+
+  // OD surface lines
+  var odY=mapX(D1);
+  svg.innerHTML+='<line x1="'+wpX+'" y1="'+odY+'" x2="'+VW+'" y2="'+odY+'" stroke="#404850" stroke-width="1.5"/>';
+  svg.innerHTML+='<line x1="'+wpX+'" y1="'+(VH-odY)+'" x2="'+VW+'" y2="'+(VH-odY)+'" stroke="#404850" stroke-width="1.5"/>';
+
+  // Centerline
+  svg.innerHTML+='<line x1="'+MG+'" y1="'+(VH/2)+'" x2="'+VW+'" y2="'+(VH/2)+'" stroke="#5a6068" stroke-width="1" stroke-dasharray="8 5"/>';
+
+  // Draw the target groove outline (ghost) for reference
+  var gA=[mapZ(Z1), mapX(D1)];
+  var gB=[mapZ(Z1), mapX(D2)];
+  var gC=[mapZ(Z2), mapX(D2)];
+  var gD=[mapZ(Z2), mapX(D1)];
+  svg.innerHTML+='<path d="M '+gA[0]+' '+gA[1]+' L '+gB[0]+' '+gB[1]+' L '+gC[0]+' '+gC[1]+' L '+gD[0]+' '+gD[1]+' Z" fill="rgba(255,179,0,0.08)" stroke="#ffb300" stroke-width="1" stroke-dasharray="4 3"/>';
+  svg.innerHTML+='<path d="M '+gA[0]+' '+(VH-gA[1])+' L '+gB[0]+' '+(VH-gB[1])+' L '+gC[0]+' '+(VH-gC[1])+' L '+gD[0]+' '+(VH-gD[1])+' Z" fill="rgba(255,179,0,0.08)" stroke="#ffb300" stroke-width="1" stroke-dasharray="4 3"/>';
+
+  // Draw tool path traversed up to simIdx
+  var colors={rapid:'#29b6f6', feed:'#ffb300', plunge:'#ff5252', retract:'#a0a0a0'};
+  for(var i=1;i<=simIdx && i<simFrames.length;i++){
+    var f1=simFrames[i-1], f2=simFrames[i];
+    var color=colors[f2.type]||'#ffb300';
+    var w=(f2.type==='rapid'?1.4:2.4);
+    var dash=(f2.type==='rapid'?'5 4':'');
+    svg.innerHTML+='<line x1="'+mapZ(f1.z)+'" y1="'+mapX(f1.x)+'" x2="'+mapZ(f2.z)+'" y2="'+mapX(f2.x)+'" stroke="'+color+'" stroke-width="'+w+'" stroke-dasharray="'+dash+'"/>';
+  }
+
+  // Draw the tool at current position
+  if(simIdx<simFrames.length){
+    var f=simFrames[simIdx];
+    var cx=mapZ(f.z), cy=mapX(f.x);
+    var Wi=parseFloat($('tl_wi').value)||3;
+    var tW=Wi*scaleZ;
+    var tH=30;
+    // Tool insert (small rectangle representing the grooving insert)
+    svg.innerHTML+='<rect x="'+(cx-tW/2)+'" y="'+(cy-tH)+'" width="'+tW+'" height="'+tH+'" fill="#ffb300" stroke="#7a4a00" stroke-width="1.5" rx="1"/>';
+    // Tool shank extending up
+    svg.innerHTML+='<rect x="'+(cx-tW/2-4)+'" y="'+(cy-tH-40)+'" width="'+(tW+8)+'" height="42" fill="#5a6068" stroke="#3a4048" stroke-width="1"/>';
+    // Tip marker
+    svg.innerHTML+='<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#ff5252" stroke="#1a1200" stroke-width="1.5"/>';
+    // Position readout
+    svg.innerHTML+='<text x="'+(cx+15)+'" y="'+(cy-tH-50)+'" fill="#ffb300" font-size="12" font-weight="700" font-family="monospace">X'+f.x.toFixed(3)+' Z'+f.z.toFixed(3)+'</text>';
+    svg.innerHTML+='<text x="'+(cx+15)+'" y="'+(cy-tH-36)+'" fill="'+colors[f.type]+'" font-size="11" font-weight="600">'+f.type.toUpperCase()+'</text>';
+  }
+
+  var statusMsg='Move '+simIdx+' / '+Math.max(0,simFrames.length-1);
+  if(simIdx<simFrames.length)statusMsg+=' &middot; '+simFrames[simIdx].type;
+  $('simStatus').innerHTML=statusMsg;
+  if($('simScrub'))$('simScrub').value=simIdx;
+}
+
+function simPlay(){
+  if(!simFrames.length){buildSimFrames();}
+  if(simIdx>=simFrames.length-1){simIdx=0;}
+  clearInterval(simTimer);
+  var speed=520-parseInt(($('simSpeed')&&$('simSpeed').value)||120);
+  simTimer=setInterval(function(){
+    if(simIdx>=simFrames.length-1){clearInterval(simTimer);$('simPlayBtn').classList.remove('on');return;}
+    simIdx++; drawSim();
+  }, speed);
+  $('simPlayBtn').classList.add('on');
+}
+function simPause(){clearInterval(simTimer); $('simPlayBtn').classList.remove('on');}
+function simReset(){simPause(); simIdx=0; if($('simFull').classList.contains('on')){buildSimFrames(); drawSim();}}
+
+initMaterials();
+drawInsertRef();
+recalc();
+
+// Expose gv_ functions for HTML onclick
+window.gv_toggle = toggle;
+window.gv_recalc = recalc;
+window.gv_matChange = matChange;
+window.gv_applyAllCorners = applyAllCorners;
+window.gv_generate = generate;
+window.gv_copyGcode = copyGcode;
+window.gv_saveProg = saveProg;
+window.gv_toggleSim = toggleSim;
+window.gv_closeSim = closeSim;
+window.gv_simPlay = simPlay;
+window.gv_simPause = simPause;
+window.gv_simReset = simReset;
+window.gv_simSeek = simSeek;
+window.gv_init = function(){ try{ initMaterials(); recalc(); }catch(e){ console.warn("gv_init:", e); } };
+})();
+// ==== END GROOVING VIEW ====
 </script>
-<div id="insModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 60px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Insert</div><button type="button" onclick="insClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:8px 2px 6px">SHAPE</div><div id="insShapes" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:18px 2px 6px">TIP ORIENTATION <span style="color:#5f7385;letter-spacing:0">&middot; tap the cutting corner</span></div><div id="insGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:0 auto"></div><button type="button" onclick="insClose()" style="margin-top:22px;width:100%;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer">Use insert</button></div><div id="mfModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 60px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Machine frame</div><button type="button" onclick="mfClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><svg id="mfSk" viewBox="0 0 500 300" style="width:100%;max-width:460px;display:block;margin:0 auto;background:#0a1118;border:1px solid #1d2c38;border-radius:12px"></svg><table id="mfDer" style="width:100%;max-width:460px;margin:8px auto 0;border-collapse:collapse;font-size:12.5px"></table><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">CHUCK</div><div id="mfChuck" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:14px 2px 6px">TURRET</div><div id="mfTurret" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:14px 2px 6px">TOOL HAND</div><div id="mfHand" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><button type="button" onclick="mfClose()" style="margin-top:22px;width:100%;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer">Use frame</button></div><div id="opModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 60px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Operation</div><button type="button" onclick="opClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:8px 2px 6px">OUTSIDE / INSIDE</div><div id="opOdid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">PATH</div><div id="opPath" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">ROUGH / FINISH</div><div id="opMode" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">CONSIDER FACING STOCK <span style="color:#5f7385;letter-spacing:0">· extra metal on the face</span></div><div id="opFs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><button type="button" onclick="opClose()" style="margin-top:22px;width:100%;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer">Use operation</button></div><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfdff"/><stop offset=".18" stop-color="#e0e7ed"/><stop offset=".5" stop-color="#b3bec8"/><stop offset=".82" stop-color="#7c8791"/><stop offset="1" stop-color="#586269"/></linearGradient><radialGradient id="face" cx=".4" cy=".4" r=".9"><stop offset="0" stop-color="#eef2f6"/><stop offset=".7" stop-color="#aeb9c3"/><stop offset="1" stop-color="#79838c"/></radialGradient><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe083"/><stop offset=".5" stop-color="#f0c24a"/><stop offset="1" stop-color="#bd881c"/></linearGradient><linearGradient id="dark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b5560"/><stop offset="1" stop-color="#232c34"/></linearGradient><linearGradient id="bore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05090d"/><stop offset=".5" stop-color="#131c25"/><stop offset="1" stop-color="#05090d"/></linearGradient><linearGradient id="lay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b97a2"/><stop offset="1" stop-color="#5a636c"/></linearGradient></defs></svg><div id="spModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 70px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Specials &mdash; Profile + Insert</div><button type="button" onclick="spClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><div class="note" style="text-align:left;margin:2px 2px 8px">Custom profile + custom insert for the Generative Toolpath system. Leave any field blank if not applicable.</div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Specials</label><select id="sp_active" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Inactive</option><option>Active</option></select></div><div style="background:#0e1a25;border:1px solid #26404f;border-radius:12px;padding:12px;margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--acc2);letter-spacing:.5px;margin-bottom:2px">PROFILE &nbsp;(target on workpiece)</div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Profile type</label><select id="sp_ptype" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>V (sharp / round root)</option><option>Trapezoidal</option><option>Round</option><option>Custom</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Trailing flank angle</label><input id="sp_ptfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Leading flank angle</label><input id="sp_plfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Major dia</label><input id="sp_pmaj" type="number" inputmode="decimal" placeholder="" value="20" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Minor dia</label><input id="sp_pmin" type="number" inputmode="decimal" placeholder="" value="17.5" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Height</label><input id="sp_ph" type="number" inputmode="decimal" placeholder="" value="1.25" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Root R (V)</label><input id="sp_prootr" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Flat length (Trap)</label><input id="sp_pflat" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Corner R (Trap)</label><input id="sp_pcorr" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Pitch P</label><input id="sp_ppitch" type="number" inputmode="decimal" placeholder="" value="2.5" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Groove start (Z from face)</label><input id="sp_pzstart" type="number" inputmode="decimal" placeholder="" value="5" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div></div><div style="background:#0e1a25;border:1px solid #26404f;border-radius:12px;padding:12px;margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--acc2);letter-spacing:.5px;margin-bottom:2px">INSERT &nbsp;(cutter geometry)</div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Insert type</label><select id="sp_itype" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>V (with nose R)</option><option>Grooving (flat)</option><option>Full radius</option><option>Custom</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Trailing flank angle</label><input id="sp_itfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Leading flank angle</label><input id="sp_ilfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Insert depth</label><input id="sp_idepth" type="number" inputmode="decimal" placeholder="mm cutting depth" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Insert width</label><input id="sp_iwidth" type="number" inputmode="decimal" placeholder="mm perpendicular to cut" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Nose R (V)</label><input id="sp_inoser" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Flat width (Grooving)</label><input id="sp_iflat" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Corner R (Grooving)</label><input id="sp_icorr" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="background:#0e1a25;border:1px solid #26404f;border-radius:12px;padding:12px;margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--acc2);letter-spacing:.5px;margin-bottom:2px">OPERATION SETTINGS</div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Feature type</label><select id="sp_feat" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Groove</option><option>Thread</option><option>Profile</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Roughing style</label><select id="sp_rstyle" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Copy roughing</option><option>Plunge roughing</option><option>Turn roughing</option></select></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">T-factor (control point)</label><select id="sp_tfac" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>0  Centre (legacy)</option><option>1  Leading corner</option><option>2  Trailing corner</option><option>9  Tip</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Tilt ref</label><select id="sp_tiltref" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Trailing edge</option><option>Leading edge</option><option>Centre</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Tilt angle</label><input id="sp_tiltang" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Start flank</label><select id="sp_startflank" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>leading</option><option>trailing</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Direction</label><select id="sp_dir" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>one-way</option><option>zig-zag</option></select></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">DOC (mm)</label><input id="sp_doc" type="number" inputmode="decimal" placeholder="" value="0.2" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Passes</label><input id="sp_passes" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Set by</label><select id="sp_setby" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>doc</option><option>passes</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Plunge feed</label><input id="sp_pf" type="number" inputmode="decimal" placeholder="" value="0.04" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Traverse feed</label><input id="sp_tf" type="number" inputmode="decimal" placeholder="" value="0.08" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">RPM mode</label><select id="sp_rpmmode" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>G97 (fixed RPM)</option><option>G96 (CSS)</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">RPM value</label><input id="sp_rpmval" type="number" inputmode="decimal" placeholder="" value="500" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Max RPM cap</label><input id="sp_rpmcap" type="number" inputmode="decimal" placeholder="" value="2500" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Coolant mode</label><select id="sp_coolmode" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Flood</option><option>Mist</option><option>None</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">On-code</label><input id="sp_coolcode" type="text" value="M08" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Finishing pass</label><select id="sp_fin" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Yes</option><option>No</option></select></div></div><div style="display:flex;gap:8px;margin-top:16px"><button type="button" onclick="spClose()" style="flex:1;background:#1a2530;border:1px solid #2b4658;color:#cfe0ee;border-radius:10px;padding:13px;font-size:14px;cursor:pointer">Cancel</button><button type="button" onclick="spSave()" style="flex:1;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">Save</button></div></div><div id="tn_simfull" style="display:none;position:fixed;inset:0;z-index:200;background:#0a1118;flex-direction:column;padding:0"><div style="flex:1;min-height:0;overflow:hidden;position:relative"><canvas id="tn_simcv" width="600" height="900" style="touch-action:none;width:100%;height:100%;display:block;background:#0a1118"></canvas><div id="tn_simsel" style="position:absolute;display:none;left:0;top:0;border:1.5px dashed #ff4d4d;background:rgba(255,77,77,0.08);pointer-events:none"></div></div><div id="tn_simctrls" style="display:none;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;padding:5px 2px"><button class="s2playbtn" style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Toggle()"><svg width="20" height="20"><polygon points="5,4 5,16 16,10" fill="#4ade80"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Block(-1)" title="Step back"><svg width="22" height="20" viewBox="0 0 22 20" fill="none" stroke="#cfe3f2" stroke-width="2" stroke-linejoin="round"><path d="M3 4 H7 V8 H11 V12 H15 V16 H19"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Block(1)" title="Step forward"><svg width="22" height="20" viewBox="0 0 22 20" fill="none" stroke="#cfe3f2" stroke-width="2" stroke-linejoin="round"><path d="M3 16 H7 V12 H11 V8 H15 V4 H19"/></svg></button><button id="tn_simspeed" style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Speed()">5&#215;</button><button id="tn_simclean" style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0" onclick="s2CleanToggle()" title="Show only profile + cutting"></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" id="tn_simzin" onclick="s2ZinClick(event)" title="Centre + = region zoom · elsewhere = zoom in"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#cfe3f2" stroke-width="2"><circle cx="9" cy="9" r="5"/><line x1="12.8" y1="12.8" x2="17" y2="17"/><line x1="9" y1="6.6" x2="9" y2="11.4"/><line x1="6.6" y1="9" x2="11.4" y2="9"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Zoom(0.926)" title="Zoom out"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#cfe3f2" stroke-width="2"><circle cx="9" cy="9" r="5"/><line x1="12.8" y1="12.8" x2="17" y2="17"/><line x1="6.6" y1="9" x2="11.4" y2="9"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Fit()" title="Fit"><svg width="20" height="20"><rect x="4" y="4" width="12" height="12" fill="none" stroke="#cfe3f2" stroke-width="1.6" stroke-dasharray="2.5 2"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Reset()" title="Reset"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#4aa3ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 4 20 10 14 10"/><path d="M20 10 A8 8 0 1 0 19 15"/></svg></button><button style="width:40px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;color:#ff4d4d;cursor:pointer;padding:0;font-size:22px;font-weight:800" onclick="tnSimExit()" title="Exit">&#10005;</button><span id="tn_simlbl" class="note" style="width:100%;text-align:center"></span></div></div></body>
+<div id="insModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 60px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Insert</div><button type="button" onclick="insClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:8px 2px 6px">SHAPE</div><div id="insShapes" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:18px 2px 6px">TIP ORIENTATION <span style="color:#5f7385;letter-spacing:0">&middot; tap the cutting corner</span></div><div id="insGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:0 auto"></div><button type="button" onclick="insClose()" style="margin-top:22px;width:100%;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer">Use insert</button></div><div id="mfModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 60px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Machine frame</div><button type="button" onclick="mfClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><svg id="mfSk" viewBox="0 0 500 300" style="width:100%;max-width:460px;display:block;margin:0 auto;background:#0a1118;border:1px solid #1d2c38;border-radius:12px"></svg><table id="mfDer" style="width:100%;max-width:460px;margin:8px auto 0;border-collapse:collapse;font-size:12.5px"></table><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">CHUCK</div><div id="mfChuck" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:14px 2px 6px">TURRET</div><div id="mfTurret" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:14px 2px 6px">TOOL HAND</div><div id="mfHand" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><button type="button" onclick="mfClose()" style="margin-top:22px;width:100%;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer">Use frame</button></div><div id="opModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 60px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Operation</div><button type="button" onclick="opClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:8px 2px 6px">OUTSIDE / INSIDE</div><div id="opOdid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">PATH</div><div id="opPath" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">ROUGH / FINISH</div><div id="opMode" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><div style="font-size:11px;letter-spacing:.5px;color:#8aa2b4;margin:16px 2px 6px">CONSIDER FACING STOCK <span style="color:#5f7385;letter-spacing:0">· extra metal on the face</span></div><div id="opFs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div><button type="button" onclick="opClose()" style="margin-top:22px;width:100%;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer">Use operation</button></div><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfdff"/><stop offset=".18" stop-color="#e0e7ed"/><stop offset=".5" stop-color="#b3bec8"/><stop offset=".82" stop-color="#7c8791"/><stop offset="1" stop-color="#586269"/></linearGradient><radialGradient id="face" cx=".4" cy=".4" r=".9"><stop offset="0" stop-color="#eef2f6"/><stop offset=".7" stop-color="#aeb9c3"/><stop offset="1" stop-color="#79838c"/></radialGradient><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe083"/><stop offset=".5" stop-color="#f0c24a"/><stop offset="1" stop-color="#bd881c"/></linearGradient><linearGradient id="dark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b5560"/><stop offset="1" stop-color="#232c34"/></linearGradient><linearGradient id="bore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05090d"/><stop offset=".5" stop-color="#131c25"/><stop offset="1" stop-color="#05090d"/></linearGradient><linearGradient id="lay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b97a2"/><stop offset="1" stop-color="#5a636c"/></linearGradient></defs></svg><div id="spModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1220;overflow:auto;padding:14px 14px 70px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div style="font-size:17px;font-weight:700;color:#dfe8f0">Specials &mdash; Profile + Insert</div><button type="button" onclick="spClose()" style="background:#2a1414;border:1px solid #8a3838;color:#ff6b6b;border-radius:9px;width:40px;height:40px;font-size:19px;cursor:pointer">&#10005;</button></div><div class="note" style="text-align:left;margin:2px 2px 8px">Custom profile + custom insert for the Generative Toolpath system. Leave any field blank if not applicable.</div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Specials</label><select id="sp_active" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Inactive</option><option>Active</option></select></div><div style="background:#0e1a25;border:1px solid #26404f;border-radius:12px;padding:12px;margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--acc2);letter-spacing:.5px;margin-bottom:2px">PROFILE &nbsp;(target on workpiece)</div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Profile type</label><select id="sp_ptype" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>V (sharp / round root)</option><option>Trapezoidal</option><option>Round</option><option>Custom</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Trailing flank angle</label><input id="sp_ptfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Leading flank angle</label><input id="sp_plfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Major dia</label><input id="sp_pmaj" type="number" inputmode="decimal" placeholder="" value="20" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Minor dia</label><input id="sp_pmin" type="number" inputmode="decimal" placeholder="" value="17.5" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Height</label><input id="sp_ph" type="number" inputmode="decimal" placeholder="" value="1.25" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Root R (V)</label><input id="sp_prootr" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Flat length (Trap)</label><input id="sp_pflat" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Corner R (Trap)</label><input id="sp_pcorr" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Pitch P</label><input id="sp_ppitch" type="number" inputmode="decimal" placeholder="" value="2.5" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Groove start (Z from face)</label><input id="sp_pzstart" type="number" inputmode="decimal" placeholder="" value="5" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div></div><div style="background:#0e1a25;border:1px solid #26404f;border-radius:12px;padding:12px;margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--acc2);letter-spacing:.5px;margin-bottom:2px">INSERT &nbsp;(cutter geometry)</div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Insert type</label><select id="sp_itype" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>V (with nose R)</option><option>Grooving (flat)</option><option>Full radius</option><option>Custom</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Trailing flank angle</label><input id="sp_itfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Leading flank angle</label><input id="sp_ilfa" type="number" inputmode="decimal" placeholder="deg from centerline" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Insert depth</label><input id="sp_idepth" type="number" inputmode="decimal" placeholder="mm cutting depth" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Insert width</label><input id="sp_iwidth" type="number" inputmode="decimal" placeholder="mm perpendicular to cut" value="" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Nose R (V)</label><input id="sp_inoser" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Flat width (Grooving)</label><input id="sp_iflat" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Corner R (Grooving)</label><input id="sp_icorr" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="background:#0e1a25;border:1px solid #26404f;border-radius:12px;padding:12px;margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--acc2);letter-spacing:.5px;margin-bottom:2px">OPERATION SETTINGS</div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Feature type</label><select id="sp_feat" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Groove</option><option>Thread</option><option>Profile</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Roughing style</label><select id="sp_rstyle" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Copy roughing</option><option>Plunge roughing</option><option>Turn roughing</option></select></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">T-factor (control point)</label><select id="sp_tfac" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>0  Centre (legacy)</option><option>1  Leading corner</option><option>2  Trailing corner</option><option>9  Tip</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Tilt ref</label><select id="sp_tiltref" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Trailing edge</option><option>Leading edge</option><option>Centre</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Tilt angle</label><input id="sp_tiltang" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Start flank</label><select id="sp_startflank" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>leading</option><option>trailing</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Direction</label><select id="sp_dir" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>one-way</option><option>zig-zag</option></select></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">DOC (mm)</label><input id="sp_doc" type="number" inputmode="decimal" placeholder="" value="0.2" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Passes</label><input id="sp_passes" type="number" inputmode="decimal" placeholder="" value="0" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Set by</label><select id="sp_setby" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>doc</option><option>passes</option></select></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Plunge feed</label><input id="sp_pf" type="number" inputmode="decimal" placeholder="" value="0.04" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Traverse feed</label><input id="sp_tf" type="number" inputmode="decimal" placeholder="" value="0.08" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">RPM mode</label><select id="sp_rpmmode" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>G97 (fixed RPM)</option><option>G96 (CSS)</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">RPM value</label><input id="sp_rpmval" type="number" inputmode="decimal" placeholder="" value="500" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Max RPM cap</label><input id="sp_rpmcap" type="number" inputmode="decimal" placeholder="" value="2500" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div><div class="row2" style="margin-top:8px"><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Coolant mode</label><select id="sp_coolmode" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Flood</option><option>Mist</option><option>None</option></select></div><div><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">On-code</label><input id="sp_coolcode" type="text" value="M08" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"></div></div><div style="margin-top:8px"><label style="display:block;font-size:11px;color:#8aa2b4;margin-bottom:3px">Finishing pass</label><select id="sp_fin" style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:7px 9px;width:100%;font-size:13px"><option>Yes</option><option>No</option></select></div></div><div style="display:flex;gap:8px;margin-top:16px"><button type="button" onclick="spClose()" style="flex:1;background:#1a2530;border:1px solid #2b4658;color:#cfe0ee;border-radius:10px;padding:13px;font-size:14px;cursor:pointer">Cancel</button><button type="button" onclick="spSave()" style="flex:1;background:#16301f;border:1px solid #2f7d4e;color:#bdf0b4;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">Save</button></div></div><div id="tn_simfull" style="display:none;position:fixed;inset:0;z-index:200;background:#0a1118;flex-direction:column;padding:0"><div style="flex:1;min-height:0;overflow:hidden;position:relative"><canvas id="tn_simcv" width="600" height="900" style="touch-action:none;width:100%;height:100%;display:block;background:#0a1118"></canvas><div id="tn_simsel" style="position:absolute;display:none;left:0;top:0;border:1.5px dashed #ff4d4d;background:rgba(255,77,77,0.08);pointer-events:none"></div></div><div id="tn_simctrls" style="display:none;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;padding:5px 2px"><button class="s2playbtn" style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Toggle()"><svg width="20" height="20"><polygon points="5,4 5,16 16,10" fill="#4ade80"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Block(-1)" title="Step back"><svg width="22" height="20" viewBox="0 0 22 20" fill="none" stroke="#cfe3f2" stroke-width="2" stroke-linejoin="round"><path d="M3 4 H7 V8 H11 V12 H15 V16 H19"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Block(1)" title="Step forward"><svg width="22" height="20" viewBox="0 0 22 20" fill="none" stroke="#cfe3f2" stroke-width="2" stroke-linejoin="round"><path d="M3 16 H7 V12 H11 V8 H15 V4 H19"/></svg></button><button id="tn_simspeed" style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Speed()">5&#215;</button><button id="tn_simclean" style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0" onclick="s2CleanToggle()" title="Show only profile + cutting"></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" id="tn_simzin" onclick="s2ZinClick(event)" title="Centre + = region zoom · elsewhere = zoom in"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#cfe3f2" stroke-width="2"><circle cx="9" cy="9" r="5"/><line x1="12.8" y1="12.8" x2="17" y2="17"/><line x1="9" y1="6.6" x2="9" y2="11.4"/><line x1="6.6" y1="9" x2="11.4" y2="9"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Zoom(0.926)" title="Zoom out"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#cfe3f2" stroke-width="2"><circle cx="9" cy="9" r="5"/><line x1="12.8" y1="12.8" x2="17" y2="17"/><line x1="6.6" y1="9" x2="11.4" y2="9"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Fit()" title="Fit"><svg width="20" height="20"><rect x="4" y="4" width="12" height="12" fill="none" stroke="#cfe3f2" stroke-width="1.6" stroke-dasharray="2.5 2"/></svg></button><button style="width:42px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:#12202c;border:1px solid #2b4658;border-radius:9px;cursor:pointer;padding:0;color:#cfe3f2;font-size:14px;font-weight:700" onclick="s2Reset()" title="Reset"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#4aa3ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 4 20 10 14 10"/><path d="M20 10 A8 8 0 1 0 19 15"/></svg></button><button style="width:40px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;color:#ff4d4d;cursor:pointer;padding:0;font-size:22px;font-weight:800" onclick="tnSimExit()" title="Exit">&#10005;</button><span id="tn_simlbl" class="note" style="width:100%;text-align:center"></span></div></div>
+<!-- ============ FULL-PAGE SIMULATION OVERLAY ============ -->
+<div class="simFull" id="simFull">
+  <div class="simFullHead">
+    <h2>SIMULATION</h2>
+    <span class="badge" id="simFullBadge">-</span>
+    <button class="simClose" onclick="gv_closeSim()">&times; Close</button>
+  </div>
+  <div class="simCanvasWrap">
+    <svg id="simSvg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="simFullCtrl">
+    <button onclick="gv_simPlay()" id="simPlayBtn">&#9654; Play</button>
+    <button onclick="gv_simPause()">&#10074;&#10074; Pause</button>
+    <button onclick="gv_simReset()">&#8634; Reset</button>
+    <div class="simScrub">
+      <span>0</span>
+      <input type="range" id="simScrub" min="0" max="0" value="0" oninput="gv_simSeek(this.value)">
+      <span id="simMax">0</span>
+    </div>
+    <span class="status" id="simStatus">Move 0 / 0</span>
+  </div>
+  <div class="simFullCtrl" style="padding-top:4px">
+    <div class="simLegend">
+      <span class="lg"><span class="sw" style="background:#29b6f6"></span> Rapid (G00)</span>
+      <span class="lg"><span class="sw" style="background:#ffb300"></span> Feed (G01)</span>
+      <span class="lg"><span class="sw" style="background:#ff5252"></span> Plunge</span>
+      <span class="lg"><span class="sw" style="background:#a0a0a0"></span> Retract</span>
+    </div>
+    <label style="color:var(--mut);font-size:12px;display:flex;align-items:center;gap:8px;margin-left:auto">Speed
+      <input type="range" id="simSpeed" min="20" max="500" value="120" step="10" style="accent-color:var(--acc);width:120px">
+    </label>
+  </div>
+</div>
+<script>window.addEventListener('load',function(){setTimeout(function(){if(window.gv_init)window.gv_init();},500);});</script>
+</body>
 </html>
