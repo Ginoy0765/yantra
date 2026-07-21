@@ -222,6 +222,9 @@
 
     <!-- THREADING submenu -->
     <section id="threading" class="view">
+      <div style="background:rgba(67,209,122,.08);border:1px solid rgba(67,209,122,.28);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--txt)">
+        <b style="color:#43d17a">Z convention:</b> Job face = <b>Z=0</b> &middot; toward chuck is <b>&minus;Z</b> &middot; away from face is <b>+Z</b>. Enter machining Z as negative values.
+      </div>
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Threading</h2></div>
       <div style="border:1px solid #293a4d;border-radius:14px;overflow:hidden;background:#13202e;margin-bottom:2px">
         <svg viewBox="0 0 480 250" width="100%" aria-hidden="true">
@@ -390,6 +393,9 @@
     </section>
 
     <section id="drill" class="view">
+      <div style="background:rgba(67,209,122,.08);border:1px solid rgba(67,209,122,.28);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--txt)">
+        <b style="color:#43d17a">Z convention:</b> Job face = <b>Z=0</b> &middot; toward chuck is <b>&minus;Z</b> &middot; away from face is <b>+Z</b>. Enter machining Z as negative values.
+      </div>
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Drilling</h2></div>
             <div class="sec"><div class="st" onclick="tog(this)">OPERATION <span>&#9662;</span></div><div class="sb">
         <label>Machine</label><select id="dr_mach" onchange="drCalc()"><option>Milling (machining centre)</option><option>Turning</option></select>
@@ -467,6 +473,9 @@
     </section>
 
     <section id="turnops" class="view">
+      <div style="background:rgba(67,209,122,.08);border:1px solid rgba(67,209,122,.28);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--txt)">
+        <b style="color:#43d17a">Z convention:</b> Job face = <b>Z=0</b> &middot; toward chuck is <b>&minus;Z</b> &middot; away from face is <b>+Z</b>. Enter machining Z as negative values.
+      </div>
       <div class="vhead"><button class="back" onclick="show('home')">&lsaquo;</button><h2>Turning</h2></div>
       <div class="sec"><div class="st" onclick="tog(this)">OPERATION <span>&#9662;</span></div><div class="sb">
         <div id="opRaw"><label>Outside / Inside</label><div class="segbtns"><button type="button" class="on" id="opb_od" onclick="segPick('tn_odid','OD (outside)',this)">OD (outside)</button><button type="button" id="opb_id" onclick="segPick('tn_odid','ID (bore)',this)">ID (bore)</button></div><select id="tn_odid" onchange="tnFaceStockDefault();tnPosDefaults()" style="display:none"><option>OD (outside)</option><option>ID (bore)</option></select>
@@ -492,8 +501,8 @@
       </div></div>
       <div class="sec"><div class="st" onclick="tog(this)">POSITIONING <span>&#9656;</span></div><div class="sb" style="display:none">
         <p class="note" style="text-align:left">Safe position &amp; tool-change (G28) inherited from Job Setup.</p>
-        <div class="row2"><div><label>Safe X</label><input id="tn_safex" type="number" inputmode="decimal"></div><div><label>Safe Z</label><input id="tn_safez" type="number" inputmode="decimal"></div></div>
-        <div class="row2"><div><label>Infeed Point X</label><input id="tn_infx" type="number" inputmode="decimal"></div><div><label>Infeed Point Z</label><input id="tn_infz" type="number" inputmode="decimal"></div></div>
+        <div class="row2"><div><label>Safe X</label><input id="tn_safex" type="number" inputmode="decimal"></div><div><label>Safe Z (face = 0)</label><input id="tn_safez" type="number" inputmode="decimal"></div></div>
+        <div class="row2"><div><label>Infeed Point X</label><input id="tn_infx" type="number" inputmode="decimal"></div><div><label>Infeed Point Z (face = 0)</label><input id="tn_infz" type="number" inputmode="decimal"></div></div>
         
         <p class="note" style="text-align:left">Z bounds limit how far along the part roughing runs. Default: raw face &rarr; deepest profile Z.</p>
       </div></div>
@@ -555,10 +564,11 @@
       <div><label>Bottom dia D2 (mm)</label><input id="D2" type="number" value="26" step="0.001" oninput="gv_recalc()"></div>
     </div>
     <div class="row2">
-      <div><label>Start Z1 (mm)</label><input id="Z1" type="number" value="10" step="0.001" oninput="gv_recalc()"></div>
-      <div><label>End Z2 (mm)</label><input id="Z2" type="number" value="4" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>Start Z1 (mm, face = 0)</label><input id="Z1" type="number" value="-4" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>End Z2 (mm)</label><input id="Z2" type="number" value="-10" step="0.001" oninput="gv_recalc()"></div>
     </div>
-    <div class="hint">Width = |Z1&minus;Z2| = <span id="wCalc">6</span> mm &nbsp;&middot;&nbsp; Depth = (D1&minus;D2)/2 = <span id="dCalc">3</span> mm</div>
+    <div class="hint">Width = |Z1&minus;Z2| = <span id="wCalc">6</span> mm &nbsp;&middot;&nbsp; Depth = (D1&minus;D2)/2 = <span id="dCalc">3</span> mm
+    <br>Z convention: <b>face = 0</b>, towards chuck is <b>&minus;Z</b>, away from face is <b>+Z</b>. All Z values in a normal turning setup are negative.</div>
 
   </div></div>
 
@@ -632,25 +642,25 @@
         <label style="margin-top:0">X (dia)</label>
         <input id="A_x" type="number" step="0.001" value="32" oninput="gv_pointEdit('A')">
         <label>Z</label>
-        <input id="A_z" type="number" step="0.001" value="10" oninput="gv_pointEdit('A')">
+        <input id="A_z" type="number" step="0.001" value="-4" oninput="gv_pointEdit('A')">
       </div>
       <div class="cornerBox"><h4>B &mdash; bot-L</h4>
         <label style="margin-top:0">X (dia)</label>
         <input id="B_x" type="number" step="0.001" value="26" oninput="gv_pointEdit('B')">
         <label>Z</label>
-        <input id="B_z" type="number" step="0.001" value="10" oninput="gv_pointEdit('B')">
+        <input id="B_z" type="number" step="0.001" value="-4" oninput="gv_pointEdit('B')">
       </div>
       <div class="cornerBox"><h4>C &mdash; bot-R</h4>
         <label style="margin-top:0">X (dia)</label>
         <input id="C_x" type="number" step="0.001" value="26" oninput="gv_pointEdit('C')">
         <label>Z</label>
-        <input id="C_z" type="number" step="0.001" value="4" oninput="gv_pointEdit('C')">
+        <input id="C_z" type="number" step="0.001" value="-10" oninput="gv_pointEdit('C')">
       </div>
       <div class="cornerBox"><h4>D &mdash; top-R</h4>
         <label style="margin-top:0">X (dia)</label>
         <input id="D_x" type="number" step="0.001" value="32" oninput="gv_pointEdit('D')">
         <label>Z</label>
-        <input id="D_z" type="number" step="0.001" value="4" oninput="gv_pointEdit('D')">
+        <input id="D_z" type="number" step="0.001" value="-10" oninput="gv_pointEdit('D')">
       </div>
     </div>
 
@@ -809,7 +819,11 @@
   <!-- ============ VISUAL PREVIEW ============ -->
   <div class="sec open"><div class="st" onclick="gv_toggle(this)">PREVIEW <span class="caret">&#9656;</span></div><div class="sb">
     <div class="previewbox">
-      <svg id="prev" viewBox="0 0 620 260" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg"></svg>
+      <svg id="prev" viewBox="0 0 620 260" style="width:100%;height:auto;display:block;cursor:grab" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div style="text-align:right;margin-top:6px">
+        <button class="pbtn" onclick="gv_resetZoom()" style="padding:6px 14px;font-size:12px">Reset view</button>
+        <span class="hint" style="margin-left:10px">Scroll to zoom &middot; drag to pan &middot; pinch on mobile</span>
+      </div>
     </div>
     <div class="hint">Longitudinal cross-section &mdash; centerline dashed. Grey shapes = groove copies.</div>
   </div></div>
@@ -2087,6 +2101,7 @@ function updateTableAndPreview(){
   var pts=readCorners();
   renderTable(pts);
   drawPreview(pts);
+  initZoomPan();  // ensures interactive zoom/pan on the preview SVG
 }
 
 function pointEdit(p){
@@ -2133,7 +2148,7 @@ function drawPreview(pts){
   var p2=parseFloat($('pat2').value)||0;
   var dir=parseInt($('patDir').value)||-1;
   var pitch=patOn?(patMode==='pitch'?p2:(N>1?p2/(N-1):p2)):0;
-  var Zs=[]; pts.forEach(function(p){Zs.push(p.z);});
+  var Zs=[0]; pts.forEach(function(p){Zs.push(p.z);});  // include Z=0 (face) in view
   for(var i=1;i<N;i++){ Zs.push(pts[0].z+i*pitch*dir); Zs.push(pts[2].z+i*pitch*dir);}
   var Zmin=Math.min.apply(null,Zs)-4, Zmax=Math.max.apply(null,Zs)+4;
   var Zspan=Math.max(1,Zmax-Zmin);
@@ -2148,6 +2163,12 @@ function drawPreview(pts){
   var odY=mapX(D1);
   svg.innerHTML+='<line x1="'+margin+'" y1="'+odY+'" x2="'+(viewW-margin)+'" y2="'+odY+'" stroke="#c2c7cc" stroke-width="1.5"/>';
   svg.innerHTML+='<line x1="'+margin+'" y1="'+(viewH-odY)+'" x2="'+(viewW-margin)+'" y2="'+(viewH-odY)+'" stroke="#c2c7cc" stroke-width="1.5"/>';
+  // Face marker at Z=0
+  var faceX=mapZ(0);
+  if(faceX>margin && faceX<viewW-margin){
+    svg.innerHTML+='<line x1="'+faceX+'" y1="'+stockYtop+'" x2="'+faceX+'" y2="'+(viewH-stockYtop)+'" stroke="#43d17a" stroke-width="1.8" stroke-dasharray="4 3"/>';
+    svg.innerHTML+='<text x="'+(faceX+4)+'" y="'+(stockYtop+12)+'" font-size="10" fill="#43d17a" font-weight="700">FACE Z=0</text>';
+  }
   for(var k=0;k<N;k++){
     var off=k*pitch*dir;
     var Ax=mapZ(pts[0].z+off), Ay=mapX(pts[0].x);
@@ -2520,10 +2541,151 @@ function buildSimFrames(){
       simFrames.push({x:safeX,z:z1g,type:'retract'});
     }
   }
-  simFrames.push({x:safeX,z:Z1+3,type:'rapid'});
+  // Finish pass with corner treatments (if rf includes finish)
+  var doFin=(rf==='finish'||rf==='both');
+  if(doFin){
+    var corners={};
+    ['A','B','C','D'].forEach(function(k){
+      corners[k]={t:$(k+'_t').value, s1:parseFloat($(k+'_s1').value)||0, s2:$('indepLegs').checked?(parseFloat($(k+'_s2').value)||0):(parseFloat($(k+'_s1').value)||0)};
+    });
+    var A=readCorners()[0], B=readCorners()[1], C=readCorners()[2], D=readCorners()[3];
+    for(var g2=0;g2<N;g2++){
+      var zoff=g2*pitch*dir;
+      simFrames.push({x:D1+2,z:A.z+zoff+2,type:'rapid'});
+      simFrames.push({x:D1+2,z:A.z+zoff,type:'rapid'});
+      simFrames.push({x:D1,z:A.z+zoff,type:'feed'});
+      // Corner A → wall to B, corner B → floor to C, corner C → wall to D, corner D → out
+      simEmitCorner(A, 'toB', zoff);
+      simFrames.push({x:B.x,z:B.z+zoff-cornerZOffset(B,'in'),type:'feed'});
+      simEmitCorner(B, 'toC', zoff);
+      simFrames.push({x:C.x-cornerXOffset(C,'in'),z:C.z+zoff,type:'feed'});
+      simEmitCorner(C, 'toD', zoff);
+      simFrames.push({x:D.x,z:D.z+zoff+cornerZOffset(D,'in'),type:'feed'});
+      simEmitCorner(D, 'out', zoff);
+      simFrames.push({x:safeX,z:D.z+zoff,type:'retract'});
+    }
+  }
+  simFrames.push({x:safeX,z:0+3,type:'rapid'});
   simIdx=0;
   $('simStatus').textContent='Move 0 / '+simFrames.length;
 }
+
+// Helpers for corner-treatment emission in sim
+function cornerZOffset(c,which){ return (c.t==='Chamfer'||c.t==='Radius')?c.s1:0; }
+function cornerXOffset(c,which){ return (c.t==='Chamfer'||c.t==='Radius')?c.s2:0; }
+function simEmitCorner(c, dir, zoff){
+  if(c.t==='Sharp' || c.s1<=0) return;  // no corner move needed
+  // Approximate transition. For simplicity, one diagonal move for chamfer.
+  // For radius, approximate with 4 segments (arc).
+  var pts_prev = simFrames[simFrames.length-1];
+  var px = pts_prev.x, pz = pts_prev.z;
+  if(c.t==='Chamfer'){
+    // Straight diagonal to the actual corner point
+    simFrames.push({x:c.x, z:c.z+zoff, type:'feed'});
+  } else if(c.t==='Radius'){
+    var r = c.s1;
+    var steps=6;
+    var startX=px, startZ=pz;
+    var endX=c.x, endZ=c.z+zoff;
+    for(var s=1;s<=steps;s++){
+      var t=s/steps;
+      // Simple quadratic interpolation through the corner point (approximation of arc)
+      var midX=(startX+endX)/2, midZ=(startZ+endZ)/2;
+      var xi = startX + (endX-startX)*t;
+      var zi = startZ + (endZ-startZ)*t;
+      simFrames.push({x:xi, z:zi, type:'feed'});
+    }
+  }
+}
+
+
+// -------- ZOOM/PAN for profile preview SVG --------
+var zpState={init:false, baseVB:null, vb:null};
+function initZoomPan(){
+  var svg = $('prev');
+  if(!svg || zpState.init) return;
+  zpState.init=true;
+  var vb = svg.getAttribute('viewBox').split(' ').map(parseFloat);
+  zpState.baseVB = {x:vb[0],y:vb[1],w:vb[2],h:vb[3]};
+  zpState.vb = Object.assign({}, zpState.baseVB);
+  function setVB(){ svg.setAttribute('viewBox', zpState.vb.x+' '+zpState.vb.y+' '+zpState.vb.w+' '+zpState.vb.h); }
+  // Wheel zoom
+  svg.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var rect = svg.getBoundingClientRect();
+    var mx = (e.clientX - rect.left) / rect.width * zpState.vb.w + zpState.vb.x;
+    var my = (e.clientY - rect.top) / rect.height * zpState.vb.h + zpState.vb.y;
+    var scale = e.deltaY > 0 ? 1.15 : 1/1.15;
+    zpState.vb.x = mx - (mx - zpState.vb.x) * scale;
+    zpState.vb.y = my - (my - zpState.vb.y) * scale;
+    zpState.vb.w *= scale;
+    zpState.vb.h *= scale;
+    setVB();
+  }, {passive:false});
+  // Mouse drag pan
+  var pan=null;
+  svg.addEventListener('mousedown', function(e){
+    pan = {x:e.clientX, y:e.clientY, vx:zpState.vb.x, vy:zpState.vb.y};
+    svg.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove', function(e){
+    if(!pan) return;
+    var rect = svg.getBoundingClientRect();
+    var dx = (e.clientX - pan.x) / rect.width * zpState.vb.w;
+    var dy = (e.clientY - pan.y) / rect.height * zpState.vb.h;
+    zpState.vb.x = pan.vx - dx;
+    zpState.vb.y = pan.vy - dy;
+    setVB();
+  });
+  window.addEventListener('mouseup', function(){ pan=null; svg.style.cursor='grab'; });
+  svg.style.cursor='grab';
+  svg.style.touchAction='none';
+  // Touch: pinch and pan
+  var tstart = null;
+  svg.addEventListener('touchstart', function(e){
+    if(e.touches.length===1){
+      tstart = {mode:'pan', x:e.touches[0].clientX, y:e.touches[0].clientY, vx:zpState.vb.x, vy:zpState.vb.y};
+    } else if(e.touches.length===2){
+      var t1=e.touches[0], t2=e.touches[1];
+      var d = Math.hypot(t2.clientX-t1.clientX, t2.clientY-t1.clientY);
+      var cx = (t1.clientX+t2.clientX)/2, cy=(t1.clientY+t2.clientY)/2;
+      tstart = {mode:'zoom', d:d, cx:cx, cy:cy, vb:Object.assign({},zpState.vb)};
+    }
+    e.preventDefault();
+  }, {passive:false});
+  svg.addEventListener('touchmove', function(e){
+    if(!tstart) return;
+    if(tstart.mode==='pan' && e.touches.length===1){
+      var rect = svg.getBoundingClientRect();
+      var dx = (e.touches[0].clientX - tstart.x) / rect.width * zpState.vb.w;
+      var dy = (e.touches[0].clientY - tstart.y) / rect.height * zpState.vb.h;
+      zpState.vb.x = tstart.vx - dx;
+      zpState.vb.y = tstart.vy - dy;
+      setVB();
+    } else if(tstart.mode==='zoom' && e.touches.length===2){
+      var t1=e.touches[0], t2=e.touches[1];
+      var d = Math.hypot(t2.clientX-t1.clientX, t2.clientY-t1.clientY);
+      var scale = tstart.d / d;
+      var rect = svg.getBoundingClientRect();
+      var mx = (tstart.cx - rect.left) / rect.width * tstart.vb.w + tstart.vb.x;
+      var my = (tstart.cy - rect.top) / rect.height * tstart.vb.h + tstart.vb.y;
+      zpState.vb.x = mx - (mx - tstart.vb.x) * scale;
+      zpState.vb.y = my - (my - tstart.vb.y) * scale;
+      zpState.vb.w = tstart.vb.w * scale;
+      zpState.vb.h = tstart.vb.h * scale;
+      setVB();
+    }
+    e.preventDefault();
+  }, {passive:false});
+  svg.addEventListener('touchend', function(){ tstart=null; });
+}
+function resetZoom(){
+  if(!zpState.init || !zpState.baseVB) return;
+  zpState.vb = Object.assign({}, zpState.baseVB);
+  var svg = $('prev');
+  svg.setAttribute('viewBox', zpState.vb.x+' '+zpState.vb.y+' '+zpState.vb.w+' '+zpState.vb.h);
+}
+
 function drawSim(){
   var svg=$('simSvg'); svg.innerHTML='';
   if(!simFrames.length)return;
@@ -2639,6 +2801,7 @@ window.gv_simPause = simPause;
 window.gv_simReset = simReset;
 window.gv_simSeek = simSeek;
 window.gv_pointEdit = pointEdit;
+window.gv_resetZoom = resetZoom;
 window.gv_init = function(){ try{ initMaterials(); recalc(); }catch(e){ console.warn("gv_init:", e); } };
 })();
 </script>
