@@ -2579,28 +2579,38 @@ function buildSimFrames(){
       simFrames.push({x:safeX,z:z1g,type:'retract'});
     }
   }
-  // Finish pass with corner treatments (if rf includes finish)
+  // Finish pass with proper chamfer and radius geometry that matches the G-code output
   var doFin=(rf==='finish'||rf==='both');
   if(doFin){
-    var corners={};
-    ['A','B','C','D'].forEach(function(k){
-      corners[k]={t:$(k+'_t').value, s1:parseFloat($(k+'_s1').value)||0, s2:$('indepLegs').checked?(parseFloat($(k+'_s2').value)||0):(parseFloat($(k+'_s1').value)||0)};
-    });
-    var A=readCorners()[0], B=readCorners()[1], C=readCorners()[2], D=readCorners()[3];
+    var cA=readCorners()[0], cB=readCorners()[1], cC=readCorners()[2], cD=readCorners()[3];
     for(var g2=0;g2<N;g2++){
       var zoff=g2*pitch*dir;
-      simFrames.push({x:D1+2,z:A.z+zoff+2,type:'rapid'});
-      simFrames.push({x:D1+2,z:A.z+zoff,type:'rapid'});
-      simFrames.push({x:D1,z:A.z+zoff,type:'feed'});
-      // Corner A → wall to B, corner B → floor to C, corner C → wall to D, corner D → out
-      simEmitCorner(A, 'toB', zoff);
-      simFrames.push({x:B.x,z:B.z+zoff-cornerZOffset(B,'in'),type:'feed'});
-      simEmitCorner(B, 'toC', zoff);
-      simFrames.push({x:C.x-cornerXOffset(C,'in'),z:C.z+zoff,type:'feed'});
-      simEmitCorner(C, 'toD', zoff);
-      simFrames.push({x:D.x,z:D.z+zoff+cornerZOffset(D,'in'),type:'feed'});
-      simEmitCorner(D, 'out', zoff);
-      simFrames.push({x:safeX,z:D.z+zoff,type:'retract'});
+      var z1g=cA.z+zoff, z2g=cC.z+zoff;
+      // Approach
+      simFrames.push({x:D1+2,z:z1g+1,type:'rapid'});
+      simFrames.push({x:D1+0.5,z:z1g+1,type:'rapid'});
+      // === Corner A: enter to (D1, z1+s) then chamfer/arc to (D1-2s, z1) ===
+      var Aoff = (cA.ctype!=='Sharp' && cA.cs1>0) ? cA.cs1 : 0;
+      simFrames.push({x:D1, z:z1g+Aoff, type:'feed'});
+      simEmitCornerV2(cA, D1, z1g, 'A', zoff);
+      // Wall A->B on X=D1-2*sA to X=D2+2*sB (or full if sharp)
+      var exitA_x = D1 - 2*((cA.ctype==='Chamfer')?cA.cs2:(cA.ctype==='Radius'?cA.cs1:0));
+      var enterB_x = D2 + 2*((cB.ctype==='Chamfer')?cB.cs2:(cB.ctype==='Radius'?cB.cs1:0));
+      simFrames.push({x:enterB_x, z:z1g, type:'feed'});
+      // === Corner B: chamfer/arc to (D2, z1 - sB) ===
+      simEmitCornerV2(cB, D2, z1g, 'B', zoff);
+      // Floor B->C from Z=z1-sB to Z=z2+sC
+      var exitB_z = z1g - ((cB.ctype!=='Sharp' && cB.cs1>0) ? cB.cs1 : 0);
+      var enterC_z = z2g + ((cC.ctype!=='Sharp' && cC.cs1>0) ? cC.cs1 : 0);
+      simFrames.push({x:D2, z:enterC_z, type:'feed'});
+      // === Corner C: to (D2+2*sC, z2) ===
+      simEmitCornerV2(cC, D2, z2g, 'C', zoff);
+      // Wall C->D from X=D2+2*sC to X=D1-2*sD
+      var enterD_x = D1 - 2*((cD.ctype==='Chamfer')?cD.cs2:(cD.ctype==='Radius'?cD.cs1:0));
+      simFrames.push({x:enterD_x, z:z2g, type:'feed'});
+      // === Corner D: to (D1, z2 + sD) ===
+      simEmitCornerV2(cD, D1, z2g, 'D', zoff);
+      simFrames.push({x:safeX, z:z2g, type:'retract'});
     }
   }
   simFrames.push({x:safeX,z:0+3,type:'rapid'});
@@ -2609,30 +2619,48 @@ function buildSimFrames(){
 }
 
 // Helpers for corner-treatment emission in sim
-function cornerZOffset(c,which){ return (c.t==='Chamfer'||c.t==='Radius')?c.s1:0; }
-function cornerXOffset(c,which){ return (c.t==='Chamfer'||c.t==='Radius')?c.s2:0; }
-function simEmitCorner(c, dir, zoff){
-  if(c.t==='Sharp' || c.s1<=0) return;  // no corner move needed
-  // Approximate transition. For simplicity, one diagonal move for chamfer.
-  // For radius, approximate with 4 segments (arc).
-  var pts_prev = simFrames[simFrames.length-1];
-  var px = pts_prev.x, pz = pts_prev.z;
-  if(c.t==='Chamfer'){
-    // Straight diagonal to the actual corner point
-    simFrames.push({x:c.x, z:c.z+zoff, type:'feed'});
-  } else if(c.t==='Radius'){
-    var r = c.s1;
-    var steps=6;
-    var startX=px, startZ=pz;
-    var endX=c.x, endZ=c.z+zoff;
-    for(var s=1;s<=steps;s++){
-      var t=s/steps;
-      // Simple quadratic interpolation through the corner point (approximation of arc)
-      var midX=(startX+endX)/2, midZ=(startZ+endZ)/2;
-      var xi = startX + (endX-startX)*t;
-      var zi = startZ + (endZ-startZ)*t;
+// simEmitCornerV2: emit chamfer diagonal or radius arc for one corner.
+// Matches the G-code finishPass geometry so simulation and program agree.
+function simEmitCornerV2(c, Dx, zBase, cornerName, zoff){
+  if(c.ctype==='Sharp' || c.cs1<=0) return;
+  var s1=c.cs1, s2=c.cs2;
+  var endX, endZ;
+  if(cornerName==='A'){        // OD -> wall down; end at (Dx-2s, zBase)
+    endX = Dx - 2*(c.ctype==='Chamfer'?s2:s1);  endZ = zBase;
+  } else if(cornerName==='B'){ // wall -> floor; end at (Dx, zBase - s)
+    endX = Dx;                                    endZ = zBase - s1;
+  } else if(cornerName==='C'){ // floor -> wall up; end at (Dx+2s, zBase)
+    endX = Dx + 2*(c.ctype==='Chamfer'?s2:s1);  endZ = zBase;
+  } else if(cornerName==='D'){ // wall up -> OD out; end at (Dx, zBase + s)
+    endX = Dx;                                    endZ = zBase + s1;
+  }
+  if(c.ctype==='Chamfer'){
+    simFrames.push({x:endX, z:endZ, type:'feed'});
+    return;
+  }
+  if(c.ctype==='Radius'){
+    var prev=simFrames[simFrames.length-1];
+    var startX=prev.x, startZ=prev.z;
+    var r=s1;
+    var cX, cZ;
+    if(cornerName==='A'){ cX = Dx - 2*r; cZ = zBase + r; }
+    if(cornerName==='B'){ cX = Dx + 2*r; cZ = zBase - r; }
+    if(cornerName==='C'){ cX = Dx + 2*r; cZ = zBase + r; }
+    if(cornerName==='D'){ cX = Dx - 2*r; cZ = zBase + r; }
+    var a0 = Math.atan2(startZ - cZ, (startX - cX)/2);
+    var a1 = Math.atan2(endZ - cZ, (endX - cX)/2);
+    var da = a1 - a0;
+    while(da <= -Math.PI) da += 2*Math.PI;
+    while(da > Math.PI) da -= 2*Math.PI;
+    var steps = 14;
+    for(var s=1; s<=steps; s++){
+      var t = s/steps;
+      var a = a0 + da*t;
+      var xi = cX + 2*r*Math.cos(a);
+      var zi = cZ + r*Math.sin(a);
       simFrames.push({x:xi, z:zi, type:'feed'});
     }
+    return;
   }
 }
 
@@ -2732,7 +2760,8 @@ function drawSim(){
   var stockOD=D1*1.2+10;
   var VW=1000, VH=500, MG=50;
 
-  var Zs=simFrames.map(function(f){return f.z;});
+  // Range includes Z=0 (face) and all frame positions
+  var Zs=[0]; simFrames.forEach(function(f){Zs.push(f.z);});
   var Zmin=Math.min.apply(null,Zs)-6, Zmax=Math.max.apply(null,Zs)+6;
   var Zspan=Math.max(1,Zmax-Zmin);
   var scaleZ=(VW-2*MG)/Zspan;
@@ -2740,65 +2769,79 @@ function drawSim(){
   var mapZ=function(z){return MG+(z-Zmin)*scaleZ;};
   var mapX=function(x){return VH/2 - x*scaleX;};
 
-  // Chuck (left side) - simple rectangle
-  var chuckW=30, chuckH=(stockOD*1.4)*scaleX;
-  svg.innerHTML+='<rect x="'+MG+'" y="'+(VH/2-chuckH)+'" width="'+chuckW+'" height="'+(chuckH*2)+'" fill="#3a3f45" stroke="#5a6068" stroke-width="1"/>';
-  svg.innerHTML+='<text x="'+(MG+chuckW/2)+'" y="'+(VH/2+chuckH+16)+'" fill="#5a6068" font-size="11" text-anchor="middle">CHUCK</text>';
+  // Solid dark background
+  svg.innerHTML+='<rect x="0" y="0" width="'+VW+'" height="'+VH+'" fill="#0a1219"/>';
 
-  // Workpiece as horizontal cylinder (both halves)
+  // Chuck rectangle on the LEFT (most negative Z side)
+  var chuckW=32, chuckH=(stockOD*1.35)*scaleX;
+  svg.innerHTML+='<rect x="'+MG+'" y="'+(VH/2-chuckH)+'" width="'+chuckW+'" height="'+(chuckH*2)+'" fill="#2a3038" stroke="#4a5058" stroke-width="1.5"/>';
+  // Chuck jaw lines
+  for(var jj=1; jj<3; jj++){
+    var jy=VH/2 - chuckH + jj*(chuckH*2)/3;
+    svg.innerHTML+='<line x1="'+MG+'" y1="'+jy+'" x2="'+(MG+chuckW)+'" y2="'+jy+'" stroke="#4a5058" stroke-width="1"/>';
+  }
+  svg.innerHTML+='<text x="'+(MG+chuckW/2)+'" y="'+(VH/2+chuckH+18)+'" fill="#6b7178" font-size="11" text-anchor="middle" font-weight="700" letter-spacing="1">CHUCK</text>';
+
+  // Workpiece — solid steel color, sharp edges
   var stockYtop=mapX(stockOD);
   var wpX=MG+chuckW;
-  var wpW=VW-MG-wpX;
-  // Top half (above centerline)
-  svg.innerHTML+='<rect x="'+wpX+'" y="'+stockYtop+'" width="'+wpW+'" height="'+(VH/2-stockYtop)+'" fill="url(#steelGrad)" stroke="#5a6068" stroke-width="1"/>';
-  // Bottom half (below centerline)
-  svg.innerHTML+='<rect x="'+wpX+'" y="'+(VH/2)+'" width="'+wpW+'" height="'+(VH/2-stockYtop)+'" fill="url(#steelGradB)" stroke="#5a6068" stroke-width="1"/>';
-  // Steel gradient defs
-  var defs='<defs><linearGradient id="steelGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8ecf0"/><stop offset=".5" stop-color="#b3bec8"/><stop offset="1" stop-color="#7c8791"/></linearGradient><linearGradient id="steelGradB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c8791"/><stop offset=".5" stop-color="#b3bec8"/><stop offset="1" stop-color="#e8ecf0"/></linearGradient></defs>';
-  svg.innerHTML=defs+svg.innerHTML;
+  // Face position at Z=0
+  var faceX = mapZ(0);
+  var wpEndX = Math.min(faceX, VW-MG);
+  // Top half
+  svg.innerHTML+='<rect x="'+wpX+'" y="'+stockYtop+'" width="'+(wpEndX-wpX)+'" height="'+(VH/2-stockYtop)+'" fill="#c7cdd4" stroke="#5a6068" stroke-width="1.2"/>';
+  // Bottom half
+  svg.innerHTML+='<rect x="'+wpX+'" y="'+(VH/2)+'" width="'+(wpEndX-wpX)+'" height="'+(VH/2-stockYtop)+'" fill="#c7cdd4" stroke="#5a6068" stroke-width="1.2"/>';
 
-  // OD surface lines
+  // OD surface lines (crisp)
   var odY=mapX(D1);
-  svg.innerHTML+='<line x1="'+wpX+'" y1="'+odY+'" x2="'+VW+'" y2="'+odY+'" stroke="#404850" stroke-width="1.5"/>';
-  svg.innerHTML+='<line x1="'+wpX+'" y1="'+(VH-odY)+'" x2="'+VW+'" y2="'+(VH-odY)+'" stroke="#404850" stroke-width="1.5"/>';
+  svg.innerHTML+='<line x1="'+wpX+'" y1="'+odY+'" x2="'+wpEndX+'" y2="'+odY+'" stroke="#404850" stroke-width="1.5"/>';
+  svg.innerHTML+='<line x1="'+wpX+'" y1="'+(VH-odY)+'" x2="'+wpEndX+'" y2="'+(VH-odY)+'" stroke="#404850" stroke-width="1.5"/>';
 
   // Centerline
-  svg.innerHTML+='<line x1="'+MG+'" y1="'+(VH/2)+'" x2="'+VW+'" y2="'+(VH/2)+'" stroke="#5a6068" stroke-width="1" stroke-dasharray="8 5"/>';
+  svg.innerHTML+='<line x1="'+MG+'" y1="'+(VH/2)+'" x2="'+(VW-MG)+'" y2="'+(VH/2)+'" stroke="#3a4048" stroke-width="1" stroke-dasharray="10 6"/>';
 
-  // Draw the target groove outline (ghost) for reference
+  // FACE marker at Z=0 (bright green vertical line)
+  if(faceX > wpX && faceX < VW-MG){
+    svg.innerHTML+='<line x1="'+faceX+'" y1="'+stockYtop+'" x2="'+faceX+'" y2="'+(VH-stockYtop)+'" stroke="#43d17a" stroke-width="2.5"/>';
+    svg.innerHTML+='<text x="'+(faceX+6)+'" y="'+(stockYtop+16)+'" fill="#43d17a" font-size="13" font-weight="800">FACE  Z=0</text>';
+  }
+
+  // Target groove outline (light dashed) so it is clear even before path is drawn
   var gA=[mapZ(Z1), mapX(D1)];
   var gB=[mapZ(Z1), mapX(D2)];
   var gC=[mapZ(Z2), mapX(D2)];
   var gD=[mapZ(Z2), mapX(D1)];
-  svg.innerHTML+='<path d="M '+gA[0]+' '+gA[1]+' L '+gB[0]+' '+gB[1]+' L '+gC[0]+' '+gC[1]+' L '+gD[0]+' '+gD[1]+' Z" fill="rgba(255,179,0,0.08)" stroke="#ffb300" stroke-width="1" stroke-dasharray="4 3"/>';
-  svg.innerHTML+='<path d="M '+gA[0]+' '+(VH-gA[1])+' L '+gB[0]+' '+(VH-gB[1])+' L '+gC[0]+' '+(VH-gC[1])+' L '+gD[0]+' '+(VH-gD[1])+' Z" fill="rgba(255,179,0,0.08)" stroke="#ffb300" stroke-width="1" stroke-dasharray="4 3"/>';
+  svg.innerHTML+='<path d="M '+gA[0]+' '+gA[1]+' L '+gB[0]+' '+gB[1]+' L '+gC[0]+' '+gC[1]+' L '+gD[0]+' '+gD[1]+' Z" fill="rgba(255,179,0,0.05)" stroke="#8a6a10" stroke-width="1" stroke-dasharray="3 3"/>';
+  svg.innerHTML+='<path d="M '+gA[0]+' '+(VH-gA[1])+' L '+gB[0]+' '+(VH-gB[1])+' L '+gC[0]+' '+(VH-gC[1])+' L '+gD[0]+' '+(VH-gD[1])+' Z" fill="rgba(255,179,0,0.05)" stroke="#8a6a10" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>';
 
-  // Draw tool path traversed up to simIdx
+  // Traversed tool path — thicker, brighter, and color-coded
   var colors={rapid:'#29b6f6', feed:'#ffb300', plunge:'#ff5252', retract:'#a0a0a0'};
   for(var i=1;i<=simIdx && i<simFrames.length;i++){
     var f1=simFrames[i-1], f2=simFrames[i];
     var color=colors[f2.type]||'#ffb300';
-    var w=(f2.type==='rapid'?1.4:2.4);
-    var dash=(f2.type==='rapid'?'5 4':'');
-    svg.innerHTML+='<line x1="'+mapZ(f1.z)+'" y1="'+mapX(f1.x)+'" x2="'+mapZ(f2.z)+'" y2="'+mapX(f2.x)+'" stroke="'+color+'" stroke-width="'+w+'" stroke-dasharray="'+dash+'"/>';
+    var w=(f2.type==='rapid'?1.6:3);
+    var dash=(f2.type==='rapid'?'6 4':'');
+    svg.innerHTML+='<line x1="'+mapZ(f1.z)+'" y1="'+mapX(f1.x)+'" x2="'+mapZ(f2.z)+'" y2="'+mapX(f2.x)+'" stroke="'+color+'" stroke-width="'+w+'" stroke-dasharray="'+dash+'" stroke-linecap="round"/>';
   }
 
-  // Draw the tool at current position
+  // Tool at current position — crisper insert + shank
   if(simIdx<simFrames.length){
     var f=simFrames[simIdx];
     var cx=mapZ(f.z), cy=mapX(f.x);
     var Wi=parseFloat($('tl_wi').value)||3;
-    var tW=Wi*scaleZ;
-    var tH=30;
-    // Tool insert (small rectangle representing the grooving insert)
-    svg.innerHTML+='<rect x="'+(cx-tW/2)+'" y="'+(cy-tH)+'" width="'+tW+'" height="'+tH+'" fill="#ffb300" stroke="#7a4a00" stroke-width="1.5" rx="1"/>';
-    // Tool shank extending up
-    svg.innerHTML+='<rect x="'+(cx-tW/2-4)+'" y="'+(cy-tH-40)+'" width="'+(tW+8)+'" height="42" fill="#5a6068" stroke="#3a4048" stroke-width="1"/>';
-    // Tip marker
-    svg.innerHTML+='<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#ff5252" stroke="#1a1200" stroke-width="1.5"/>';
+    var tW=Math.max(6, Wi*scaleZ);
+    var tH=24;
+    // Insert (orange, sharp corners)
+    svg.innerHTML+='<rect x="'+(cx-tW/2)+'" y="'+(cy-tH)+'" width="'+tW+'" height="'+tH+'" fill="#ff8800" stroke="#1a0a00" stroke-width="1.5"/>';
+    // Shank (dark grey)
+    svg.innerHTML+='<rect x="'+(cx-tW/2-6)+'" y="'+(cy-tH-46)+'" width="'+(tW+12)+'" height="46" fill="#4a5058" stroke="#2a3038" stroke-width="1.2"/>';
+    // Bright red tip
+    svg.innerHTML+='<circle cx="'+cx+'" cy="'+cy+'" r="4.5" fill="#ff2020" stroke="#000" stroke-width="1.2"/>';
     // Position readout
-    svg.innerHTML+='<text x="'+(cx+15)+'" y="'+(cy-tH-50)+'" fill="#ffb300" font-size="12" font-weight="700" font-family="monospace">X'+f.x.toFixed(3)+' Z'+f.z.toFixed(3)+'</text>';
-    svg.innerHTML+='<text x="'+(cx+15)+'" y="'+(cy-tH-36)+'" fill="'+colors[f.type]+'" font-size="11" font-weight="600">'+f.type.toUpperCase()+'</text>';
+    svg.innerHTML+='<rect x="'+(cx+12)+'" y="'+(cy-tH-58)+'" width="130" height="34" fill="#0f1720" stroke="#43d17a" stroke-width="1" rx="4"/>';
+    svg.innerHTML+='<text x="'+(cx+18)+'" y="'+(cy-tH-40)+'" fill="#ffb300" font-size="13" font-weight="700" font-family="monospace">X'+f.x.toFixed(3)+'</text>';
+    svg.innerHTML+='<text x="'+(cx+18)+'" y="'+(cy-tH-27)+'" fill="'+colors[f.type]+'" font-size="11" font-weight="700">Z'+f.z.toFixed(3)+' &#183; '+f.type+'</text>';
   }
 
   var statusMsg='Move '+simIdx+' / '+Math.max(0,simFrames.length-1);
