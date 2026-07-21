@@ -2273,6 +2273,7 @@ function generate(){
         // One plunge centered in the groove
         var zc=(zLeftWall+zRightWall)/2;
         var zp=zc+offShift;
+        mv.push({t:'g0', Z:zp});
         pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell);
       } else if(strat==='multi'){
         // Multi-plunge: insert-center steps from (zLeftWall+Wi/2) to (zRightWall-Wi/2)
@@ -2519,6 +2520,25 @@ function simSeek(v){
   simIdx=parseInt(v)||0;
   drawSim();
 }
+// Helper: emit peck plunges for a list of insert-center Z positions
+function simDoPasses(centers, oShift, D1, D2, safeX, pd, pr){
+  centers.forEach(function(ctr){
+    var zPos = ctr + oShift;
+    simFrames.push({x:safeX, z:zPos, type:'rapid'});
+    var curX=D1;
+    while(curX>D2){
+      var nextX=Math.max(D2, curX-pd*2);
+      simFrames.push({x:nextX, z:zPos, type:'plunge'});
+      if(nextX>D2){
+        simFrames.push({x:nextX+pr*2, z:zPos, type:'retract'});
+        simFrames.push({x:nextX, z:zPos, type:'plunge'});
+      }
+      curX=nextX;
+    }
+    simFrames.push({x:safeX, z:zPos, type:'retract'});
+  });
+}
+
 function buildSimFrames(){
   simFrames=[];
   var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
@@ -2540,15 +2560,32 @@ function buildSimFrames(){
   for(var g=0;g<N;g++){
     var z1g=Z1+g*pitch*dir, z2g=Z2+g*pitch*dir;
     simFrames.push({x:safeX,z:z1g,type:'rapid'});
-    if(strat==='single' || strat==='multi'){
-      // Multi-plunge along Z first if width > insert width
+    if(strat==='single'){
+      // Single plunge: one pass at insert-center = groove center
+      var zLW=Math.min(z1g,z2g), zRW=Math.max(z1g,z2g);
+      var zCenter=(zLW+zRW)/2;
+      var passes=1;
+      var centers_s=[zCenter];
+      simDoPasses(centers_s, oShift, D1, D2, safeX, pd, pr);
+    } else if(strat==='multi'){
+      // Multi-plunge: N passes, insert-center from (zLW+Wi/2) to (zRW-Wi/2)
+      var zLW=Math.min(z1g,z2g), zRW=Math.max(z1g,z2g);
+      var step=Math.max(0.1, Wi-2*(parseFloat($('tl_rc').value)||0.2));
+      var zCF=zLW+Wi/2, zCL=zRW-Wi/2, span=zCL-zCF;
+      var N_p=(span<=0.001)?1:Math.max(2, Math.ceil(span/step)+1);
+      var actualStep=(N_p>1)?span/(N_p-1):0;
+      var centers_s=[];
+      for(var iP=0;iP<N_p;iP++)centers_s.push(zCF+iP*actualStep);
+      simDoPasses(centers_s, oShift, D1, D2, safeX, pd, pr);
+    } else if(strat==='DUMMY_NEVER_MATCHES'){
+      // legacy branch marker (kept to preserve old braces)
       var W=Math.abs(z1g-z2g);
-      var passes=Math.max(1,Math.ceil(W/Wi));
-      var dirZ_s=(z2g>z1g?1:-1);
-      var firstCtr_s=z1g+Wi/2*dirZ_s, lastCtr_s=z2g-Wi/2*dirZ_s;
+      var passes=1;
+      var dirZ_s=1;
+      var firstCtr_s=0, lastCtr_s=0;
       for(var pass=0;pass<passes;pass++){
-        var ctr_s=firstCtr_s+(lastCtr_s-firstCtr_s)*(passes>1?pass/(passes-1):0);
-        var zPos=ctr_s+oShift;
+        var ctr_s=0;
+        var zPos=0;
         simFrames.push({x:safeX,z:zPos,type:'rapid'});
         // Peck plunge
         var curX=D1;
