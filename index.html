@@ -2932,97 +2932,90 @@ function drawSim(){
   if(!simFrames.length)return;
   var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
   var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
-  var stockOD=D1*1.2+10;
-  var VW=1000, VH=500, MG=50;
+  var Wi=parseFloat($('tl_wi').value)||3;
+  var stockOD=D1*1.15+8;
+  var VW=1000, VH=500, MG=40;
 
-  // Range includes Z=0 (face) and all frame positions
+  // ----- View range: include Z=0 (face) and all frame positions -----
   var Zs=[0]; simFrames.forEach(function(f){Zs.push(f.z);});
-  var Zmin=Math.min.apply(null,Zs)-6, Zmax=Math.max.apply(null,Zs)+6;
+  var Zmin=Math.min.apply(null,Zs)-4, Zmax=Math.max.apply(null,Zs)+4;
   var Zspan=Math.max(1,Zmax-Zmin);
-  var scaleZ=(VW-2*MG)/Zspan;
-  var scaleX=(VH/2-MG)/stockOD;
+  // Unified physical scale so 1 mm radial = 1 mm axial visually
+  var maxSZ=(VW-2*MG)/Zspan;
+  var maxSX=(VH/2-MG)/(stockOD/2);
+  var pxPerMm=Math.min(maxSZ,maxSX);
+  var scaleZ=pxPerMm, scaleR=pxPerMm;
   var mapZ=function(z){return MG+(z-Zmin)*scaleZ;};
-  var mapX=function(x){return VH/2 - x*scaleX;};
+  // mapR maps a DIAMETER value to y-offset from centerline. Above/below centerline for top/bottom mirror.
+  var cy=VH/2;
+  var mapYTop=function(dia){return cy - (dia/2)*scaleR;};
+  var mapYBot=function(dia){return cy + (dia/2)*scaleR;};
 
-  // Solid dark background
+  // ----- Solid dark background -----
   svg.innerHTML+='<rect x="0" y="0" width="'+VW+'" height="'+VH+'" fill="#0a1219"/>';
 
-  // Chuck rectangle on the LEFT (most negative Z side)
-  var chuckW=32, chuckH=(stockOD*1.35)*scaleX;
-  svg.innerHTML+='<rect x="'+MG+'" y="'+(VH/2-chuckH)+'" width="'+chuckW+'" height="'+(chuckH*2)+'" fill="#2a3038" stroke="#4a5058" stroke-width="1.5"/>';
-  // Chuck jaw lines
-  for(var jj=1; jj<3; jj++){
-    var jy=VH/2 - chuckH + jj*(chuckH*2)/3;
-    svg.innerHTML+='<line x1="'+MG+'" y1="'+jy+'" x2="'+(MG+chuckW)+'" y2="'+jy+'" stroke="#4a5058" stroke-width="1"/>';
-  }
-  svg.innerHTML+='<text x="'+(MG+chuckW/2)+'" y="'+(VH/2+chuckH+18)+'" fill="#6b7178" font-size="11" text-anchor="middle" font-weight="700" letter-spacing="1">CHUCK</text>';
+  // ----- Very faint dashed centerline -----
+  svg.innerHTML+='<line x1="'+MG+'" y1="'+cy+'" x2="'+(VW-MG)+'" y2="'+cy+'" stroke="#2a3540" stroke-width="1" stroke-dasharray="8 6"/>';
 
-  // Workpiece — solid steel color, sharp edges
-  var stockYtop=mapX(stockOD);
-  var wpX=MG+chuckW;
-  // Face position at Z=0
-  var faceX = mapZ(0);
-  var wpEndX = Math.min(faceX, VW-MG);
-  // Top half
-  svg.innerHTML+='<rect x="'+wpX+'" y="'+stockYtop+'" width="'+(wpEndX-wpX)+'" height="'+(VH/2-stockYtop)+'" fill="#c7cdd4" stroke="#5a6068" stroke-width="1.2"/>';
-  // Bottom half
-  svg.innerHTML+='<rect x="'+wpX+'" y="'+(VH/2)+'" width="'+(wpEndX-wpX)+'" height="'+(VH/2-stockYtop)+'" fill="#c7cdd4" stroke="#5a6068" stroke-width="1.2"/>';
-
-  // OD surface lines (crisp)
-  var odY=mapX(D1);
-  svg.innerHTML+='<line x1="'+wpX+'" y1="'+odY+'" x2="'+wpEndX+'" y2="'+odY+'" stroke="#404850" stroke-width="1.5"/>';
-  svg.innerHTML+='<line x1="'+wpX+'" y1="'+(VH-odY)+'" x2="'+wpEndX+'" y2="'+(VH-odY)+'" stroke="#404850" stroke-width="1.5"/>';
-
-  // Centerline
-  svg.innerHTML+='<line x1="'+MG+'" y1="'+(VH/2)+'" x2="'+(VW-MG)+'" y2="'+(VH/2)+'" stroke="#3a4048" stroke-width="1" stroke-dasharray="10 6"/>';
-
-  // FACE marker at Z=0 (bright green vertical line)
-  if(faceX > wpX && faceX < VW-MG){
-    svg.innerHTML+='<line x1="'+faceX+'" y1="'+stockYtop+'" x2="'+faceX+'" y2="'+(VH-stockYtop)+'" stroke="#43d17a" stroke-width="2.5"/>';
-    svg.innerHTML+='<text x="'+(faceX+6)+'" y="'+(stockYtop+16)+'" fill="#43d17a" font-size="13" font-weight="800">FACE  Z=0</text>';
+  // ----- FACE Z=0 marker (kept — takes little space, essential reference) -----
+  var faceX=mapZ(0);
+  if(faceX>MG && faceX<VW-MG){
+    svg.innerHTML+='<line x1="'+faceX+'" y1="'+MG+'" x2="'+faceX+'" y2="'+(VH-MG)+'" stroke="#43d17a" stroke-width="1.6" stroke-dasharray="6 4" opacity="0.7"/>';
+    svg.innerHTML+='<text x="'+(faceX+6)+'" y="'+(MG+14)+'" fill="#43d17a" font-size="12" font-weight="700">FACE Z=0</text>';
   }
 
-  // Target groove outline (light dashed) so it is clear even before path is drawn
-  var gA=[mapZ(Z1), mapX(D1)];
-  var gB=[mapZ(Z1), mapX(D2)];
-  var gC=[mapZ(Z2), mapX(D2)];
-  var gD=[mapZ(Z2), mapX(D1)];
-  svg.innerHTML+='<path d="M '+gA[0]+' '+gA[1]+' L '+gB[0]+' '+gB[1]+' L '+gC[0]+' '+gC[1]+' L '+gD[0]+' '+gD[1]+' Z" fill="rgba(255,179,0,0.05)" stroke="#8a6a10" stroke-width="1" stroke-dasharray="3 3"/>';
-  svg.innerHTML+='<path d="M '+gA[0]+' '+(VH-gA[1])+' L '+gB[0]+' '+(VH-gB[1])+' L '+gC[0]+' '+(VH-gC[1])+' L '+gD[0]+' '+(VH-gD[1])+' Z" fill="rgba(255,179,0,0.05)" stroke="#8a6a10" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>';
+  // ----- Colors -----
+  var CDONE='#29b6f6';   // blue (completed cuts / rapids)
+  var CCUR='#ffb300';    // orange (current move)
+  var CRAP='#5a6c78';    // greyed-out rapid
+  var CTIP='#ff2626';    // red tool tip
 
-  // Traversed tool path — thicker, brighter, and color-coded
-  var colors={rapid:'#29b6f6', feed:'#ffb300', plunge:'#ff5252', retract:'#a0a0a0'};
-  for(var i=1;i<=simIdx && i<simFrames.length;i++){
+  // ----- Paths (mirrored top + bottom) -----
+  // Draw completed segments as blue thin lines; current segment as orange thick
+  var doneW = 1.4;
+  var curW = 3.2;
+  for(var i=1; i<=simIdx && i<simFrames.length; i++){
     var f1=simFrames[i-1], f2=simFrames[i];
-    var color=colors[f2.type]||'#ffb300';
-    var w=(f2.type==='rapid'?1.6:3);
-    var dash=(f2.type==='rapid'?'6 4':'');
-    svg.innerHTML+='<line x1="'+mapZ(f1.z)+'" y1="'+mapX(f1.x)+'" x2="'+mapZ(f2.z)+'" y2="'+mapX(f2.x)+'" stroke="'+color+'" stroke-width="'+w+'" stroke-dasharray="'+dash+'" stroke-linecap="round"/>';
+    var isCurrent = (i === simIdx);
+    var isRapid = (f2.type === 'rapid');
+    var stroke, w, dash;
+    if(isCurrent){
+      stroke = CCUR; w = curW; dash = isRapid ? '8 5' : '';
+    } else if(isRapid){
+      stroke = CRAP; w = doneW; dash = '5 4';
+    } else {
+      stroke = CDONE; w = doneW; dash = '';
+    }
+    var z1p=mapZ(f1.z), z2p=mapZ(f2.z);
+    var yTopA=mapYTop(f1.x), yTopB=mapYTop(f2.x);
+    var yBotA=mapYBot(f1.x), yBotB=mapYBot(f2.x);
+    // top mirror
+    svg.innerHTML+='<line x1="'+z1p+'" y1="'+yTopA+'" x2="'+z2p+'" y2="'+yTopB+'" stroke="'+stroke+'" stroke-width="'+w+'" stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';
+    // bottom mirror
+    svg.innerHTML+='<line x1="'+z1p+'" y1="'+yBotA+'" x2="'+z2p+'" y2="'+yBotB+'" stroke="'+stroke+'" stroke-width="'+w+'" stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+' opacity="0.85"/>';
   }
 
-  // Tool at current position — crisper insert + shank
+  // ----- Tool tip (red circle top + bottom, mirrored) -----
   if(simIdx<simFrames.length){
     var f=simFrames[simIdx];
-    var cx=mapZ(f.z), cy=mapX(f.x);
-    var Wi=parseFloat($('tl_wi').value)||3;
-    var tW=Math.max(6, Wi*scaleZ);
-    var tH=24;
-    // Insert (orange, sharp corners)
-    svg.innerHTML+='<rect x="'+(cx-tW/2)+'" y="'+(cy-tH)+'" width="'+tW+'" height="'+tH+'" fill="#ff8800" stroke="#1a0a00" stroke-width="1.5"/>';
-    // Shank (dark grey)
-    svg.innerHTML+='<rect x="'+(cx-tW/2-6)+'" y="'+(cy-tH-46)+'" width="'+(tW+12)+'" height="46" fill="#4a5058" stroke="#2a3038" stroke-width="1.2"/>';
-    // Bright red tip
-    svg.innerHTML+='<circle cx="'+cx+'" cy="'+cy+'" r="4.5" fill="#ff2020" stroke="#000" stroke-width="1.2"/>';
-    // Position readout
-    svg.innerHTML+='<rect x="'+(cx+12)+'" y="'+(cy-tH-58)+'" width="130" height="34" fill="#0f1720" stroke="#43d17a" stroke-width="1" rx="4"/>';
-    svg.innerHTML+='<text x="'+(cx+18)+'" y="'+(cy-tH-40)+'" fill="#ffb300" font-size="13" font-weight="700" font-family="monospace">X'+f.x.toFixed(3)+'</text>';
-    svg.innerHTML+='<text x="'+(cx+18)+'" y="'+(cy-tH-27)+'" fill="'+colors[f.type]+'" font-size="11" font-weight="700">Z'+f.z.toFixed(3)+' &#183; '+f.type+'</text>';
+    var tzp=mapZ(f.z);
+    var tyt=mapYTop(f.x), tyb=mapYBot(f.x);
+    svg.innerHTML+='<circle cx="'+tzp+'" cy="'+tyt+'" r="6" fill="'+CTIP+'" stroke="#fff" stroke-width="1.4"/>';
+    svg.innerHTML+='<circle cx="'+tzp+'" cy="'+tyb+'" r="6" fill="'+CTIP+'" stroke="#fff" stroke-width="1.4" opacity="0.85"/>';
   }
 
-  var statusMsg='Move '+simIdx+' / '+Math.max(0,simFrames.length-1);
-  if(simIdx<simFrames.length)statusMsg+=' &middot; '+simFrames[simIdx].type;
-  $('simStatus').innerHTML=statusMsg;
-  if($('simScrub'))$('simScrub').value=simIdx;
+  // ----- Text label at bottom (like turning sim) -----
+  var statusMsg;
+  if(simIdx<simFrames.length){
+    var fs=simFrames[simIdx];
+    statusMsg='Move '+simIdx+' / '+(simFrames.length-1)+'   \u00B7   X '+fs.x.toFixed(3)+'   \u00B7   Z '+fs.z.toFixed(3)+'   \u00B7   '+fs.type;
+  } else {
+    statusMsg='Move '+simIdx+' / '+(simFrames.length-1);
+  }
+  svg.innerHTML+='<text x="'+MG+'" y="'+(VH-14)+'" fill="#c2d0dc" font-size="14" font-weight="600" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">'+statusMsg+'</text>';
+
+  $('simStatus').textContent=statusMsg;
+  if($('simScrub')){ $('simScrub').max=Math.max(0,simFrames.length-1); $('simScrub').value=simIdx; }
 }
 
 function simPlay(){
