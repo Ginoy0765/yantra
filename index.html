@@ -2469,7 +2469,7 @@ function buildSimFrames(){
   var pr=parseFloat($('cs_pr').value)||0.3;
   var Wi=parseFloat($('tl_wi').value)||3;
   var offRef=$('tl_off_ref').value;
-  var offShift={L:-Wi/2, C:0, R:+Wi/2}[offRef];
+  var oShift={L:-Wi/2, C:0, R:+Wi/2}[offRef];
   var patOn=$('patOn').checked;
   var N=patOn?(parseInt($('patN').value)||1):1;
   var p2=parseFloat($('pat2').value)||0;
