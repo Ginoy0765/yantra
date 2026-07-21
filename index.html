@@ -792,6 +792,20 @@
     </div>
     <label>Plunge feed override (mm/rev, blank = use rough feed)</label>
     <input id="cs_pf" type="number" step="0.001" placeholder="0.05">
+    <div class="row2">
+      <div><label>Retract feed (mm/rev)</label><input id="cs_rf" type="number" step="0.001" value="0.15" oninput="gv_recalc()"></div>
+      <div><label>Retract rate (%)</label><input id="cs_rrate" type="number" step="5" value="200" oninput="gv_recalc()"></div>
+    </div>
+    <div class="hint">Faster retract feed shortens cycle time. Retract rate over 100% uses G1 with proportionally higher feed than rough.</div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+      <label style="margin-top:0">Ramping strategy parameters</label>
+      <div class="row3">
+        <div><label>Ramp angle (&deg;)</label><input id="cs_rampang" type="number" step="0.5" value="15" oninput="gv_recalc()"></div>
+        <div><label>Ramp depth / pass (mm)</label><input id="cs_rampdoc" type="number" step="0.01" value="0.5" oninput="gv_recalc()"></div>
+        <div><label>Ramp direction</label><select id="cs_rampdir" onchange="gv_recalc()"><option value="in">Into groove (recommended)</option><option value="both">Zig-zag both ways</option></select></div>
+      </div>
+      <div class="hint">Only used when Ramping strategy is selected. Shallow angle (10-20&deg;) with small DOC reduces radial force on slender parts.</div>
+    </div>
   </div></div>
 
   <!-- ============ 8. MACHINE / SETUP ============ -->
@@ -2343,44 +2357,66 @@ function pluneRough(mv, xTop, xBot, z, safeX, pd, pr, F, dwell){
   mv.push({t:'g0', X:safeX});
 }
 
-// Finish pass: A -> B -> C -> D -> return, with corner treatments
+// Finish pass: walk A -> B -> C -> D with proper corner-treatment G-code
+// Corner geometry (with Z convention face=0 and z1 closer to face than z2):
+//   A = (D1, z1)  OD near face (approach corner)
+//   B = (D2, z1)  ID near face
+//   C = (D2, z2)  ID far
+//   D = (D1, z2)  OD far
 function finishPass(mv, D1, D2, z1, z2, safeX, F, c, dwell){
-  // Approach point above corner A
+  // Rapid approach above and outside corner A
   mv.push({t:'g0', X:D1+2, Z:z1+1});
   mv.push({t:'g0', X:D1+0.5});
-  // Move to just above A
-  mv.push({t:'g1', X:D1, Z:z1, F:F});
-  // Corner A: top-left, going down the left wall from A to B
-  cornerEmit(mv, {x:D1,z:z1}, 'down', 'left', c.A, F);
-  // Wall A->B (subtract corner sizes)
-  var Bx = D2;
-  mv.push({t:'g1', X:Bx});
-  // Corner B: bottom-left
-  cornerEmit(mv, {x:D2,z:z1}, 'right', 'down', c.B, F);
-  // Floor B->C
-  mv.push({t:'g1', Z:z2});
-  // Corner C: bottom-right
-  cornerEmit(mv, {x:D2,z:z2}, 'up', 'right', c.C, F);
-  // Wall C->D
-  mv.push({t:'g1', X:D1});
-  // Corner D: top-right
-  cornerEmit(mv, {x:D1,z:z2}, 'left', 'up', c.D, F);
+
+  // ----- Enter at A -----
+  var A=c.A;
+  var enterA_z = z1 + ((A.t!=='Sharp' && A.s1>0) ? A.s1 : 0);
+  mv.push({t:'g1', X:D1, Z:enterA_z, F:F});
+  var exitA_x = D1;   // X after corner A (start of wall)
+  if(A.t==='Chamfer' && A.s1>0){
+    exitA_x = D1 - 2*A.s2;
+    mv.push({t:'g1', X:exitA_x, Z:z1, F:F, cmt:'Chamfer A '+A.s1+'x'+A.s2});
+  } else if(A.t==='Radius' && A.s1>0){
+    exitA_x = D1 - 2*A.s1;
+    mv.push({t:'g3', X:exitA_x, Z:z1, R:A.s1, F:F, cmt:'Radius A r='+A.s1});
+  }
+
+  // ----- Feed down wall (A->B) up to corner B entry point -----
+  var B=c.B;
+  var enterB_x = (B.t!=='Sharp' && B.s1>0) ? (D2 + 2*(B.t==='Chamfer'?B.s2:B.s1)) : D2;
+  if(enterB_x !== exitA_x) mv.push({t:'g1', X:enterB_x, F:F});
+  if(B.t==='Chamfer' && B.s1>0){
+    mv.push({t:'g1', X:D2, Z:z1 - B.s1, F:F, cmt:'Chamfer B '+B.s1+'x'+B.s2});
+  } else if(B.t==='Radius' && B.s1>0){
+    mv.push({t:'g3', X:D2, Z:z1 - B.s1, R:B.s1, F:F, cmt:'Radius B r='+B.s1});
+  }
+
+  // ----- Feed along floor (B->C) up to corner C entry point -----
+  var C=c.C;
+  var enterC_z = (C.t!=='Sharp' && C.s1>0) ? (z2 + C.s1) : z2;
+  mv.push({t:'g1', Z:enterC_z, F:F});
+  if(C.t==='Chamfer' && C.s1>0){
+    mv.push({t:'g1', X:D2 + 2*C.s2, Z:z2, F:F, cmt:'Chamfer C '+C.s1+'x'+C.s2});
+  } else if(C.t==='Radius' && C.s1>0){
+    mv.push({t:'g3', X:D2 + 2*C.s1, Z:z2, R:C.s1, F:F, cmt:'Radius C r='+C.s1});
+  }
+
+  // ----- Feed up wall (C->D) up to corner D entry point -----
+  var D_c=c.D;
+  var enterD_x = (D_c.t!=='Sharp' && D_c.s1>0) ? (D1 - 2*(D_c.t==='Chamfer'?D_c.s2:D_c.s1)) : D1;
+  mv.push({t:'g1', X:enterD_x, F:F});
+  if(D_c.t==='Chamfer' && D_c.s1>0){
+    mv.push({t:'g1', X:D1, Z:z2 + D_c.s1, F:F, cmt:'Chamfer D '+D_c.s1+'x'+D_c.s2});
+  } else if(D_c.t==='Radius' && D_c.s1>0){
+    mv.push({t:'g3', X:D1, Z:z2 + D_c.s1, R:D_c.s1, F:F, cmt:'Radius D r='+D_c.s1});
+  }
+
   if(dwell>0)mv.push({t:'dwell', p:dwell});
   mv.push({t:'g0', X:safeX});
 }
 
-function cornerEmit(mv, pt, dirOut, dirIn, corner, F){
-  // Simplified: only emit corner if not sharp
-  if(corner.t==='Sharp' || corner.s1<=0)return;
-  if(corner.t==='Radius'){
-    // For a simple radius corner - use G02/G03 with I,K
-    // This is a placeholder that emits the arc symbolically
-    mv.push({t:'cmt', txt:'Corner '+corner.t+' r='+corner.s1});
-  } else if(corner.t==='Chamfer'){
-    // Chamfer = single G01 diagonal move to opposite side
-    mv.push({t:'cmt', txt:'Corner '+corner.t+' '+corner.s1+'x'+corner.s2});
-  }
-}
+// Placeholder retained for backward compatibility with any old callers
+function cornerEmit(mv, pt, dirOut, dirIn, corner, F){}
 
 // Emit moves as G-code strings
 function emitMoves(mv, ctrl){
@@ -2403,6 +2439,7 @@ function emitMoves(mv, ctrl){
       if(m.X!==undefined)s+=' X'+fmt(m.X);
       if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
       if(m.F!==undefined)s+=' F'+m.F;
+      if(m.cmt) s+=' '+cmtOpen+' '+m.cmt+' '+cmtClose;
       lines.push(s);
     } else if(m.t==='g2'||m.t==='g3'){
       var s=(m.t==='g2'?'G02':'G03');
@@ -2412,6 +2449,7 @@ function emitMoves(mv, ctrl){
       if(m.I!==undefined)s+=' I'+fmt(m.I);
       if(m.K!==undefined)s+=' K'+fmt(m.K);
       if(m.F!==undefined)s+=' F'+m.F;
+      if(m.cmt) s+=' '+cmtOpen+' '+m.cmt+' '+cmtClose;
       lines.push(s);
     } else if(m.t==='dwell'){
       lines.push('G04 P'+(m.p*1000).toFixed(0));
