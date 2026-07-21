@@ -562,6 +562,38 @@
 
   </div></div>
 
+
+  <!-- ============ CORNER TREATMENT (below GEOMETRY) ============ -->
+  <div class="sec open"><div class="st" onclick="gv_toggle(this)">CORNER TREATMENT <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="hint" style="margin-bottom:4px">Set the treatment for each corner independently. Type + Size on each row applies to that specific corner.</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="A_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="A_s1" type="number" step="0.01" value="0" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="A_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to A</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="B_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="B_s1" type="number" step="0.01" value="0.2" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="B_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to B</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="C_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="C_s1" type="number" step="0.01" value="0.2" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="C_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to C</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="D_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="D_s1" type="number" step="0.01" value="0" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="D_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to D</button>
+    </div>
+    <label class="chkrow" style="margin-top:14px"><input type="checkbox" id="indepLegs" onchange="gv_recalc()"> Independent chamfer legs (Z-leg &ne; X-leg)</label>
+    <div class="hint" style="margin-top:6px">When on, each row shows a Size 2 field for the X-leg (asymmetric chamfer). Individual corner points can be tweaked further in the PROFILE section below.</div>
+  </div></div>
+
   <!-- ============ 3. TOOL ============ -->
   <div class="sec"><div class="st" onclick="gv_toggle(this)">TOOL <span class="caret">&#9656;</span></div><div class="sb">
     <div class="row2">
@@ -620,45 +652,6 @@
         <label>Z</label>
         <input id="D_z" type="number" step="0.001" value="4" oninput="gv_pointEdit('D')">
       </div>
-    </div>
-    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
-      <h4 style="margin:0 0 8px;color:var(--acc);font-size:12.5px;letter-spacing:.5px">CORNER TREATMENT</h4>
-      <label class="chkrow" style="margin:8px 0 0"><input type="checkbox" id="indepLegs" onchange="gv_recalc()"> Independent chamfer legs (Z-leg &ne; X-leg)</label>
-      <div class="row4" style="margin-top:10px">
-        <div class="cornerBox"><h4>A treatment</h4>
-          <label style="margin-top:0">Type</label>
-          <select id="A_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-          <label>Size 1 (Z-leg / R)</label>
-          <input id="A_s1" type="number" step="0.01" value="0" oninput="gv_recalc()">
-          <label class="indepOnly">Size 2 (X-leg)</label>
-          <input id="A_s2" class="indepOnly" type="number" step="0.01" value="0" oninput="gv_recalc()">
-        </div>
-        <div class="cornerBox"><h4>B treatment</h4>
-          <label style="margin-top:0">Type</label>
-          <select id="B_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-          <label>Size 1 (Z-leg / R)</label>
-          <input id="B_s1" type="number" step="0.01" value="0.2" oninput="gv_recalc()">
-          <label class="indepOnly">Size 2 (X-leg)</label>
-          <input id="B_s2" class="indepOnly" type="number" step="0.01" value="0" oninput="gv_recalc()">
-        </div>
-        <div class="cornerBox"><h4>C treatment</h4>
-          <label style="margin-top:0">Type</label>
-          <select id="C_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-          <label>Size 1 (Z-leg / R)</label>
-          <input id="C_s1" type="number" step="0.01" value="0.2" oninput="gv_recalc()">
-          <label class="indepOnly">Size 2 (X-leg)</label>
-          <input id="C_s2" class="indepOnly" type="number" step="0.01" value="0" oninput="gv_recalc()">
-        </div>
-        <div class="cornerBox"><h4>D treatment</h4>
-          <label style="margin-top:0">Type</label>
-          <select id="D_t" onchange="gv_recalc()"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-          <label>Size 1 (Z-leg / R)</label>
-          <input id="D_s1" type="number" step="0.01" value="0" oninput="gv_recalc()">
-          <label class="indepOnly">Size 2 (X-leg)</label>
-          <input id="D_s2" class="indepOnly" type="number" step="0.01" value="0" oninput="gv_recalc()">
-        </div>
-      </div>
-      <div class="hint">Corner treatment is independent per corner. Insert offset origin (L/C/R) is set in the TOOL section.</div>
     </div>
 
     <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:8px">
