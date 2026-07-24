@@ -2244,7 +2244,9 @@ function generate(P){
       offRef:($('tl_off_ref')?$('tl_off_ref').value:'C'),
       patOn:$('patOn').checked, patN:(parseInt($('patN').value)||1), pat2:(parseFloat($('pat2').value)||0), patDir:(parseInt($('patDir').value)||-1),
       patMode:(typeof patMode!=='undefined'?patMode:'pitch'),
-      strat:strat, rf:rf, peck:($('cs_peck')?$('cs_peck').checked:true), incr:($('cs_incr')?$('cs_incr').checked:false),
+      strat:(function(){var p=document.querySelector('#stratPills .pill.on');return p?p.getAttribute('data-v'):'single';})(),
+      rf:(function(){var p=document.querySelector('#rfPills .pill.on');return p?p.getAttribute('data-v'):'both';})(),
+      peck:($('cs_peck')?$('cs_peck').checked:true), incr:($('cs_incr')?$('cs_incr').checked:false),
       tipPos:($('tl_tip')?$('tl_tip').value:'3'), compSet:($('tl_comp')?$('tl_comp').value:'auto'),
       corners:(function(){var c={};['A','B','C','D'].forEach(function(k){c[k]={t:$(k+'_t').value,s1:parseFloat($(k+'_s1').value)||0,s2:$('indepLegs').checked?(parseFloat($(k+'_s2').value)||0):(parseFloat($(k+'_s1').value)||0)};});return c;})()
     };
