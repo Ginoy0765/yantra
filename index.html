@@ -2291,6 +2291,7 @@ function generate(P){
         else if(origin==='L'){ zp=zLeftWall+Wi/2; }              // left edge to left wall
         else if(origin==='R'){ zp=zRightWall-Wi/2; }             // right edge to right wall
         else { zp=(zLeftWall+zRightWall)/2; }                    // center
+        zp -= Wi/2;   // emit LEFT-CORNER reference (matches finish); tool offset = left corner
         mv.push({t:'g0', Z:zp});
         pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell, peck);
       } else if(strat==='multi'){
@@ -2305,8 +2306,8 @@ function generate(P){
         for(var iP=0;iP<N_p;iP++)centers.push(zCFirst+iP*actualStep);
         mv.push({t:'cmt', txt:N_p+' plunge(s), step '+actualStep.toFixed(3)+' mm between insert centers'});
         centers.forEach(function(zc){
-          // centers already clamped inside the walls (zLeftWall+Wi/2 .. zRightWall-Wi/2); no offset shift (would gouge)
-          var zp=zc;
+          // centres clamped inside the walls; emit LEFT-CORNER reference (centre - Wi/2) to match finish
+          var zp=zc - Wi/2;
           mv.push({t:'g0', Z:zp});
           pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell, peck);
         });
@@ -2314,7 +2315,7 @@ function generate(P){
         // Plunge one end first, then turn to opposite. Practical Machinist rule: turn one direction only.
         // Start-side plunge insert-center at (zLeftWall + Wi/2)
         var zcStart=zLeftWall+Wi/2, zcEnd=zRightWall-Wi/2;
-        var zpStart=zcStart, zpEnd=zcEnd;   // wall-clamped; no offset shift (would gouge)
+        var zpStart=zcStart-Wi/2, zpEnd=zcEnd-Wi/2;   // LEFT-CORNER reference (matches finish)
         mv.push({t:'cmt', txt:'Plunge one end (leaves right shoulder for turn)'});
         mv.push({t:'g0', Z:zpStart});
         pluneRough(mv, D1, D2+0.2, zpStart, safeX, pd, pr, Fr, dwell, peck);
@@ -2327,7 +2328,7 @@ function generate(P){
       } else if(strat==='ramp'){
         // Ramp entry — simultaneous X-Z at an angle, then clean the bottom
         var zcStart=zLeftWall+Wi/2, zcEnd=zRightWall-Wi/2;
-        var zpStart=zcStart, zpEnd=zcEnd;   // wall-clamped; no offset shift (would gouge)
+        var zpStart=zcStart-Wi/2, zpEnd=zcEnd-Wi/2;   // LEFT-CORNER reference (matches finish)
         mv.push({t:'cmt', txt:'Ramp entry (simultaneous X-Z)'});
         mv.push({t:'g0', Z:zpStart});
         mv.push({t:'g1', X:D2, Z:zpEnd, F:Fr});
@@ -2336,8 +2337,8 @@ function generate(P){
       }
     }
     if(doFin){
-      // Fanuc TNRC finish: build the true finished profile and compute the nose-centre path.
-      finishTNRC(mv, D1, D2, z1g, z2g, corners, rIns, safeX, Ff);
+      // Fanuc TNRC + grooving flank overlay: gouge-safe finish for the width-Wi insert.
+      finishTNRC(mv, D1, D2, z1g, z2g, corners, rIns, Wi, safeX, Ff);
     }
   }
   mv.push({t:'g0', X:safeX});
@@ -2434,27 +2435,78 @@ var TNRC=(function(){
     path.push({pt:o[o.length-1].p2,seg:o[o.length-1]});
     return path;
   }
-  return {run:run};
+  // per-block offset (flank overlay): each block carries .off (0=flank, R=nose)
+  function run2(blocks){
+    var o=blocks.map(function(b){return off(b,b.off);}),path=[{pt:o[0].p1}];
+    for(var i=0;i<blocks.length-1;i++){
+      var c=cr(dE(blocks[i]),dS(blocks[i+1])),corner=blocks[i].p2;
+      if(c<-EPS){path.push({pt:isect(o[i],o[i+1],add(corner,mul(rn(dE(blocks[i])),blocks[i].off)))});}
+      else if(c>EPS){path.push({pt:o[i].p2});path.push({pt:o[i+1].p1});}
+      else {path.push({pt:o[i].p2});}
+    }
+    path.push({pt:o[o.length-1].p2});
+    return path;
+  }
+  // per-block offset, returns emittable moves (lines + arcs with G02/G03 + offset radius)
+  function run2moves(blocks){
+    var o=blocks.map(function(b){return off(b,b.off);});
+    var startV=[],endV=[],trans=[];
+    for(var i=0;i<blocks.length;i++){startV[i]=o[i].p1;endV[i]=o[i].p2;}
+    for(var i=0;i<blocks.length-1;i++){
+      var c=cr(dE(blocks[i]),dS(blocks[i+1]));
+      if(c<-EPS){var ip=isect(o[i],o[i+1],add(blocks[i].p2,mul(rn(dE(blocks[i])),blocks[i].off)));endV[i]=ip;startV[i+1]=ip;trans[i]=null;}
+      else if(c>EPS){trans[i]={pt:o[i+1].p1};}
+      else {trans[i]=null;startV[i+1]=o[i].p2;}
+    }
+    var moves=[],start=startV[0];
+    for(var i=0;i<blocks.length;i++){
+      if(blocks[i].type==='line')moves.push({code:'g1',to:endV[i]});
+      else moves.push({code:blocks[i].cw?'g2':'g3',to:endV[i],R:o[i].rad});
+      if(i<blocks.length-1&&trans[i])moves.push({code:'g1',to:trans[i].pt});
+    }
+    return {start:start,moves:moves};
+  }
+  return {run:run, run2:run2, run2moves:run2moves};
 })();
 
-// Build the finished groove profile as line/arc blocks (cut order near->far), then TNRC it.
-// Round-nose model. Mouth chamfers (A/D) supported as lines; base sharp/nose-formed.
-function finishTNRC(mv, D1, D2, Z1, Z2, corners, nr, safeX, F){
+// Grooving finish = Fanuc TNRC + flank overlay (gouge-safe for a width-Wi grooving insert).
+// Straight walls/floor are flank-cut (offset 0) with the left-corner reference shift
+// (-Wi on the near/right-edge half, 0 on the far/left-edge half); mouth chamfers/rounds are
+// nose-cut (offset R). Base corner is programmed sharp -> the nose forms an R fillet.
+function finishTNRC(mv, D1, D2, Z1, Z2, corners, nr, Wi, safeX, F){
   var rOD=D1/2, rFL=D2/2, zN=Math.max(Z1,Z2), zF=Math.min(Z1,Z2);
   var A=corners.A, D=corners.D;
-  var pts=[];
-  if(A.t==='Chamfer'&&A.s1>0){ pts.push([zN+A.s1,rOD]); pts.push([zN,rOD-A.s1]); } else { pts.push([zN,rOD]); }
-  pts.push([zN,rFL]);           // near wall bottom (base sharp / nose-formed)
-  pts.push([zF,rFL]);           // floor to far base
-  if(D.t==='Chamfer'&&D.s1>0){ pts.push([zF,rOD-D.s1]); pts.push([zF-D.s1,rOD]); } else { pts.push([zF,rOD]); }
-  var blocks=[];
-  for(var i=0;i<pts.length-1;i++) blocks.push({type:'line',p1:{z:pts[i][0],x:pts[i][1]},p2:{z:pts[i+1][0],x:pts[i+1][1]}});
-  var path=TNRC.run(blocks, nr);
-  mv.push({t:'cmt', txt:'Finish - Fanuc TNRC nose-centre path (R'+nr.toFixed(2)+', no G41/G42)'});
-  var v0=path[0].pt;
+  var V=[], S=[];
+  function vtx(z,x,reg){ V.push({z:z,x:x,reg:reg}); return V.length-1; }
+  // ---- NEAR MOUTH (A): Radius -> arc, Chamfer -> line(nose), Sharp -> corner point ----
+  var wallTop;
+  if(A.t==='Radius'&&A.s1>0){ var Ra=A.s1; var a=vtx(zN+Ra,rOD,'near'), b=vtx(zN,rOD-Ra,'near'); S.push({i:a,j:b,type:'arc',cz:zN+Ra,cx:rOD-Ra,cw:false,off:nr}); wallTop=b; }
+  else if(A.t==='Chamfer'&&A.s1>0){ var ch=A.s1; var a=vtx(zN+ch,rOD,'near'), b=vtx(zN,rOD-ch,'near'); S.push({i:a,j:b,type:'line',off:nr}); wallTop=b; }
+  else { wallTop=vtx(zN,rOD,'near'); }
+  // ---- NEAR WALL (flank) -> NEAR BASE (sharp; nose fillets) ----
+  var baseNear=vtx(zN,rFL,'near'); S.push({i:wallTop,j:baseNear,type:'line',off:0});
+  // ---- FLOOR (flank) ----
+  var baseFar=vtx(zF,rFL,'far'); S.push({i:baseNear,j:baseFar,type:'line',off:0});
+  // ---- FAR WALL (flank) -> FAR MOUTH (D) ----
+  if(D.t==='Radius'&&D.s1>0){ var Rd=D.s1; var w=vtx(zF,rOD-Rd,'far'), d2=vtx(zF-Rd,rOD,'far'); S.push({i:baseFar,j:w,type:'line',off:0}); S.push({i:w,j:d2,type:'arc',cz:zF-Rd,cx:rOD-Rd,cw:false,off:nr}); }
+  else if(D.t==='Chamfer'&&D.s1>0){ var chd=D.s1; var w=vtx(zF,rOD-chd,'far'), d2=vtx(zF-chd,rOD,'far'); S.push({i:baseFar,j:w,type:'line',off:0}); S.push({i:w,j:d2,type:'line',off:nr}); }
+  else { var top=vtx(zF,rOD,'far'); S.push({i:baseFar,j:top,type:'line',off:0}); }
+  // ---- left-corner reference shift (near -Wi, far 0) ----
+  V.forEach(function(v){ v.zs = v.z + (v.reg==='near'? -Wi : 0); });
+  var blocks=S.map(function(s){
+    var p1={z:V[s.i].zs,x:V[s.i].x}, p2={z:V[s.j].zs,x:V[s.j].x};
+    if(s.type==='line') return {type:'line',p1:p1,p2:p2,off:s.off};
+    var cz=s.cz + (V[s.i].reg==='near'? -Wi : 0);
+    return {type:'arc',p1:p1,p2:p2,center:{z:cz,x:s.cx},cw:s.cw,off:s.off};
+  });
+  var seq=TNRC.run2moves(blocks);
+  mv.push({t:'cmt', txt:'Finish - Fanuc TNRC + flank overlay (nose R'+nr.toFixed(2)+', G02/G03 arcs, no G41/G42)'});
   mv.push({t:'g0', X:safeX});
-  mv.push({t:'g0', X:2*v0.x, Z:v0.z});
-  for(var k=1;k<path.length;k++){ var v=path[k].pt; mv.push({t:'g1', X:2*v.x, Z:v.z, F:F}); }
+  mv.push({t:'g0', X:2*seq.start.x, Z:seq.start.z});
+  seq.moves.forEach(function(m){
+    if(m.code==='g1') mv.push({t:'g1', X:2*m.to.x, Z:m.to.z, F:F});
+    else mv.push({t:m.code, X:2*m.to.x, Z:m.to.z, R:m.R, F:F});
+  });
   mv.push({t:'g0', X:safeX});
 }
 
