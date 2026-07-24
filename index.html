@@ -556,53 +556,6 @@
     </div>
   </div></div>
 
-  <!-- ============ 2. GEOMETRY ============ -->
-  <div class="sec open"><div class="st" onclick="gv_toggle(this)">GEOMETRY <span class="caret">&#9656;</span></div><div class="sb">
-    <div class="row2">
-      <div><label>Top dia D1 (mm)</label><input id="D1" type="number" value="32" step="0.001" oninput="gv_recalc()"></div>
-      <div><label>Bottom dia D2 (mm)</label><input id="D2" type="number" value="26" step="0.001" oninput="gv_recalc()"></div>
-    </div>
-    <div class="row2">
-      <div><label>Start Z1 (mm, face = 0)</label><input id="Z1" type="number" value="-4" step="0.001" oninput="gv_recalc()"></div>
-      <div><label>End Z2 (mm)</label><input id="Z2" type="number" value="-10" step="0.001" oninput="gv_recalc()"></div>
-    </div>
-    <div class="hint">Width = |Z1&minus;Z2| = <span id="wCalc">6</span> mm &nbsp;&middot;&nbsp; Depth = (D1&minus;D2)/2 = <span id="dCalc">3</span> mm
-    <br>Z convention: <b>face = 0</b>, towards chuck is <b>&minus;Z</b>, away from face is <b>+Z</b>. All Z values in a normal turning setup are negative.</div>
-
-  </div></div>
-
-
-  <!-- ============ CORNER TREATMENT (below GEOMETRY) ============ -->
-  <div class="sec open"><div class="st" onclick="gv_toggle(this)">CORNER TREATMENT <span class="caret">&#9656;</span></div><div class="sb">
-    <div class="hint" style="margin-bottom:4px">Set the treatment for each corner independently. Type + Size on each row applies to that specific corner.</div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-      <select id="A_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-      <input id="A_s1" type="number" step="0.01" value="0" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <input id="A_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to A</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-      <select id="B_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-      <input id="B_s1" type="number" step="0.01" value="0.2" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <input id="B_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to B</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-      <select id="C_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-      <input id="C_s1" type="number" step="0.01" value="0.2" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <input id="C_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to C</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-      <select id="D_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
-      <input id="D_s1" type="number" step="0.01" value="0" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <input id="D_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
-      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to D</button>
-    </div>
-    <label class="chkrow" style="margin-top:14px"><input type="checkbox" id="indepLegs" onchange="gv_recalc()"> Independent chamfer legs (Z-leg &ne; X-leg)</label>
-    <div class="hint" style="margin-top:6px">When on, each row shows a Size 2 field for the X-leg (asymmetric chamfer). Individual corner points can be tweaked further in the PROFILE section below.</div>
-  </div></div>
-
   <!-- ============ 3. TOOL ============ -->
   <div class="sec"><div class="st" onclick="gv_toggle(this)">TOOL <span class="caret">&#9656;</span></div><div class="sb">
     <div class="row2">
@@ -657,8 +610,53 @@
     <div class="hint">YANTRA shifts programmed Z coordinates so groove wall positions land exactly where you specified, regardless of where you touched off the tool. Fanuc, Siemens, Mazatrol, and Heidenhain all handle this the same way &mdash; whichever edge you touched off, the offset table stores that as the reference point.</div>
   </div></div>
 
-  <!-- ============ 4. PROFILE ============ -->
-  <div class="sec open"><div class="st" onclick="gv_toggle(this)">PROFILE <span class="badge live" id="modeBadge">auto</span> <span class="caret">&#9656;</span></div><div class="sb">
+  
+  <!-- ============ GROOVE ============ -->
+  <div class="sec open"><div class="st" onclick="gv_toggle(this)">GROOVE <span class="badge live" id="modeBadge">auto</span> <span class="caret">&#9656;</span></div><div class="sb">
+    <div class="row2">
+      <div><label>Top dia D1 (mm)</label><input id="D1" type="number" value="32" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>Bottom dia D2 (mm)</label><input id="D2" type="number" value="26" step="0.001" oninput="gv_recalc()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Start Z1 (mm, face = 0)</label><input id="Z1" type="number" value="-4" step="0.001" oninput="gv_recalc()"></div>
+      <div><label>End Z2 (mm)</label><input id="Z2" type="number" value="-10" step="0.001" oninput="gv_recalc()"></div>
+    </div>
+    <div class="hint">Width = |Z1&minus;Z2| = <span id="wCalc">6</span> mm &nbsp;&middot;&nbsp; Depth = (D1&minus;D2)/2 = <span id="dCalc">3</span> mm
+    <br>Z convention: <b>face = 0</b>, towards chuck is <b>&minus;Z</b>, away from face is <b>+Z</b>. All Z values in a normal turning setup are negative.</div>
+
+  
+    <div style="font-size:11px;letter-spacing:.6px;color:#8aa2b4;margin:18px 2px 6px;font-weight:700;border-top:1px solid #1e2d3a;padding-top:12px">CORNER TREATMENT</div>
+
+    <div class="hint" style="margin-bottom:4px">Set the treatment for each corner independently. Type + Size on each row applies to that specific corner.</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="A_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="A_s1" type="number" step="0.01" value="0" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="A_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to A</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="B_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="B_s1" type="number" step="0.01" value="0.2" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="B_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to B</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="C_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="C_s1" type="number" step="0.01" value="0.2" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="C_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to C</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <select id="D_t" onchange="gv_recalc()" style="flex:1;min-width:110px"><option>Sharp</option><option>Chamfer</option><option>Radius</option></select>
+      <input id="D_s1" type="number" step="0.01" value="0" placeholder="Size 1" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <input id="D_s2" class="indepOnly" type="number" step="0.01" value="0" placeholder="Size 2 (X)" oninput="gv_recalc()" style="flex:1;max-width:110px">
+      <button class="pbtn" onclick="gv_recalc()" style="padding:9px 18px;white-space:nowrap;min-width:100px">Apply to D</button>
+    </div>
+    <label class="chkrow" style="margin-top:14px"><input type="checkbox" id="indepLegs" onchange="gv_recalc()"> Independent chamfer legs (Z-leg &ne; X-leg)</label>
+    <div class="hint" style="margin-top:6px">When on, each row shows a Size 2 field for the X-leg (asymmetric chamfer). Individual corner points can be tweaked further in the PROFILE section below.</div>
+  
+    <div style="font-size:11px;letter-spacing:.6px;color:#8aa2b4;margin:18px 2px 6px;font-weight:700;border-top:1px solid #1e2d3a;padding-top:12px">PROFILE POINTS / PATTERN</div>
+
     <div class="hint" style="margin-top:6px"><b>A</b> top-left &middot; <b>B</b> bottom-left &middot; <b>C</b> bottom-right &middot; <b>D</b> top-right<br>Each corner has its own X (diameter) and Z entry &mdash; edit directly for asymmetric grooves, or leave and use GEOMETRY / modifiers to auto-fill. Changes flow immediately into the points table below.</div>
     <div class="row4" style="margin-top:8px">
       <div class="cornerBox"><h4>A &mdash; top-L</h4>
@@ -732,9 +730,22 @@
       </table>
       <div class="hint" id="ptStatus" style="margin-top:6px"></div>
     </div>
+  
+    <div style="font-size:11px;letter-spacing:.6px;color:#8aa2b4;margin:18px 2px 6px;font-weight:700;border-top:1px solid #1e2d3a;padding-top:12px">PREVIEW</div>
+
+    <div class="previewbox">
+      <canvas id="gv_preview" width="380" height="300" style="touch-action:none;width:100%;height:min(46vh,340px);display:block;background:#0a1118;border:1px solid #293a4d;border-radius:10px"></canvas>
+      <div style="text-align:right;margin-top:6px">
+        <button class="pbtn" onclick="gvView.z=1;gvView.ox=0;gvView.oy=0;gvDraw()" style="padding:6px 14px;font-size:12px">Reset view</button>
+        <span class="hint" style="margin-left:10px">Scroll to zoom &middot; drag to pan &middot; pinch on mobile</span>
+      </div>
+    </div>
+    <div class="hint">Longitudinal cross-section &mdash; centerline dashed. Grey shapes = groove copies.</div>
+  
   </div></div>
 
-  <!-- ============ 5. PARAMETERS (cutting) ============ -->
+
+  <!-- ============ PARAMETERS ============ -->
   <div class="sec"><div class="st" onclick="gv_toggle(this)">PARAMETERS <span class="caret">&#9656;</span></div><div class="sb">
     <div class="row3">
       <div><label>Vc (m/min)</label><input id="p_vc" type="number" value="120" step="1" oninput="gv_recalc()"></div>
@@ -753,10 +764,9 @@
       <div><label>Dwell at bottom (rev)</label><input id="p_dw" type="number" value="0.5" step="0.1" oninput="gv_recalc()"></div>
       <div><label>Coolant</label><select id="p_cool" onchange="gv_recalc()"><option>M08 flood</option><option>M07 mist</option><option>M09 off</option></select></div>
     </div>
-  </div></div>
+  
+    <div style="font-size:11px;letter-spacing:.6px;color:#8aa2b4;margin:18px 2px 6px;font-weight:700;border-top:1px solid #1e2d3a;padding-top:12px">ROUGH / FINISH STRATEGY</div>
 
-  <!-- ============ STRATEGY + ROUGH/FINISH (top strip) ============ -->
-  <div class="sec"><div class="st" onclick="gv_toggle(this)">STRATEGY <span class="caret">&#9656;</span></div><div class="sb">
     <h3 style="margin:10px 0 4px">ROUGHING STRATEGY</h3>
     <div class="pills3" id="stratPills">
       <div class="pill on" data-v="single">Single plunge</div>
@@ -776,9 +786,10 @@
       <div class="pill" data-v="finish">Finish only</div>
       <div class="pill on" data-v="both">Rough + Finish</div>
     </div>
+  
   </div></div>
 
-  <!-- ============ 6. POSITIONING (approach/retract) ============ -->
+<!-- ============ 6. POSITIONING (approach/retract) ============ -->
   <div class="sec"><div class="st" onclick="gv_toggle(this)">POSITIONING <span class="caret">&#9656;</span></div><div class="sb">
     <div class="row2">
       <div><label>Safe X (mm above OD)</label><input id="pos_sx" type="number" value="5" step="0.1" oninput="gv_recalc()"></div>
@@ -806,6 +817,8 @@
         <div><label>Retract per peck (mm)</label><input id="cs_pr" type="number" value="0.3" step="0.05" oninput="gv_recalc()"></div>
       </div>
     </div>
+    <label class="chkrow"><input type="checkbox" id="cs_incr" onchange="gv_recalc()"> Incremental output (U/W after start point)</label>
+    <div class="hint">First positioning move stays absolute (X/Z); all following moves are emitted as incremental U/W deltas. Fanuc-style controls only &mdash; Siemens/Heidenhain stay absolute.</div>
     <label class="chkrow"><input type="checkbox" id="cs_cb" onchange="gv_recalc()"> Chip-break interrupts</label>
     <div id="cbBox" style="display:none;margin-left:24px">
       <div class="row2">
@@ -853,18 +866,6 @@
     <input id="ms_tcp" type="text" value="G28 U0 W0">
   </div></div>
 
-  <!-- ============ VISUAL PREVIEW ============ -->
-  <div class="sec open"><div class="st" onclick="gv_toggle(this)">PREVIEW <span class="caret">&#9656;</span></div><div class="sb">
-    <div class="previewbox">
-      <svg id="prev" viewBox="0 0 620 260" style="width:100%;height:auto;display:block;cursor:grab" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div style="text-align:right;margin-top:6px">
-        <button class="pbtn" onclick="gv_resetZoom()" style="padding:6px 14px;font-size:12px">Reset view</button>
-        <span class="hint" style="margin-left:10px">Scroll to zoom &middot; drag to pan &middot; pinch on mobile</span>
-      </div>
-    </div>
-    <div class="hint">Longitudinal cross-section &mdash; centerline dashed. Grey shapes = groove copies.</div>
-  </div></div>
-
   <!-- ============ GENERATE + OUTPUT ============ -->
   <button class="genbtn" onclick="gv_generate()">&#9881; GENERATE G-CODE</button>
 
@@ -873,7 +874,7 @@
       <div class="gcodehead"><span class="cyc" id="cycLabel">Cycle: -</span></div>
       <div class="gcode" id="gcode"></div>
       <div class="postbtns">
-        <button class="pbtn primary" onclick="gv_toggleSim()">&#9654; Simulate (full screen)</button>
+        <button class="pbtn primary" onclick="gvSim()">&#9654; Simulate (full screen)</button>
         <button class="pbtn save" onclick="gv_saveProg()">&#128190; Save</button>
         <button class="pbtn" onclick="gv_copyGcode()">&#128203; Copy</button>
       </div>
@@ -1137,6 +1138,8 @@ function ppUndoUI(){var u=$('pp_undo'),r=$('pp_redo');var cu=ppHistI>0,cr=ppHist
 var ppCur=null,ppMap=null,ppAdded=false,ppLock=false,ppCarry=null;
 function ppNice(range,divs){var raw=(range||1)/divs;var p=Math.pow(10,Math.floor(Math.log10(raw)));var n=raw/p;var s=(n<1.5?1:(n<3?2:(n<7?5:10)))*p;return s;}function ppNiceFloor(x){if(!(x>0))return 1;var p=Math.pow(10,Math.floor(Math.log10(x)));var c=[10*p,5*p,2.5*p,2*p,p];for(var i=0;i<c.length;i++){if(c[i]<=x)return c[i];}return 0.5*p;}
 function ppArcSeg(ctx,PX,PY,q,p){var z0=q.z,r0=q.r,z1=p.z,r1=p.r,R=p.ar,dz=z1-z0,dr=r1-r0,d=Math.sqrt(dz*dz+dr*dr);if(d<1e-6){ctx.lineTo(PX(r1),PY(z1));return;}if(R<d/2)R=d/2;var mz=(z0+z1)/2,mr=(r0+r1)/2,hh=Math.sqrt(Math.max(0,R*R-d*d/4)),nz=-dr/d,nr=dz/d,sg=(p.arc==='CW')?-1:1,cz=mz+sg*hh*nz,cr=mr+sg*hh*nr,a0=Math.atan2(r0-cr,z0-cz),a1=Math.atan2(r1-cr,z1-cz);if(p.arc==='CW'){if(a1>a0)a1-=2*Math.PI;}else{if(a1<a0)a1+=2*Math.PI;}for(var k=1;k<=24;k++){var aa=a0+(a1-a0)*k/24;ctx.lineTo(PX(cr+R*Math.sin(aa)),PY(cz+R*Math.cos(aa)));}}
+function gvFinPts(){function NV(id){var e=$(id);return e?(parseFloat(e.value)||0):0;}var c=['A','B','C','D'].map(function(p){return {x:NV(p+'_x'),z:NV(p+'_z')};});if(c[0].x<=0&&c[3].x<=0)return [];var r1=Math.max(c[0].x,c[3].x)/2;if(!(r1>0))return [];var pel=$('patOn'),patOn=pel&&pel.checked;var N=patOn?Math.max(1,parseInt(($('patN')||{}).value||'')||1):1;var p2=parseFloat(($('pat2')||{}).value||'')||0;var dir=parseInt(($('patDir')||{}).value||'')||-1;var pitch=patOn?((typeof patMode!=='undefined'&&patMode==='pitch')?p2:(N>1?p2/(N-1):p2)):0;var allz=[],i,k;for(i=0;i<N;i++){var o=i*pitch*dir;for(k=0;k<4;k++)allz.push(c[k].z+o);}var zmax=Math.max.apply(null,allz),zmin=Math.min.apply(null,allz),span=Math.max(1,zmax-zmin);var pts=[{z:zmax+span*0.25+2,r:r1}];for(i=0;i<N;i++){var o2=i*pitch*dir;for(k=0;k<4;k++)pts.push({z:c[k].z+o2,r:c[k].x/2});}pts.push({z:zmin-span*0.25-2,r:r1});return pts;}
+function gvDraw(){var cv=$('gv_preview');if(!cv)return;var ctx=cv.getContext('2d');if(!ctx)return;var dpr=window.devicePixelRatio||1;var W=cv.clientWidth||380,H=cv.clientHeight||460;var bw=Math.round(W*dpr),bh=Math.round(H*dpr);if(cv.width!==bw)cv.width=bw;if(cv.height!==bh)cv.height=bh;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1118';ctx.fillRect(0,0,W,H);var Fp=gvFinPts(),Rw=[];var all=Fp.slice();var mnz,mxz,mxr;if(all.length){var zs=all.map(function(p){return p.z;}),rs=all.map(function(p){return p.r;});mnz=Math.min.apply(null,zs);mxz=Math.max.apply(null,zs);mxr=Math.max.apply(null,rs);}else{mnz=-10;mxz=0;mxr=10;}if(mxz-mnz<1e-6){mnz-=10;mxz+=1;}else{var _pz=(mxz-mnz);mnz-=_pz*0.08;mxz+=Math.min(_pz*0.05,1.5);}if(mxr<1e-6)mxr=5;var mnr=0;if(all.length){mnr=Math.min.apply(null,rs);}if(!(mnr<mxr))mnr=Math.max(0,mxr-1);var _pr=(mxr-mnr);if(_pr>1e-6){mnr-=_pr*0.08;mxr+=_pr*0.08;}if(mnr<0)mnr=0;var gx=44,gr=22,gt=22,gb=28,rp=gr,tp=gt;var availW=(W-gx-gr),availH=(H-gt-gb);var rSpan=(mxr-mnr);if(rSpan<1e-6)rSpan=1;var zSpan=(mxz-mnz);if(zSpan<1e-6)zSpan=1;var sc=Math.min(availW/rSpan,availH/zSpan);var scr=sc,scz=sc;var cW=rSpan*sc,cH=zSpan*sc;var x0=gx+(availW-cW)/2-mnr*scr;var bp=H-(gt+(availH-cH)/2+cH);var V=gvView;function BX(r){return x0+r*scr;}function BY(z){return (H-bp)-(mxz-z)*scz;}function PX(r){return W/2+(BX(r)-W/2)*V.z+V.ox;}function PY(z){return H/2+(BY(z)-H/2)*V.z+V.oy;}function zFromY(y){var by=(y-H/2-V.oy)/V.z+H/2;return mxz-((H-bp)-by)/scz;}function diaFromX(x){var bx=(x-W/2-V.ox)/V.z+W/2;return 2*((bx-x0)/scr);}var zA=zFromY(0),zB=zFromY(H),zLo=Math.min(zA,zB),zHi=Math.max(zA,zB);var dA=diaFromX(0),dB=diaFromX(W),dLo=Math.max(0,Math.min(dA,dB)),dHi=Math.max(dA,dB);var _cw=(cv&&cv.clientWidth)?cv.clientWidth:W;var _tgt=(10*96/25.4)*(W/_cw);var zStep=ppNiceFloor(_tgt/(scz*V.z))||1,dStep=ppNiceFloor(_tgt/(scr*V.z/2))||1;gvMap={x0:x0,scr:scr,scz:scz,mxz:mxz,mnz:mnz,mxr:mxr,W:W,H:H,rp:rp,tp:tp,bp:bp,vz:V.z,vox:V.ox,voy:V.oy,zStep:zStep,dStep:dStep,pts:Fp};ctx.strokeStyle='#14202c';ctx.lineWidth=1;ctx.fillStyle='#8296a8';ctx.font='10px "Segoe UI",system-ui,sans-serif';ctx.textAlign='left';var zdec=(zStep<1?1:0),ddec=(dStep<1?1:0);for(var zz=Math.floor(zLo/zStep)*zStep;zz<=zHi+1e-6;zz+=zStep){var yy=PY(zz);ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy);ctx.stroke();ctx.fillText('Z'+(+zz).toFixed(zdec),2,yy-2);}for(var dd=Math.max(0,Math.floor(dLo/dStep)*dStep);dd<=dHi+1e-6;dd+=dStep){var xx=PX(dd/2);ctx.beginPath();ctx.moveTo(xx,0);ctx.lineTo(xx,H);ctx.stroke();ctx.fillText('Ø'+(+dd).toFixed(ddec),xx+2,H-3);}ctx.strokeStyle='#3a5266';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(PX(0),0);ctx.lineTo(PX(0),H);ctx.stroke();ctx.setLineDash([]);if(Fp&&Fp.length){ctx.strokeStyle='#66d9ff';ctx.lineWidth=1.3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();ctx.moveTo(PX(Fp[0].r),PY(Fp[0].z));for(var fi=1;fi<Fp.length;fi++){var _fp=Fp[fi];if(_fp.arc&&_fp.ar>0)ppArcSeg(ctx,PX,PY,Fp[fi-1],_fp);else ctx.lineTo(PX(_fp.r),PY(_fp.z));}ctx.stroke();for(var hi=0;hi<Fp.length;hi++){var hx=PX(Fp[hi].r),hy=PY(Fp[hi].z),sel=(hi===0);ctx.beginPath();ctx.arc(hx,hy,sel?3.6:2.6,0,6.3);ctx.fillStyle=sel?'#9af0bd':'#6fd8ff';ctx.fill();if(sel){ctx.lineWidth=1.2;ctx.strokeStyle='#effff6';ctx.stroke();}}}}
 function ppDraw(){var cv=$('tt_preview');if(!cv)return;var ctx=cv.getContext('2d');if(!ctx)return;var dpr=window.devicePixelRatio||1;var W=cv.clientWidth||380,H=cv.clientHeight||460;var bw=Math.round(W*dpr),bh=Math.round(H*dpr);if(cv.width!==bw)cv.width=bw;if(cv.height!==bh)cv.height=bh;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1118';ctx.fillRect(0,0,W,H);var Fp=tnFinPts(),Rw=tnRawPts();var all=Fp.slice();var mnz,mxz,mxr;if(all.length){var zs=all.map(function(p){return p.z;}),rs=all.map(function(p){return p.r;});mnz=Math.min.apply(null,zs);mxz=Math.max.apply(null,zs);mxr=Math.max.apply(null,rs);}else{mnz=-10;mxz=0;mxr=10;}if(mxz-mnz<1e-6){mnz-=10;mxz+=1;}else{var _pz=(mxz-mnz);mnz-=_pz*0.08;mxz+=Math.min(_pz*0.05,1.5);}if(mxr<1e-6)mxr=5;var mnr=0;if(all.length){mnr=Math.min.apply(null,rs);}if(!(mnr<mxr))mnr=Math.max(0,mxr-1);var _pr=(mxr-mnr);if(_pr>1e-6){mnr-=_pr*0.08;mxr+=_pr*0.08;}if(mnr<0)mnr=0;var gx=44,gr=22,gt=22,gb=28,rp=gr,tp=gt;var availW=(W-gx-gr),availH=(H-gt-gb);var rSpan=(mxr-mnr);if(rSpan<1e-6)rSpan=1;var zSpan=(mxz-mnz);if(zSpan<1e-6)zSpan=1;var sc=Math.min(availW/rSpan,availH/zSpan);var scr=sc,scz=sc;var cW=rSpan*sc,cH=zSpan*sc;var x0=gx+(availW-cW)/2-mnr*scr;var bp=H-(gt+(availH-cH)/2+cH);var V=ttView;function BX(r){return x0+r*scr;}function BY(z){return (H-bp)-(mxz-z)*scz;}function PX(r){return W/2+(BX(r)-W/2)*V.z+V.ox;}function PY(z){return H/2+(BY(z)-H/2)*V.z+V.oy;}function zFromY(y){var by=(y-H/2-V.oy)/V.z+H/2;return mxz-((H-bp)-by)/scz;}function diaFromX(x){var bx=(x-W/2-V.ox)/V.z+W/2;return 2*((bx-x0)/scr);}var zA=zFromY(0),zB=zFromY(H),zLo=Math.min(zA,zB),zHi=Math.max(zA,zB);var dA=diaFromX(0),dB=diaFromX(W),dLo=Math.max(0,Math.min(dA,dB)),dHi=Math.max(dA,dB);var _cw=(cv&&cv.clientWidth)?cv.clientWidth:W;var _tgt=(10*96/25.4)*(W/_cw);var zStep=ppNiceFloor(_tgt/(scz*V.z))||1,dStep=ppNiceFloor(_tgt/(scr*V.z/2))||1;ppMap={x0:x0,scr:scr,scz:scz,mxz:mxz,mnz:mnz,mxr:mxr,W:W,H:H,rp:rp,tp:tp,bp:bp,vz:V.z,vox:V.ox,voy:V.oy,zStep:zStep,dStep:dStep,pts:Fp};ctx.strokeStyle='#14202c';ctx.lineWidth=1;ctx.fillStyle='#8296a8';ctx.font='10px "Segoe UI",system-ui,sans-serif';ctx.textAlign='left';var zdec=(zStep<1?1:0),ddec=(dStep<1?1:0);for(var zz=Math.floor(zLo/zStep)*zStep;zz<=zHi+1e-6;zz+=zStep){var yy=PY(zz);ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy);ctx.stroke();ctx.fillText('Z'+(+zz).toFixed(zdec),2,yy-2);}for(var dd=Math.max(0,Math.floor(dLo/dStep)*dStep);dd<=dHi+1e-6;dd+=dStep){var xx=PX(dd/2);ctx.beginPath();ctx.moveTo(xx,0);ctx.lineTo(xx,H);ctx.stroke();ctx.fillText('Ø'+(+dd).toFixed(ddec),xx+2,H-3);}ctx.strokeStyle='#3a5266';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(PX(0),0);ctx.lineTo(PX(0),H);ctx.stroke();ctx.setLineDash([]);if(Fp&&Fp.length){ctx.strokeStyle='#66d9ff';ctx.lineWidth=1.3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();ctx.moveTo(PX(Fp[0].r),PY(Fp[0].z));for(var fi=1;fi<Fp.length;fi++){var _fp=Fp[fi];if(_fp.arc&&_fp.ar>0)ppArcSeg(ctx,PX,PY,Fp[fi-1],_fp);else ctx.lineTo(PX(_fp.r),PY(_fp.z));}ctx.stroke();for(var hi=0;hi<Fp.length;hi++){var hx=PX(Fp[hi].r),hy=PY(Fp[hi].z),sel=(hi===0);ctx.beginPath();ctx.arc(hx,hy,sel?3.6:2.6,0,6.3);ctx.fillStyle=sel?'#9af0bd':'#6fd8ff';ctx.fill();if(sel){ctx.lineWidth=1.2;ctx.strokeStyle='#effff6';ctx.stroke();}}}if(ppCur){var cx=PX(ppCur.r),cy=PY(ppCur.z);ctx.strokeStyle='rgba(232,165,46,.8)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=ppLock?'#e8a52e':'#f4c869';ctx.beginPath();ctx.arc(cx,cy,ppLock?5.5:4,0,6.3);ctx.fill();if(ppLock){ctx.strokeStyle='#fff2d0';ctx.lineWidth=1.6;ctx.stroke();}}ppPlaceHud();}
 function ppToRZ(mx,my){var M=ppMap;if(!M)return null;var bx=(mx-M.vox-M.W/2)/M.vz+M.W/2;var by=(my-M.voy-M.H/2)/M.vz+M.H/2;var r=(bx-M.x0)/M.scr;var z=M.mxz-((M.H-M.bp)-by)/M.scz;if(r<0)r=0;return {r:r,z:z};}
 function ppSnap(rz,noPt){var M=ppMap;if(!M)return rz;var gz=Math.round(rz.z/M.zStep)*M.zStep;if(Math.abs(gz-rz.z)*M.scz*M.vz<11)rz.z=gz;var dia=rz.r*2;var gd=Math.round(dia/M.dStep)*M.dStep,gr=gd/2;if(Math.abs(gr-rz.r)*M.scr*M.vz<11)rz.r=gr;if(rz.r<0)rz.r=0;return rz;}
@@ -1151,7 +1154,7 @@ function ppAdd(){if(!ppCur)return;var d=Math.round(ppCur.r*2*1000)/1000,z=Math.r
 function ppLoadDefault(){tnPts.length=0;var d=JSON.parse(JSON.stringify(PP_DEF));for(var i=0;i<d.length;i++)tnPts.push(d[i]);if($('tn_rawshape'))$('tn_rawshape').value='Round';if($('tn_rawd'))$('tn_rawd').value='32';if($('tn_rawlen'))$('tn_rawlen').value='45';if($('js_od'))$('js_od').value='32';if(typeof ttRender==='function')ttRender();if(typeof tnRenderPts==='function')tnRenderPts();if(typeof rwShape==='function'){try{rwShape();}catch(e){}}if(typeof rwDraw==='function'){try{rwDraw();}catch(e){}}if(typeof tnCalc==='function')tnCalc();if(typeof ppRecord==='function')ppRecord();ppDraw();}
 function ppBackup(){try{var data={app:'yantra',kind:'profiles-backup',v:1,ts:Date.now(),profiles:tnProfAll(),current:tnPts};var blob=new Blob([JSON.stringify(data)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yantra-profiles-backup.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},120);if(typeof tnProfMsg==='function')tnProfMsg('Backup file downloaded',0);}catch(e){if(typeof tnProfMsg==='function')tnProfMsg('Backup failed',1);}}
 function ppRestore(ev){var f=ev.target.files&&ev.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){try{var d=JSON.parse(rd.result);var inc=(d&&d.profiles)?d.profiles:[];var cur=tnProfAll(),byName={};cur.forEach(function(r){byName[r.name]=r;});inc.forEach(function(r){if(r&&r.name)byName[r.name]=r;});var merged=Object.keys(byName).map(function(k){return byName[k];});tnProfStore(merged);tnProfRefresh();if(typeof tnProfMsg==='function')tnProfMsg('Restored '+inc.length+' profile(s)',0);}catch(e){if(typeof tnProfMsg==='function')tnProfMsg('Bad backup file',1);}ev.target.value='';};rd.readAsText(f);}
-var ttView={z:1,ox:0,oy:0},rwView={z:1,ox:0,oy:0};var s2view={get z(){return S2.zoom||1;},set z(v){S2.zoom=v;},get ox(){return S2.panX||0;},set ox(v){S2.panX=v;},get oy(){return S2.panY||0;},set oy(v){S2.panY=v;}};function pzAttach(id,view,redraw,opts){var cv=$(id);if(!cv||cv._pz)return;cv._pz=1;opts=opts||{};function loc(t){var r=cv.getBoundingClientRect();return {x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}function zoomAt(px,py,f){var W=cv.width,H=cv.height;var nz=Math.max(0.3,Math.min(12,view.z*f));view.ox=px-W/2-((px-view.ox-W/2)/view.z)*nz;view.oy=py-H/2-((py-view.oy-H/2)/view.z)*nz;view.z=nz;redraw();}cv.addEventListener('wheel',function(e){e.preventDefault();var p=loc(e);zoomAt(p.x,p.y,e.deltaY<0?1.12:1/1.12);},{passive:false});if(!opts.noMouseDrag){var dr=false,lx=0,ly=0;cv.addEventListener('mousedown',function(e){dr=true;lx=e.clientX;ly=e.clientY;});window.addEventListener('mousemove',function(e){if(!dr)return;var r=cv.getBoundingClientRect();view.ox+=(e.clientX-lx)*(cv.width/r.width);view.oy+=(e.clientY-ly)*(cv.height/r.height);lx=e.clientX;ly=e.clientY;redraw();});window.addEventListener('mouseup',function(){dr=false;});}cv.addEventListener('dblclick',function(e){e.preventDefault();view.z=1;view.ox=0;view.oy=0;redraw();});var tlx=0,tly=0,tdist=0,tmid=null,lastTap=0;cv.addEventListener('touchstart',function(e){if(e.touches.length===1){tlx=e.touches[0].clientX;tly=e.touches[0].clientY;}else if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];tdist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);tmid=loc({clientX:(a.clientX+b.clientX)/2,clientY:(a.clientY+b.clientY)/2});}},{passive:false});cv.addEventListener('touchmove',function(e){e.preventDefault();var r=cv.getBoundingClientRect();if(e.touches.length===1){var t=e.touches[0];view.ox+=(t.clientX-tlx)*(cv.width/r.width);view.oy+=(t.clientY-tly)*(cv.height/r.height);tlx=t.clientX;tly=t.clientY;redraw();}else if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];var nd=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);if(tdist>0&&tmid)zoomAt(tmid.x,tmid.y,nd/tdist);tdist=nd;}},{passive:false});cv.addEventListener('touchend',function(e){if(e.touches.length===0){var now=Date.now();if(now-lastTap<300){view.z=1;view.ox=0;view.oy=0;redraw();}lastTap=now;}});}
+var ttView={z:1,ox:0,oy:0},rwView={z:1,ox:0,oy:0};var gvView={z:1,ox:0,oy:0};var s2view={get z(){return S2.zoom||1;},set z(v){S2.zoom=v;},get ox(){return S2.panX||0;},set ox(v){S2.panX=v;},get oy(){return S2.panY||0;},set oy(v){S2.panY=v;}};function pzAttach(id,view,redraw,opts){var cv=$(id);if(!cv||cv._pz)return;cv._pz=1;opts=opts||{};function loc(t){var r=cv.getBoundingClientRect();return {x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}function zoomAt(px,py,f){var W=cv.width,H=cv.height;var nz=Math.max(0.3,Math.min(12,view.z*f));view.ox=px-W/2-((px-view.ox-W/2)/view.z)*nz;view.oy=py-H/2-((py-view.oy-H/2)/view.z)*nz;view.z=nz;redraw();}cv.addEventListener('wheel',function(e){e.preventDefault();var p=loc(e);zoomAt(p.x,p.y,e.deltaY<0?1.12:1/1.12);},{passive:false});if(!opts.noMouseDrag){var dr=false,lx=0,ly=0;cv.addEventListener('mousedown',function(e){dr=true;lx=e.clientX;ly=e.clientY;});window.addEventListener('mousemove',function(e){if(!dr)return;var r=cv.getBoundingClientRect();view.ox+=(e.clientX-lx)*(cv.width/r.width);view.oy+=(e.clientY-ly)*(cv.height/r.height);lx=e.clientX;ly=e.clientY;redraw();});window.addEventListener('mouseup',function(){dr=false;});}cv.addEventListener('dblclick',function(e){e.preventDefault();view.z=1;view.ox=0;view.oy=0;redraw();});var tlx=0,tly=0,tdist=0,tmid=null,lastTap=0;cv.addEventListener('touchstart',function(e){if(e.touches.length===1){tlx=e.touches[0].clientX;tly=e.touches[0].clientY;}else if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];tdist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);tmid=loc({clientX:(a.clientX+b.clientX)/2,clientY:(a.clientY+b.clientY)/2});}},{passive:false});cv.addEventListener('touchmove',function(e){e.preventDefault();var r=cv.getBoundingClientRect();if(e.touches.length===1){var t=e.touches[0];view.ox+=(t.clientX-tlx)*(cv.width/r.width);view.oy+=(t.clientY-tly)*(cv.height/r.height);tlx=t.clientX;tly=t.clientY;redraw();}else if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];var nd=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);if(tdist>0&&tmid)zoomAt(tmid.x,tmid.y,nd/tdist);tdist=nd;}},{passive:false});cv.addEventListener('touchend',function(e){if(e.touches.length===0){var now=Date.now();if(now-lastTap<300){view.z=1;view.ox=0;view.oy=0;redraw();}lastTap=now;}});}
 function openProfileTable(){show('ttbl');ttRender();tnProfRefresh();ppAttach();var _b=$('tt_body');if(_b&&!_b._ppchg){_b._ppchg=1;_b.addEventListener('change',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('ttf'))ppRecord();});}if(ppHist.length===0)ppRecord();ppUndoUI();ppDraw();}
 function tnProfKey(){return 'yantra_tn_profiles';}
 function tnProfAll(){try{return JSON.parse(localStorage.getItem(tnProfKey())||'[]');}catch(e){return [];}}
@@ -1254,7 +1257,7 @@ function s2Fit(){if(!S2.segs||!S2.segs.length)return;var mnh=1e9,mxh=-1e9,mnv=1e
 function s2All(){s2Pause();S2.prog=S2.segs.length;s2Render();}
 function s2Block(d){s2Pause();S2.prog=Math.max(0,Math.min(S2.segs.length,Math.round(S2.prog)+d));s2Render();}
 function gvMr(){var m=matBy($('gv_mat')?$('gv_mat').value:'');var el=$('gv_mr');if(el&&m&&m[4]!=null){var c=ISO_COL[m[2]]||'#9E9E9E';el.innerHTML='<span class="isochip" style="background:'+c+'">ISO '+m[2]+'</span> Machinability '+m[4]+'%';}}
-var lastGrooveProg='';function gvSim(){if(typeof genGroove==='function'){try{genGroove();}catch(e){}}if(!lastGrooveProg){if($('gv_res'))$('gv_res').innerHTML='<p class="warn" style="text-align:left">Open the profile table and draw a groove (mouth &rarr; down &rarr; base &rarr; up), then Simulate.</p>';return;}lastTurnProg=lastGrooveProg.split('\n').filter(function(l){return !/\bG0?4\b/.test(l);}).join('\n');if(typeof tnSim==='function')tnSim();}
+var lastGrooveProg='';function gvSim(){try{if(typeof window!=='undefined'&&window.gv_generate)window.gv_generate();else if(typeof genGroove==='function')genGroove();}catch(e){}var el=$('gcode');var prog=el?(el.textContent||el.innerText||''):'';if(!prog||prog.replace(/\s/g,'').length<8){prog=(typeof lastGrooveProg!=='undefined'?lastGrooveProg:'')||'';}if(!prog||prog.replace(/\s/g,'').length<8){if($('gv_res'))$('gv_res').innerHTML='<p class="warn" style="text-align:left">Enter groove geometry (top/bottom dia + start/end Z) in the GROOVE section, then Simulate.</p>';return;}lastTurnProg=prog.split('\n').filter(function(l){return !/\bG0?4\b/.test(l);}).join('\n');if(typeof tnSim==='function')tnSim();}
 function _gvn(id,d){var e=$(id);var v=e?parseFloat(e.value):NaN;return isFinite(v)?v:d;}
 function gvR(v){return (Math.round(v*1000)/1000).toString();}
 function gvD(r){return gvR(2*r);}
@@ -2136,8 +2139,8 @@ function readCorners(){
 function updateTableAndPreview(){
   var pts=readCorners();
   renderTable(pts);
-  drawPreview(pts);
-  initZoomPan();  // ensures interactive zoom/pan on the preview SVG
+  gvDraw();
+  pzAttach('gv_preview',gvView,gvDraw);  // ensures interactive zoom/pan on the preview SVG
 }
 
 function pointEdit(p){
@@ -2224,60 +2227,48 @@ function drawPreview(pts){
 }
 
 // -------- G-CODE GENERATION --------
-function generate(){
-  // === Collect inputs ===
-  var ctrl=$('ms_ctrl').value;
-  var D1=parseFloat($('D1').value)||0, D2=parseFloat($('D2').value)||0;
-  var Z1=parseFloat($('Z1').value)||0, Z2=parseFloat($('Z2').value)||0;
-  var W=(D1-D2)/2;                              // radial depth
-  var GW=Math.abs(Z2-Z1);                       // axial width
-  var Wi=parseFloat($('tl_wi').value)||3;       // insert width
-  var rIns=parseFloat($('tl_rc').value)||0.2;   // insert corner radius
-  var T=$('tl_num').value, TD=$('tl_off').value;
-  var Vc=parseFloat($('p_vc').value)||0;
-  var S=parseInt($('p_rpm').value)||0;
-  var maxRPM=parseInt($('p_maxrpm').value)||3000;
-  var Fr=parseFloat($('p_fr').value)||0.08;
-  var Ff=parseFloat($('p_ff').value)||0.05;
-  var pd=parseFloat($('cs_pd').value)||0.5;     // peck depth (radial)
-  var pr=parseFloat($('cs_pr').value)||0.3;     // retract per peck
-  var dwell=parseFloat($('p_dw').value)||0;
-  var sX=parseFloat($('pos_sx').value)||5;
-  var sZ=parseFloat($('pos_sz').value)||3;
-  var mat=$('mat').selectedOptions[0].text;
-  var origin=$('tl_off_ref').value;  // 'L', 'C', or 'R'
-  var originShift={L:-Wi/2, C:0, R:+Wi/2}[origin];  // added to insert-center Z to get programmed Z
-  var originLabel={L:'LEFT corner',C:'CENTER',R:'RIGHT corner'}[origin];
+function generate(P){
+  var _T=!!(P&&P._test);
+  if(!P){
+    P={
+      ctrl:$('ms_ctrl').value,
+      D1:parseFloat($('D1').value)||0, D2:parseFloat($('D2').value)||0,
+      Z1:parseFloat($('Z1').value)||0, Z2:parseFloat($('Z2').value)||0,
+      Wi:parseFloat($('tl_wi').value)||3, rIns:parseFloat($('tl_rc').value)||0.2,
+      T:$('tl_num').value, TD:$('tl_off').value,
+      Vc:parseFloat($('p_vc').value)||0, S:parseInt($('p_rpm').value)||0, maxRPM:parseInt($('p_maxrpm').value)||3000,
+      Fr:parseFloat($('p_fr').value)||0.08, Ff:parseFloat($('p_ff').value)||0.05,
+      pd:parseFloat($('cs_pd').value)||0.5, pr:parseFloat($('cs_pr').value)||0.3, dwell:parseFloat($('p_dw').value)||0,
+      sX:parseFloat($('pos_sx').value)||5, sZ:parseFloat($('pos_sz').value)||3,
+      mat:(function(){try{return $('mat').selectedOptions[0].text;}catch(e){return '';}})(),
+      offRef:($('tl_off_ref')?$('tl_off_ref').value:'C'),
+      patOn:$('patOn').checked, patN:(parseInt($('patN').value)||1), pat2:(parseFloat($('pat2').value)||0), patDir:(parseInt($('patDir').value)||-1),
+      patMode:(typeof patMode!=='undefined'?patMode:'pitch'),
+      strat:strat, rf:rf, peck:($('cs_peck')?$('cs_peck').checked:true), incr:($('cs_incr')?$('cs_incr').checked:false),
+      tipPos:($('tl_tip')?$('tl_tip').value:'3'), compSet:($('tl_comp')?$('tl_comp').value:'auto'),
+      corners:(function(){var c={};['A','B','C','D'].forEach(function(k){c[k]={t:$(k+'_t').value,s1:parseFloat($(k+'_s1').value)||0,s2:$('indepLegs').checked?(parseFloat($(k+'_s2').value)||0):(parseFloat($(k+'_s1').value)||0)};});return c;})()
+    };
+  }
+  var ctrl=P.ctrl,D1=P.D1,D2=P.D2,Z1=P.Z1,Z2=P.Z2,Wi=P.Wi,rIns=P.rIns,T=P.T,TD=P.TD,Vc=P.Vc,S=P.S,maxRPM=P.maxRPM,Fr=P.Fr,Ff=P.Ff,pd=P.pd,pr=P.pr,dwell=P.dwell,sX=P.sX,sZ=P.sZ,mat=P.mat,strat=P.strat,rf=P.rf,tipPos=P.tipPos,compSet=P.compSet,corners=P.corners;
+  var W=(D1-D2)/2, GW=Math.abs(Z2-Z1);
+  var origin=P.offRef, originShift={L:-Wi/2,C:0,R:+Wi/2}[origin], originLabel={L:'LEFT corner',C:'CENTER',R:'RIGHT corner'}[origin];
   var safeX=D1+sX*2;
-  var patOn=$('patOn').checked;
-  var N=patOn?(parseInt($('patN').value)||1):1;
-  var p2=parseFloat($('pat2').value)||0;
-  var dir=parseInt($('patDir').value)||-1;
-  var pitch=patOn?(patMode==='pitch'?p2:(N>1?p2/(N-1):p2)):0;
+  var patOn=P.patOn, N=patOn?(P.patN||1):1, p2=P.pat2, dir=P.patDir, pitch=patOn?(P.patMode==='pitch'?p2:(N>1?p2/(N-1):p2)):0;
   var stratLabel={single:'Single plunge',multi:'Multi-plunge',plturn:'Plunge turning',ramp:'Ramping'}[strat];
-  // Offset reference — shifts programmed Z so wall positions land exactly
-  var offRef=$('tl_off_ref').value;  // 'L' | 'C' | 'R'
-  var offShift={L:-Wi/2, C:0, R:+Wi/2}[offRef];  // add to insert-center to get Z_prog
-  var offLbl={L:'Left edge (-Z)', C:'Center', R:'Right edge (+Z)'}[offRef];
-  var doFin=(rf==='finish'||rf==='both');
-  var doRgh=(rf==='rough' ||rf==='both');
-  // Corner info
-  var corners={};
-  ['A','B','C','D'].forEach(function(k){
-    corners[k]={t:$(k+'_t').value, s1:parseFloat($(k+'_s1').value)||0, s2:$('indepLegs').checked?(parseFloat($(k+'_s2').value)||0):(parseFloat($(k+'_s1').value)||0)};
-  });
-
+  var offRef=origin, offShift=originShift, offLbl={L:'Left edge (-Z)',C:'Center',R:'Right edge (+Z)'}[offRef];
+  var doFin=(rf==='finish'||rf==='both'), doRgh=(rf==='rough'||rf==='both');
+  var peck=(P.peck!==false);
   // === Build a linear list of moves ===
   var mv=[];
   mv.push({t:'cmt', txt:'Groove program - '+stratLabel});
-  mv.push({t:'cmt', txt:'Insert width: '+Wi.toFixed(3)+' mm  |  Offset origin: '+originLabel+' (Z shift '+(originShift>=0?'+':'')+originShift.toFixed(3)+' mm)'});
-  var tipPos=($('tl_tip')?$('tl_tip').value:'3');
-  var compSet=($('tl_comp')?$('tl_comp').value:'auto');
-  mv.push({t:'cmt', txt:'Tip position: '+tipPos+' (set in tool offset table) | Nose R: '+((parseFloat($('tl_rc').value)||0).toFixed(3))+' mm | Comp mode: '+compSet});
+  mv.push({t:'cmt', txt:'Insert width: '+Wi.toFixed(3)+' mm  |  Offset reference: '+originLabel+' (single-plunge edge aligns to '+({L:'LEFT wall',C:'groove centre',R:'RIGHT wall'}[origin])+')'});
+  mv.push({t:'cmt', txt:'Tip position: '+tipPos+' (set in tool offset table) | Nose R: '+(rIns.toFixed(3))+' mm | Finish: Fanuc TNRC nose-centre path (no G41/G42)'});
   mv.push({t:'cmt', txt:'Material: '+mat});
   mv.push({t:'cmt', txt:'Target control: '+ctrl+' (long-form G-code)'});
   mv.push({t:'cmt', txt:'Insert width Wi='+Wi+' mm - Offset reference: '+offLbl});
   mv.push({t:'cmt', txt:'Groove: D '+D1.toFixed(2)+' to '+D2.toFixed(2)+' x '+GW.toFixed(2)+' wide'+(N>1?', '+N+'x at '+pitch.toFixed(2)+' pitch':'')});
+  var _gvAlm=(Wi>GW+1e-6)?('ALARM: INSERT WIDTH '+Wi.toFixed(3)+' mm EXCEEDS GROOVE WIDTH '+GW.toFixed(3)+' mm -- INSERT CANNOT FIT, WILL OVERCUT WALLS (OVERRIDEABLE)'):'';
+  if(_gvAlm)mv.push({t:'cmt', txt:_gvAlm});
   mv.push({t:'raw', s:'G21 G18 G40 G97'});
   mv.push({t:'raw', s:'G28 U0 W0'});
   mv.push({t:'raw', s:'T'+T+(TD||T).toString().padStart(2,'0')});
@@ -2287,19 +2278,21 @@ function generate(){
 
   for(var g=0;g<N;g++){
     var z1g=Z1+g*pitch*dir, z2g=Z2+g*pitch*dir;
-    var origin=$('tl_off_ref')?$('tl_off_ref').value:'C';
-    var oShift={L:-Wi/2,C:0,R:+Wi/2}[origin];
     if(N>1)mv.push({t:'cmt', txt:'-- Groove '+(g+1)+'/'+N+' at Z='+z1g.toFixed(3)+' --'});
     if(doRgh){
       // Compute insert-center Z positions
       var zLeftWall=Math.min(z1g,z2g), zRightWall=Math.max(z1g,z2g);
       var grooveW=zRightWall-zLeftWall;
       if(strat==='single'){
-        // One plunge centered in the groove
-        var zc=(zLeftWall+zRightWall)/2;
-        var zp=zc+offShift;
+        // One plunge; offset reference aligns an insert EDGE to a wall (never past it -> no gouge).
+        // L: left edge on left wall | R: right edge on right wall | C: centered.
+        var zp;
+        if(grooveW<=Wi){ zp=(zLeftWall+zRightWall)/2; }          // insert spans groove -> center
+        else if(origin==='L'){ zp=zLeftWall+Wi/2; }              // left edge to left wall
+        else if(origin==='R'){ zp=zRightWall-Wi/2; }             // right edge to right wall
+        else { zp=(zLeftWall+zRightWall)/2; }                    // center
         mv.push({t:'g0', Z:zp});
-        pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell);
+        pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell, peck);
       } else if(strat==='multi'){
         // Multi-plunge: insert-center steps from (zLeftWall+Wi/2) to (zRightWall-Wi/2)
         // Step size = Wi - 2*rIns (leaves lands smaller than insert width for finish clean-up)
@@ -2312,18 +2305,19 @@ function generate(){
         for(var iP=0;iP<N_p;iP++)centers.push(zCFirst+iP*actualStep);
         mv.push({t:'cmt', txt:N_p+' plunge(s), step '+actualStep.toFixed(3)+' mm between insert centers'});
         centers.forEach(function(zc){
-          var zp=zc+offShift;
+          // centers already clamped inside the walls (zLeftWall+Wi/2 .. zRightWall-Wi/2); no offset shift (would gouge)
+          var zp=zc;
           mv.push({t:'g0', Z:zp});
-          pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell);
+          pluneRough(mv, D1, D2, zp, safeX, pd, pr, Fr, dwell, peck);
         });
       } else if(strat==='plturn'){
         // Plunge one end first, then turn to opposite. Practical Machinist rule: turn one direction only.
         // Start-side plunge insert-center at (zLeftWall + Wi/2)
         var zcStart=zLeftWall+Wi/2, zcEnd=zRightWall-Wi/2;
-        var zpStart=zcStart+offShift, zpEnd=zcEnd+offShift;
+        var zpStart=zcStart, zpEnd=zcEnd;   // wall-clamped; no offset shift (would gouge)
         mv.push({t:'cmt', txt:'Plunge one end (leaves right shoulder for turn)'});
         mv.push({t:'g0', Z:zpStart});
-        pluneRough(mv, D1, D2+0.2, zpStart, safeX, pd, pr, Fr, dwell);
+        pluneRough(mv, D1, D2+0.2, zpStart, safeX, pd, pr, Fr, dwell, peck);
         mv.push({t:'cmt', txt:'Turn axially between shoulders to opposite Z'});
         mv.push({t:'g1', X:D2+0.2, Z:zpStart, F:Fr});
         mv.push({t:'g1', Z:zpEnd, F:Fr*1.3});
@@ -2333,7 +2327,7 @@ function generate(){
       } else if(strat==='ramp'){
         // Ramp entry — simultaneous X-Z at an angle, then clean the bottom
         var zcStart=zLeftWall+Wi/2, zcEnd=zRightWall-Wi/2;
-        var zpStart=zcStart+offShift, zpEnd=zcEnd+offShift;
+        var zpStart=zcStart, zpEnd=zcEnd;   // wall-clamped; no offset shift (would gouge)
         mv.push({t:'cmt', txt:'Ramp entry (simultaneous X-Z)'});
         mv.push({t:'g0', Z:zpStart});
         mv.push({t:'g1', X:D2, Z:zpEnd, F:Fr});
@@ -2342,11 +2336,8 @@ function generate(){
       }
     }
     if(doFin){
-      mv.push({t:'cmt', txt:'Finish pass - profile contour with corner geometry'});
-      var dirZ_f=(z2g>z1g?1:-1);
-      var z1_finProg=(z1g+Wi/2*dirZ_f)+originShift;
-      var z2_finProg=(z2g-Wi/2*dirZ_f)+originShift;
-      finishPass(mv, D1, D2, z1_finProg, z2_finProg, safeX, Ff, corners, dwell);
+      // Fanuc TNRC finish: build the true finished profile and compute the nose-centre path.
+      finishTNRC(mv, D1, D2, z1g, z2g, corners, rIns, safeX, Ff);
     }
   }
   mv.push({t:'g0', X:safeX});
@@ -2355,19 +2346,28 @@ function generate(){
   mv.push({t:'raw', s:'M30'});
   mv.push({t:'raw', s:'%'});
 
+  // dedup consecutive identical X-only rapids
+  mv=mv.filter(function(m,i){return !(m.t==='g0'&&m.X!==undefined&&m.Z===undefined&&i>0&&mv[i-1].t==='g0'&&mv[i-1].X===m.X&&mv[i-1].Z===undefined);});
   // === Emit ===
-  var out=emitMoves(mv, ctrl);
+  var out=emitMoves(mv, ctrl, P.incr);
+  if(_T)return {out:out, mv:mv};
   var cyc='Long-form G-code (G0/G1/G2/G3) - '+stratLabel;
   $('outputArea').style.display='block';
   $('gcode').textContent=out;
   $('cycLabel').textContent=cyc;
   $('cycBadge').textContent=ctrl;
-  $('outputArea').scrollIntoView({behavior:'smooth',block:'start'});
+  try{if($('gv_res'))$('gv_res').innerHTML=_gvAlm?('<p class="warn" style="text-align:left">⚠ '+_gvAlm+'</p>'):'';}catch(e){}
+  try{$('outputArea').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}
   simReset();
+  return out;
 }
-
-// Peck-plunge with chip-break retract, ending with dwell at bottom + retract to safeX
-function pluneRough(mv, xTop, xBot, z, safeX, pd, pr, F, dwell){
+function pluneRough(mv, xTop, xBot, z, safeX, pd, pr, F, dwell, peck){
+  if(peck===false){
+    mv.push({t:'g1', X:xBot, Z:z, F:F});
+    if(dwell>0)mv.push({t:'dwell', p:dwell});
+    mv.push({t:'g0', X:safeX});
+    return;
+  }
   var d = 0;
   var totalD = (xTop - xBot)/2;
   while(d < totalD - 0.0001){
@@ -2383,26 +2383,90 @@ function pluneRough(mv, xTop, xBot, z, safeX, pd, pr, F, dwell){
   mv.push({t:'g0', X:safeX});
 }
 
+// ===== Fanuc Tool-Nose-Radius Compensation engine (B-62554E section 15.2) =====
+// Computes the tool-nose-CENTRE path from the finished profile. point={z,x} (x=radius).
+var TNRC=(function(){
+  var EPS=1e-9;
+  function sub(a,b){return {z:a.z-b.z,x:a.x-b.x};}
+  function add(a,b){return {z:a.z+b.z,x:a.x+b.x};}
+  function mul(a,s){return {z:a.z*s,x:a.x*s};}
+  function len(a){return Math.hypot(a.z,a.x);}
+  function norm(a){var L=len(a)||1;return {z:a.z/L,x:a.x/L};}
+  function rn(d){return {z:d.x,x:-d.z};}         // right normal (rotate -90)
+  function cr(a,b){return a.z*b.x-a.x*b.z;}
+  function dS(b){if(b.type==='line')return norm(sub(b.p2,b.p1));var r=sub(b.p1,b.center);return norm(b.cw?{z:r.x,x:-r.z}:{z:-r.x,x:r.z});}
+  function dE(b){if(b.type==='line')return norm(sub(b.p2,b.p1));var r=sub(b.p2,b.center);return norm(b.cw?{z:r.x,x:-r.z}:{z:-r.x,x:r.z});}
+  function off(b,R){
+    if(b.type==='line'){var d=norm(sub(b.p2,b.p1)),n=rn(d);return {type:'line',p1:add(b.p1,mul(n,R)),p2:add(b.p2,mul(n,R))};}
+    var p1o=add(b.p1,mul(rn(dS(b)),R));
+    return {type:'arc',center:b.center,cw:b.cw,rad:len(sub(p1o,b.center)),p1:p1o,p2:add(b.p2,mul(rn(dE(b)),R))};
+  }
+  function isect(o1,o2,corner){
+    var cands=[];
+    if(o1.type==='line'&&o2.type==='line'){
+      var p=o1.p1,r=sub(o1.p2,o1.p1),q=o2.p1,s=sub(o2.p2,o2.p1),rxs=cr(r,s);
+      if(Math.abs(rxs)<EPS)return o1.p2;
+      cands.push(add(p,mul(r,cr(sub(q,p),s)/rxs)));
+    } else {
+      var line=o1.type==='line'?o1:(o2.type==='line'?o2:null);
+      if(line){var arc=o1.type==='arc'?o1:o2;var d=sub(line.p2,line.p1),f=sub(line.p1,arc.center);
+        var a=d.z*d.z+d.x*d.x,b2=2*(f.z*d.z+f.x*d.x),c=f.z*f.z+f.x*f.x-arc.rad*arc.rad,disc=b2*b2-4*a*c;
+        if(disc<0)return corner;disc=Math.sqrt(disc);
+        [(-b2-disc)/(2*a),(-b2+disc)/(2*a)].forEach(function(t){cands.push(add(line.p1,mul(d,t)));});
+      } else {
+        var c1=o1.center,c2=o2.center,r1=o1.rad,r2=o2.rad,dz=c2.z-c1.z,dx=c2.x-c1.x,D=Math.hypot(dz,dx);
+        if(D<EPS||D>r1+r2||D<Math.abs(r1-r2))return corner;
+        var a=(r1*r1-r2*r2+D*D)/(2*D),h=Math.sqrt(Math.max(0,r1*r1-a*a)),zm=c1.z+a*dz/D,xm=c1.x+a*dx/D;
+        cands.push({z:zm+h*dx/D,x:xm-h*dz/D},{z:zm-h*dx/D,x:xm+h*dz/D});
+      }
+    }
+    var best=cands[0],bd=Infinity;cands.forEach(function(c){var dd=len(sub(c,corner));if(dd<bd){bd=dd;best=c;}});
+    return best;
+  }
+  function run(blocks,R){
+    var o=blocks.map(function(b){return off(b,R);}),path=[{pt:o[0].p1,seg:o[0]}];
+    for(var i=0;i<blocks.length-1;i++){
+      var c=cr(dE(blocks[i]),dS(blocks[i+1])),corner=blocks[i].p2;
+      if(c<-EPS){path.push({pt:isect(o[i],o[i+1],add(corner,mul(rn(dE(blocks[i])),R))),seg:o[i],inner:true});}
+      else if(c>EPS){path.push({pt:o[i].p2,seg:o[i]});path.push({pt:o[i+1].p1,seg:null,outer:true});}
+      else {path.push({pt:o[i].p2,seg:o[i]});}
+    }
+    path.push({pt:o[o.length-1].p2,seg:o[o.length-1]});
+    return path;
+  }
+  return {run:run};
+})();
+
+// Build the finished groove profile as line/arc blocks (cut order near->far), then TNRC it.
+// Round-nose model. Mouth chamfers (A/D) supported as lines; base sharp/nose-formed.
+function finishTNRC(mv, D1, D2, Z1, Z2, corners, nr, safeX, F){
+  var rOD=D1/2, rFL=D2/2, zN=Math.max(Z1,Z2), zF=Math.min(Z1,Z2);
+  var A=corners.A, D=corners.D;
+  var pts=[];
+  if(A.t==='Chamfer'&&A.s1>0){ pts.push([zN+A.s1,rOD]); pts.push([zN,rOD-A.s1]); } else { pts.push([zN,rOD]); }
+  pts.push([zN,rFL]);           // near wall bottom (base sharp / nose-formed)
+  pts.push([zF,rFL]);           // floor to far base
+  if(D.t==='Chamfer'&&D.s1>0){ pts.push([zF,rOD-D.s1]); pts.push([zF-D.s1,rOD]); } else { pts.push([zF,rOD]); }
+  var blocks=[];
+  for(var i=0;i<pts.length-1;i++) blocks.push({type:'line',p1:{z:pts[i][0],x:pts[i][1]},p2:{z:pts[i+1][0],x:pts[i+1][1]}});
+  var path=TNRC.run(blocks, nr);
+  mv.push({t:'cmt', txt:'Finish - Fanuc TNRC nose-centre path (R'+nr.toFixed(2)+', no G41/G42)'});
+  var v0=path[0].pt;
+  mv.push({t:'g0', X:safeX});
+  mv.push({t:'g0', X:2*v0.x, Z:v0.z});
+  for(var k=1;k<path.length;k++){ var v=path[k].pt; mv.push({t:'g1', X:2*v.x, Z:v.z, F:F}); }
+  mv.push({t:'g0', X:safeX});
+}
+
 // Finish pass with G41/G42 nose radius compensation and tangent-arc lead-in/out.
 // Dual-comp mode: two half-passes meeting at floor midpoint.
 //   Near-face half: approach A, tangent lead-in, G42, wall A->B, half floor B->mid, tangent lead-out, G40
 //   Far-face half:  approach D, tangent lead-in, G41, wall D->C, half floor C->mid, tangent lead-out, G40
-function finishPass(mv, D1, D2, z1, z2, safeX, F, c, dwell){
-  var compMode = $('tl_comp') ? $('tl_comp').value : 'auto';
-  var noseR = parseFloat($('tl_rc').value) || 0;
-  var doComp = (compMode !== 'off') && (noseR > 0);
-  if(doComp && compMode==='auto'){
-    // DUAL pass with G42 near-face half + G41 far-face half
-    finishHalfComp(mv, 'near', D1, D2, z1, z2, safeX, F, c, dwell, noseR, 'G42');
-    finishHalfComp(mv, 'far',  D1, D2, z1, z2, safeX, F, c, dwell, noseR, 'G41');
-    return;
-  }
-  if(doComp){
-    // SINGLE pass with user-picked G41 or G42
-    finishHalfComp(mv, 'full', D1, D2, z1, z2, safeX, F, c, dwell, noseR, compMode);
-    return;
-  }
-  // No comp — fall through to legacy sharp-tip walk (existing code below)
+function finishPass(mv, D1, D2, z1, z2, safeX, F, c, dwell, compSet, rIns){
+  // Grooving finish is ALWAYS hand-computed — no G41/G42.
+  // Rationale (Ginoy): a grooving insert forces G41<->G42 to be toggled repeatedly per flank,
+  // and the tool-orientation number changes with it, which is error-prone. The nose-radius
+  // offset is instead applied by hand in the contour (per the reference example).
   finishPassNoComp(mv, D1, D2, z1, z2, safeX, F, c, dwell);
 }
 
@@ -2535,33 +2599,48 @@ function finishPassNoComp(mv, D1, D2, z1, z2, safeX, F, c, dwell){
 // Placeholder retained for backward compatibility with any old callers
 function cornerEmit(mv, pt, dirOut, dirIn, corner, F){}
 
-// Emit moves as G-code strings
-function emitMoves(mv, ctrl){
+// Emit moves as G-code strings.
+// incr=true -> after the first positioning move, X/Z become incremental U/W deltas
+// (Fanuc-style). Siemens/Heidenhain keep absolute (their incremental syntax differs).
+function emitMoves(mv, ctrl, incr){
   var lines=[];
   var cmtOpen=(ctrl==='Siemens'||ctrl==='Heidenhain')?';':'(';
   var cmtClose=(ctrl==='Siemens'||ctrl==='Heidenhain')?'':')';
   function fmt(v){return (v<0?'-':'')+Math.abs(v).toFixed(3);}
+  var useUW = !!incr && ctrl!=='Siemens' && ctrl!=='Heidenhain';
+  var px=null, pz=null, started=false;
+  // Emit an X (or U) and Z (or W) pair for a motion block, tracking absolute position.
+  function axes(m){
+    var out='';
+    var inc = useUW && started;
+    if(m.X!==undefined){
+      if(inc){ var dx=m.X-(px!==null?px:m.X); if(Math.abs(dx)>=0.0005) out+=' U'+fmt(dx); }
+      else out+=' X'+fmt(m.X);
+      px=m.X;
+    }
+    if(m.Z!==undefined){
+      if(inc){ var dz=m.Z-(pz!==null?pz:m.Z); if(Math.abs(dz)>=0.0005) out+=' W'+fmt(dz); }
+      else out+=' Z'+fmt(m.Z);
+      pz=m.Z;
+    }
+    if(m.X!==undefined||m.Z!==undefined) started=true;
+    return out;
+  }
   mv.forEach(function(m){
     if(m.t==='cmt'){
       lines.push(cmtOpen+' '+m.txt+' '+cmtClose);
     } else if(m.t==='raw'){
       lines.push(m.s);
     } else if(m.t==='g0'){
-      var s='G00';
-      if(m.X!==undefined)s+=' X'+fmt(m.X);
-      if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
-      lines.push(s);
+      lines.push('G00'+axes(m));
     } else if(m.t==='g1'){
-      var s='G01';
-      if(m.X!==undefined)s+=' X'+fmt(m.X);
-      if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
+      var s='G01'+axes(m);
       if(m.F!==undefined)s+=' F'+m.F;
       if(m.cmt) s+=' '+cmtOpen+' '+m.cmt+' '+cmtClose;
       lines.push(s);
     } else if(m.t==='g2'||m.t==='g3'){
-      var s=(m.t==='g2'?'G02':'G03');
-      if(m.X!==undefined)s+=' X'+fmt(m.X);
-      if(m.Z!==undefined)s+=' Z'+fmt(m.Z);
+      var s=(m.t==='g2'?'G02':'G03')+axes(m);
+      // I/K are already incremental-to-centre on Fanuc, so they are unaffected by U/W mode.
       if(m.R!==undefined)s+=' R'+m.R.toFixed(3);
       if(m.I!==undefined)s+=' I'+fmt(m.I);
       if(m.K!==undefined)s+=' K'+fmt(m.K);
@@ -3077,6 +3156,7 @@ window.gv_recalc = recalc;
 window.gv_matChange = matChange;
 window.gv_applyAllCorners = applyAllCorners;
 window.gv_generate = generate;
+window.gvGen = generate;
 window.gv_copyGcode = copyGcode;
 window.gv_saveProg = saveProg;
 window.gv_toggleSim = toggleSim;
